@@ -1,5 +1,5 @@
 import math
-from equipment import Centrifugal_Chiller, Internal_Combustion_Engine, Water_Pump, Natural_Gas_Boiler_hot_water
+from equipment import Centrifugal_Chiller, Internal_Combustion_Engine, Water_Pump, Natural_Gas_Boiler_hot_water, Energy_Storage_Equipment_Cold
 from centrifugal_chiller_function import centrifugal_chiller_function as ccf, centrifugal_chiller_result as ccr
 from triple_supply_function import triple_supply_cold_function as tscf
 from natural_gas_boiler_funtion import natural_gas_boiler_in_out_hot_water as ngbiohw
@@ -12,7 +12,7 @@ def cooling_season_function(cold_load, hot_water_load, electricity_load, gc):
     # 实例化两个内燃机对象
     ice1 = Internal_Combustion_Engine(792, gc, 0.5)
     ice2 = Internal_Combustion_Engine(792, gc, 0.5)
-    # 实例化4个离心式冷水机的各种水泵
+    # 实例化4个离心式冷水机的各种水泵（离心式热泵的制冷工况采用离心式冷水机的计算模型）
     cc_wp = False
     cc1_wp_chilled_water = Water_Pump(600, cc_wp, gc)
     cc2_wp_chilled_water = Water_Pump(600, cc_wp, gc)
@@ -22,7 +22,7 @@ def cooling_season_function(cold_load, hot_water_load, electricity_load, gc):
     cc2_wp_cooling_water = Water_Pump(710, cc_wp, gc)
     cc3_wp_cooling_water = Water_Pump(710, cc_wp, gc)
     cc4_wp_cooling_water = Water_Pump(710, cc_wp, gc)
-    # 实例化4个离心式冷水机类
+    # 实例化4个离心式冷水机类（离心式热泵的制冷工况采用离心式冷水机的计算模型）
     cc1 = Centrifugal_Chiller(3164, 0.2, False, cc1_wp_chilled_water, cc1_wp_cooling_water, gc)
     cc2 = Centrifugal_Chiller(3164, 0.2, False, cc2_wp_chilled_water, cc2_wp_cooling_water, gc)
     cc3 = Centrifugal_Chiller(3164, 0.2, False, cc3_wp_chilled_water, cc3_wp_cooling_water, gc)
@@ -32,6 +32,15 @@ def cooling_season_function(cold_load, hot_water_load, electricity_load, gc):
     lb2_wp_cooling_water = Water_Pump(335, False, gc)
     lb1_wp_chilled_water = Water_Pump(170, False, gc)
     lb2_wp_chilled_water = Water_Pump(170, False, gc)
+    # 实例化1组3个蓄冷水罐的循环水泵（水泵3用1备）
+    esec1_wp_chilled_water = Water_Pump(50, False, gc)
+    esec2_wp_chilled_water = Water_Pump(50, False, gc)
+    esec3_wp_chilled_water = Water_Pump(50, False, gc)
+    # 实例化3个蓄冷水罐（实际上只有1个水罐，但是有3个水泵，将水泵假想3等分，作为3个水罐，与水泵一一对应去计算）
+    esec1 = Energy_Storage_Equipment_Cold(1000, 0.1, 8000, esec1_wp_chilled_water, gc)
+    esec2 = Energy_Storage_Equipment_Cold(1000, 0.1, 8000, esec2_wp_chilled_water, gc)
+    esec3 = Energy_Storage_Equipment_Cold(1000, 0.1, 8000, esec3_wp_chilled_water, gc)
+
     # 如果是母管制系统
     if gc.header_system == True:
         lb1_wp_hot_water = Water_Pump(44, False, gc)
@@ -110,6 +119,7 @@ def cooling_season_header_system(cold_load, hot_water_load, electricity_load, ic
     cc2_load_ratio_result = []
     cc3_load_ratio_result = []
     cc4_load_ratio_result = []
+    # 列表，储存3台蓄能水罐
     # 列表，储存整个能源站的收入、成本、利润
     income = []
     cost = []
