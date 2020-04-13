@@ -71,6 +71,10 @@ class Global_Constant():
         # 溴化锂设备生活热水计算步长
         self.lb1_hot_water_step = 50
         self.lb2_hot_water_step = 50
+        # 非谷电时间段开始时间(用与蓄冷蓄热策略计算)
+        self.hour_start = 7
+        # 非谷电时间段结束时间(用与蓄冷蓄热策略计算)
+        self.hour_end = 22
         # 离心式冷水机COP神经网络模型
         self.model_centrifugal_chiller_cop_1 = tf.keras.models.load_model('./centrifugal_chiller_cop_model/centrifugal_chiller_cop_model_0.5_to_1.h5')
         self.model_centrifugal_chiller_cop_2 = tf.keras.models.load_model('./centrifugal_chiller_cop_model/centrifugal_chiller_cop_model_0.1_to_0.5.h5')

@@ -1,4 +1,5 @@
 import math
+import datetime
 from equipment import Centrifugal_Chiller, Internal_Combustion_Engine, Water_Pump, Natural_Gas_Boiler_hot_water, Energy_Storage_Equipment_Cold
 from centrifugal_chiller_function import centrifugal_chiller_function as ccf, centrifugal_chiller_result as ccr
 from triple_supply_function import triple_supply_cold_function as tscf
@@ -119,7 +120,10 @@ def cooling_season_header_system(cold_load, hot_water_load, electricity_load, ic
     cc2_load_ratio_result = []
     cc3_load_ratio_result = []
     cc4_load_ratio_result = []
-    # 列表，储存3台蓄能水罐
+    # 列表，储存3台蓄能水罐（实际上是3个水泵）计算出的负荷率结果
+    esec1_load_ratio_result = []
+    esec2_load_ratio_result = []
+    esec3_load_ratio_result = []
     # 列表，储存整个能源站的收入、成本、利润
     income = []
     cost = []
@@ -172,16 +176,28 @@ def cooling_season_header_system(cold_load, hot_water_load, electricity_load, ic
     else:
         ice_num_max_cold = ice_num_max_cold_1
     # 两个结果取小值
-    ice_num_max = min(ice_num_max_cold, ice_num_max_elec)
+    ice_num_max_a = min(ice_num_max_cold, ice_num_max_elec)
 
     # 内燃机启动数量初始值
     cc_cooling_power_rated_total = cc1.cooling_power_rated + cc2.cooling_power_rated + cc3.cooling_power_rated + cc4.cooling_power_rated # 离心式冷水机额定制冷量之和
     if cold_load - min(gc.lb1_cold_max, gc.lb2_cold_max) > cc_cooling_power_rated_total and cold_load - gc.lb1_cold_max- gc.lb2_cold_max <= cc_cooling_power_rated_total:
-        ice_num = 2
+        ice_num_a = 2
     elif cold_load > cc_cooling_power_rated_total and cold_load - min(gc.lb1_cold_max, gc.lb2_cold_max) <= cc_cooling_power_rated_total:
-        ice_num = 1
+        ice_num_a = 1
     else:
+        ice_num_a = 0
+
+    # 根据目前所处的用电时间段，重新修正内燃机可以启动的最大数量和内燃机启动数量初始值
+    now = datetime.datetime.now() # 获取当前的时间
+    now_hour = now.hour # 当前的小时
+    # 如果当前的小时在非谷电时间段，则采用前面计算出的内燃机启动数量，否则为0
+    if now_hour >= gc.hour_start and now_hour <= gc.hour_end:
+        ice_num_max = ice_num_max_a
+        ice_num = ice_num_a
+    else:
+        ice_num_max = 0
         ice_num = 0
+
     # 内燃机启动数量，可以是0，可以是1，也可以是2
     while ice_num <= ice_num_max:
         # 重置内燃机、冷水机设备负荷率

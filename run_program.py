@@ -1,6 +1,7 @@
 # 如要正常使用本程序，需要导入以下几个第三方程序库
 # numpy,tensorflow
 
+import datetime
 from cooling_season_calculate import cooling_season_function as csf, print_cooling_season as pcs
 from heating_season_calculate import heating_season_function as hsf, print_heating_season as phs
 from transition_season_calculate import transition_season_function as tsf, print_transition_season as pts
@@ -42,5 +43,18 @@ def run_program():
         print("输入的负荷信息有误，请检查！")
 
 
+def test():
+    """测试"""
+    a=[]
+    f = open("./energy_storage_equipment_cold_stock.txt")  # 打开文件
+    for line in f.readlines():
+        lines = line.strip().split("\t")
+        a.append(lines[0])
+
+    print(a[0])
+    print(a[1])
+    print(a[2])
 # 执行程序
 #run_program()
+
+#test()
