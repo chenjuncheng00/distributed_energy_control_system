@@ -56,17 +56,11 @@ def energy_storage_equipment_cold_header_system(cold_load_a, esec1, esec2, esec3
     else:
         esec_num_max_a = esec_num_max_1
 
-    # 列表，储存从txt文件读取的3个水罐的剩余蓄冷量（单位kWh）
-    esec_cold_stock = []
-    # 读取txt文件，获取当前蓄冷水罐剩余的蓄冷量（单位kWh）
-    f = open("./energy_storage_equipment_cold_stock.txt")  # 打开文件
-    for line in f.readlines():
-        lines = line.strip().split("\t")
-        esec_cold_stock.append(lines[0])
     # 3个水罐的剩余蓄冷量（单位kWh）
-    esec1_cold_stock = float(esec_cold_stock[0])
-    esec2_cold_stock = float(esec_cold_stock[1])
-    esec3_cold_stock = float(esec_cold_stock[2])
+    esec1_cold_stock = energy_storage_equipment_cold_storage_residual_read()[0]
+    esec2_cold_stock = energy_storage_equipment_cold_storage_residual_read()[1]
+    esec3_cold_stock = energy_storage_equipment_cold_storage_residual_read()[2]
+
     if cold_load_a > 0:
         # 如果此时是供冷工况（冷负荷功率值大于0），但是水罐内的可以供冷总量等于0，则水罐关闭（实际上是水泵关闭），得到的负荷率结果用来判断这个水泵是否可以开启的标签
         if esec1_cold_stock <= 0 + gc.project_load_error:
@@ -158,7 +152,6 @@ def energy_storage_equipment_cold_header_system(cold_load_a, esec1, esec2, esec3
         cold_load = 0
     else:
         cold_load = max(cold_load_a, cold_load_b)
-
     # 水泵启动数量初始值
     esec_num = 1
     while esec_num <= esec_num_max:
@@ -209,7 +202,7 @@ def energy_storage_equipment_cold_header_system(cold_load_a, esec1, esec2, esec3
                     esec3_cold_out_now = 0
                 esec_cold_out_now_sum = - (esec1_cold_out_now + esec2_cold_out_now + esec3_cold_out_now)
 
-            if abs(esec_cold_out_now_sum) < abs(cold_load) or abs(esec_cold_out_now_sum) >= esec1_cold_stock + esec2_cold_stock + esec3_cold_stock - gc.project_load_error:
+            if abs(esec_cold_out_now_sum) < abs(cold_load) - gc.project_load_error or abs(esec_cold_out_now_sum) >= esec1_cold_stock + esec2_cold_stock + esec3_cold_stock - gc.project_load_error:
                 # 负荷都取绝对值
                 # 增加公用负荷率
                 esec_load_ratio += esec_step / 100
@@ -253,6 +246,50 @@ def energy_storage_equipment_cold_header_system(cold_load_a, esec1, esec2, esec3
 
     # 返回计算结果
     return cost, esec1_load_ratio_result, esec2_load_ratio_result, esec3_load_ratio_result, total_power_consumption, total_water_supply
+
+
+def energy_storage_equipment_cold_storage_residual_read():
+    """从txt文件读取目前蓄能水罐剩余的蓄冷量（单位KWh）"""
+    # 列表，储存从txt文件读取的3个水罐的剩余蓄冷量（单位kWh）
+    esec_cold_stock = []
+    # 读取txt文件，获取当前蓄冷水罐剩余的蓄冷量（单位kWh）
+    f = open("./energy_storage_equipment_cold_stock.txt", 'r')  # 打开文件
+    for line in f.readlines():
+        lines = line.strip().split("\t")
+        esec_cold_stock.append(lines[0])
+    # 3个水罐的剩余蓄冷量（单位kWh）
+    esec1_cold_stock = float(esec_cold_stock[0])
+    esec2_cold_stock = float(esec_cold_stock[1])
+    esec3_cold_stock = float(esec_cold_stock[2])
+
+    return esec1_cold_stock, esec2_cold_stock, esec3_cold_stock
+
+
+def energy_storage_equipment_cold_storage_residual_write(hour_state, esec1, esec2, esec3, esec1_load_ratio, esec2_load_ratio, esec3_load_ratio, esec1_cold_stock, esec2_cold_stock, esec3_cold_stock):
+    """向txt文件中写入计算结果，改变水罐蓄冷量（kWh）"""
+    f = open("./energy_storage_equipment_cold_stock.txt", 'w')  # 打开文件
+    if hour_state == 1:
+        # 供冷状态，蓄冷量减少
+        esec1_cold_stock_new = esec1_cold_stock - esec1_load_ratio * esec1.cooling_power_rated
+        esec2_cold_stock_new = esec2_cold_stock - esec2_load_ratio * esec2.cooling_power_rated
+        esec3_cold_stock_new = esec3_cold_stock - esec3_load_ratio * esec3.cooling_power_rated
+        line1 = str(esec1_cold_stock_new) + "\n"
+        f.writelines(line1)
+        line2 = str(esec2_cold_stock_new) + "\n"
+        f.writelines(line2)
+        line3 = str(esec3_cold_stock_new)
+        f.writelines(line3)
+    else:
+        # 蓄冷状态，蓄冷量增加
+        esec1_cold_stock_new = esec1_cold_stock + esec1_load_ratio * esec1.cooling_power_rated
+        esec2_cold_stock_new = esec2_cold_stock + esec2_load_ratio * esec2.cooling_power_rated
+        esec3_cold_stock_new = esec3_cold_stock + esec3_load_ratio * esec3.cooling_power_rated
+        line1 = str(esec1_cold_stock_new) + "\n"
+        f.writelines(line1)
+        line2 = str(esec2_cold_stock_new) + "\n"
+        f.writelines(line2)
+        line3 = str(esec3_cold_stock_new)
+        f.writelines(line3)
 
 
 def energy_storage_equipment_cold_load_ratio(esec_num, esec1_load_ratio_a, esec2_load_ratio_a, esec3_load_ratio_a, esec_load_ratio):
@@ -347,7 +384,7 @@ def energy_storage_equipment_cold_result(ans_esec, esec1, esec2, esec3):
 
 
 def print_energy_storage_equipment_cold(ans_esec, esec1, esec2, esec3):
-    """打印ß出最合适的蓄冷水罐（实际上是水泵）的计算结果"""
+    """打印出最合适的蓄冷水罐（实际上是水泵）的计算结果"""
     # 总成本最小值
     cost_min = min(ans_esec[0])
     # 记录总成本最小值的列表索引
@@ -397,9 +434,15 @@ def test_energy_storage_equipment_cold_function():
     esec2 = Energy_Storage_Equipment_Cold(1000, 0.1, 8000, esec2_wp_chilled_water, gc)
     esec3 = Energy_Storage_Equipment_Cold(1000, 0.1, 8000, esec3_wp_chilled_water, gc)
     # 冷负荷
-    cold_load_a = 1500
+    cold_load_a = 3000
     ans_esec = energy_storage_equipment_cold_function(cold_load_a, esec1, esec2, esec3, gc)
     print_energy_storage_equipment_cold(ans_esec, esec1, esec2, esec3)
+    # 写入txt文件
+    # hour_state = 1
+    # esec1_cold_stock = energy_storage_equipment_cold_storage_residual_read()[0]
+    # esec2_cold_stock = energy_storage_equipment_cold_storage_residual_read()[1]
+    # esec3_cold_stock = energy_storage_equipment_cold_storage_residual_read()[2]
+    # energy_storage_equipment_cold_storage_residual_write(hour_state, esec1, esec2, esec3, 1, 1, 1, esec1_cold_stock, esec2_cold_stock, esec3_cold_stock)
 
-test_energy_storage_equipment_cold_function()
+# test_energy_storage_equipment_cold_function()
 

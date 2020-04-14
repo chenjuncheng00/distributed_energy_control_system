@@ -12,7 +12,7 @@ def run_program():
     # 实例化一个全局常量类
     gc = Global_Constant()
     # 负荷情况
-    cold_load = 8000
+    cold_load = 9000
     heat_load = 0
     hot_water_load = 1000
     electricity_load = 4000
@@ -45,16 +45,10 @@ def run_program():
 
 def test():
     """测试"""
-    a=[]
-    f = open("./energy_storage_equipment_cold_stock.txt")  # 打开文件
-    for line in f.readlines():
-        lines = line.strip().split("\t")
-        a.append(lines[0])
 
-    print(a[0])
-    print(a[1])
-    print(a[2])
+
+
 # 执行程序
-#run_program()
+run_program()
 
-#test()
+# test()

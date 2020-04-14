@@ -4,6 +4,7 @@ from equipment import Centrifugal_Chiller, Internal_Combustion_Engine, Water_Pum
 from centrifugal_chiller_function import centrifugal_chiller_function as ccf, centrifugal_chiller_result as ccr
 from triple_supply_function import triple_supply_cold_function as tscf
 from natural_gas_boiler_funtion import natural_gas_boiler_in_out_hot_water as ngbiohw
+from energy_storage_equipment_cold_function import energy_storage_equipment_cold_function as esecf, energy_storage_equipment_cold_result as esecr, energy_storage_equipment_cold_storage_residual_write as esecsrw, energy_storage_equipment_cold_storage_residual_read as esecsrr
 
 def cooling_season_function(cold_load, hot_water_load, electricity_load, gc):
     """制冷季计算"""
@@ -59,7 +60,7 @@ def cooling_season_function(cold_load, hot_water_load, electricity_load, gc):
 
     # 如果是母管制系统
     if gc.header_system == True:
-        ans_csc = cooling_season_header_system(cold_load, hot_water_load, electricity_load, ice1, ice2, cc1, cc2, cc3, cc4, lb1_wp_cooling_water, lb1_wp_chilled_water, lb1_wp_hot_water, lb2_wp_cooling_water, lb2_wp_chilled_water, lb2_wp_hot_water, ngb_hot_water, gc)
+        ans_csc = cooling_season_header_system(cold_load, hot_water_load, electricity_load, ice1, ice2, cc1, cc2, cc3, cc4, esec1, esec2, esec3, lb1_wp_cooling_water, lb1_wp_chilled_water, lb1_wp_hot_water, lb2_wp_cooling_water, lb2_wp_chilled_water, lb2_wp_hot_water, ngb_hot_water, gc)
     else:
         ans_csc = cooling_season_unit_system(cold_load, hot_water_load, electricity_load, ice1, ice2, cc1, cc2, cc3, cc4, lb1_wp_cooling_water, lb1_wp_chilled_water, lb1_wp_hot_water, lb2_wp_cooling_water, lb2_wp_chilled_water, lb2_wp_hot_water, ngb_hot_water, gc)
 
@@ -78,13 +79,19 @@ def cooling_season_function(cold_load, hot_water_load, electricity_load, gc):
     lb_cold_load_result = ans_csc[11]
     lb_hot_water_result = ans_csc[12]
     ngb_hw_hot_water_result = ans_csc[13]
+    esec1_load_ratio = ans_csc[14]
+    esec2_load_ratio = ans_csc[15]
+    esec3_load_ratio = ans_csc[16]
+    esec_cold_load_out = ans_csc[17]
 
     #返回计算结果
-    return profits, income, cost, station_cold_out_all, station_electricity_out_all, ice1_load_ratio_result, ice2_load_ratio_result, cc1_load_ratio_result, cc2_load_ratio_result, cc3_load_ratio_result, cc4_load_ratio_result, lb_cold_load_result, lb_hot_water_result, ngb_hw_hot_water_result
+    return profits, income, cost, station_cold_out_all, station_electricity_out_all, ice1_load_ratio_result, ice2_load_ratio_result, cc1_load_ratio_result, cc2_load_ratio_result, cc3_load_ratio_result, cc4_load_ratio_result, lb_cold_load_result, lb_hot_water_result, ngb_hw_hot_water_result, esec1_load_ratio, esec2_load_ratio, esec3_load_ratio, esec_cold_load_out
 
 
-def cooling_season_header_system(cold_load, hot_water_load, electricity_load, ice1, ice2, cc1, cc2, cc3, cc4, lb1_wp_cooling_water, lb1_wp_chilled_water, lb1_wp_hot_water, lb2_wp_cooling_water, lb2_wp_chilled_water, lb2_wp_hot_water, ngb_hot_water, gc):
+def cooling_season_header_system(cold_load, hot_water_load, electricity_load, ice1, ice2, cc1, cc2, cc3, cc4, esec1, esec2, esec3, lb1_wp_cooling_water, lb1_wp_chilled_water, lb1_wp_hot_water, lb2_wp_cooling_water, lb2_wp_chilled_water, lb2_wp_hot_water, ngb_hot_water, gc):
     """母管制系统，制冷季计算"""
+    # 制冷设备的总制冷功率（不包括溴化锂）
+    eq_cooling_power_rated_sum = cc1.cooling_power_rated + cc2.cooling_power_rated + cc3.cooling_power_rated + cc4.cooling_power_rated
     # 生活热水总流量
     hot_water_flow_total = hot_water_load * 3600/gc.hot_water_temperature_difference_rated/4.2/1000
     # 生活热水泵启动数量，向上取整，每个泵额定流量44t/h
@@ -100,7 +107,7 @@ def cooling_season_header_system(cold_load, hot_water_load, electricity_load, ic
     ice1_step = 5
     ice2_step = 5
     # 迭代计算中内燃机负荷率可以循环到的最小值
-    if cc1.cooling_power_rated + cc2.cooling_power_rated + cc3.cooling_power_rated + cc4.cooling_power_rated <= cold_load:
+    if eq_cooling_power_rated_sum <= cold_load:
         ice1_load_ratio_min = 1
     else:
         ice1_load_ratio_min = 0
@@ -120,10 +127,6 @@ def cooling_season_header_system(cold_load, hot_water_load, electricity_load, ic
     cc2_load_ratio_result = []
     cc3_load_ratio_result = []
     cc4_load_ratio_result = []
-    # 列表，储存3台蓄能水罐（实际上是3个水泵）计算出的负荷率结果
-    esec1_load_ratio_result = []
-    esec2_load_ratio_result = []
-    esec3_load_ratio_result = []
     # 列表，储存整个能源站的收入、成本、利润
     income = []
     cost = []
@@ -179,10 +182,9 @@ def cooling_season_header_system(cold_load, hot_water_load, electricity_load, ic
     ice_num_max_a = min(ice_num_max_cold, ice_num_max_elec)
 
     # 内燃机启动数量初始值
-    cc_cooling_power_rated_total = cc1.cooling_power_rated + cc2.cooling_power_rated + cc3.cooling_power_rated + cc4.cooling_power_rated # 离心式冷水机额定制冷量之和
-    if cold_load - min(gc.lb1_cold_max, gc.lb2_cold_max) > cc_cooling_power_rated_total and cold_load - gc.lb1_cold_max- gc.lb2_cold_max <= cc_cooling_power_rated_total:
+    if cold_load - min(gc.lb1_cold_max, gc.lb2_cold_max) > eq_cooling_power_rated_sum and cold_load - gc.lb1_cold_max- gc.lb2_cold_max <= eq_cooling_power_rated_sum:
         ice_num_a = 2
-    elif cold_load > cc_cooling_power_rated_total and cold_load - min(gc.lb1_cold_max, gc.lb2_cold_max) <= cc_cooling_power_rated_total:
+    elif cold_load > eq_cooling_power_rated_sum and cold_load - min(gc.lb1_cold_max, gc.lb2_cold_max) <= eq_cooling_power_rated_sum:
         ice_num_a = 1
     else:
         ice_num_a = 0
@@ -190,14 +192,82 @@ def cooling_season_header_system(cold_load, hot_water_load, electricity_load, ic
     # 根据目前所处的用电时间段，重新修正内燃机可以启动的最大数量和内燃机启动数量初始值
     now = datetime.datetime.now() # 获取当前的时间
     now_hour = now.hour # 当前的小时
+    # 根据预设的非谷电时间段列表，判断目前处于什么时间段
+    hour_state = 0 #用于判断目前是否处于非谷电时间段的判断因子，0表示处于谷电时间段，1表示不处于谷电时间段
+    for h in gc.hour_esec_out:
+        if now_hour == h:
+            hour_state = 1
+            break
+        else:
+            hour_state = 0
+
     # 如果当前的小时在非谷电时间段，则采用前面计算出的内燃机启动数量，否则为0
-    if now_hour >= gc.hour_start and now_hour <= gc.hour_end:
+    if hour_state == 1:
         ice_num_max = ice_num_max_a
         ice_num = ice_num_a
     else:
         ice_num_max = 0
         ice_num = 0
 
+    # 根据当前所处的用电时间段，判断蓄冷装置是进行蓄冷还是供冷
+    # 读取目前水罐剩余的蓄冷量
+    esec1_cold_stock = esecsrr()[0]
+    esec2_cold_stock = esecsrr()[1]
+    esec3_cold_stock = esecsrr()[2]
+    esec_cold_stock_sum = esec1_cold_stock + esec2_cold_stock +esec3_cold_stock
+    # 3个水罐的额定蓄冷量总和
+    esec_cooling_storage_rated_sum = esec1.cooling_storage_rated + esec2.cooling_storage_rated + esec3.cooling_storage_rated
+    # 因为计算周期是1小时，因此蓄冷量(kWh)可以直接用于冷负荷(kW)的计算，两者数值相同
+    if hour_state == 1:
+        # 供冷状态(正值)
+        if esec_cold_stock_sum >= cold_load:
+            # 如果蓄冷水罐剩余量大于等于冷负荷需求量，则蓄冷水罐提供的冷负荷等于冷负荷需求量
+            cold_load_esec = cold_load
+        else:
+            cold_load_esec = esec_cold_stock_sum
+    else:
+        # 蓄冷状态(负值)
+        # 如果制冷设备总功率减去冷负荷需求量大于0，则表示可以有设备蓄冷
+        if eq_cooling_power_rated_sum - cold_load > 0:
+            if eq_cooling_power_rated_sum - cold_load >= esec_cooling_storage_rated_sum:
+                cold_load_esec = -esec_cooling_storage_rated_sum
+            else:
+                cold_load_esec = -(eq_cooling_power_rated_sum - cold_load)
+        else:
+            cold_load_esec = 0
+
+    # 蓄冷装置负荷为0时不进行蓄冷装置计算
+    if cold_load_esec == 0:
+        esec1_load_ratio = 0
+        esec2_load_ratio = 0
+        esec3_load_ratio = 0
+        esec_cold_load_out = 0
+        esec_power_consumption_total = 0
+        esec_water_supply_total = 0
+        # 单独计算补水成本
+        cost_esec_water_supply = esec_water_supply_total * gc.water_price
+    else:
+        # 蓄冷设备的使用优先级最高，先计算蓄冷设备
+        ans_esec_a = esecf(cold_load_esec, esec1, esec2, esec3, gc) # 所有的可能解
+        ans_esec = esecr(ans_esec_a, esec1, esec2, esec3) # 选出蓄能设备最优解
+        # 蓄冷设备计算结果
+        esec1_load_ratio = ans_esec[0]
+        esec2_load_ratio = ans_esec[1]
+        esec3_load_ratio = ans_esec[2]
+        esec_cold_load_out = ans_esec[3]
+        esec_power_consumption_total = ans_esec[4]
+        esec_water_supply_total = ans_esec[5]
+        # 单独计算补水成本
+        cost_esec_water_supply = esec_water_supply_total * gc.water_price
+    # 对计算出的蓄冷装置负荷率进行修正（蓄能的情况变成负值）
+    if hour_state == 1:
+        # 供冷状态(正值)
+        esec_cold_load_out = esec_cold_load_out
+    else:
+        # 蓄冷状态（负值）
+        esec_cold_load_out = - esec_cold_load_out
+    # 根据蓄冷设备的情况对需要其他设备提供的冷负荷进行修正
+    cold_load -= esec_cold_load_out
     # 内燃机启动数量，可以是0，可以是1，也可以是2
     while ice_num <= ice_num_max:
         # 重置内燃机、冷水机设备负荷率
@@ -256,7 +326,6 @@ def cooling_season_header_system(cold_load, hot_water_load, electricity_load, ic
                 break
             # 改变内燃机负荷率
             while ice1_load_ratio >= ice1_load_ratio_min and ice1_load_ratio <= 1 + gc.load_ratio_error_coefficient:
-                # print(str(ice_num) + '   ' + str(lb1_hot_water) + '    ' + str(lb2_hot_water)+'    '+str(ice1_load_ratio)+'    '+str(ice2_load_ratio))
                 # 内燃机启动数量为1,负荷率都为0情况下的计算次数计数，这种情况下只计算一次，防止死循环
                 if ice_num == 1 and ice1_load_ratio == 0 and ice2_load_ratio == 0:
                     ice_num1_calculate += 1
@@ -309,9 +378,9 @@ def cooling_season_header_system(cold_load, hot_water_load, electricity_load, ic
                     cc3_load_ratio = ccr(ans_cc, cc1, cc2, cc3, cc4)[2]
                     cc4_load_ratio = ccr(ans_cc, cc1, cc2, cc3, cc4)[3]
                 # 此时整个能源站的向外供电功率
-                station_electricity_out_total = ts_electricity_out_total - cc_power_consumption_total - hw_wp_power_consumption
+                station_electricity_out_total = ts_electricity_out_total - cc_power_consumption_total - hw_wp_power_consumption - esec_power_consumption_total
                 # 此时能源站供冷总功率
-                station_cold_out_total = ts_cold_out_total + cc_cold_out_total
+                station_cold_out_total = ts_cold_out_total + cc_cold_out_total + esec_cold_load_out
                 # 如果仅有溴化锂供冷，且制冷量大于冷负荷需求量，则内燃机负荷往下减，内燃机1、2同时下降
                 if cold_load_centrifugal_chiller <= 0 and station_cold_out_total > cold_load and ts_cold_out_total > 0:
                     # 减小内燃机设备1、2负荷率
@@ -378,7 +447,7 @@ def cooling_season_header_system(cold_load, hot_water_load, electricity_load, ic
                     cost_ngb_hw_water_supply = ngb_hw_water_supply * gc.water_price
                     # 总收入成本利润
                     income_total = income_cold + income_electricity + income_hot_water
-                    cost_total = cost_electricity + cost_cc_water_supply + cost_ts + cost_ngb_hw_nature_gas + cost_ngb_hw_water_supply
+                    cost_total = cost_electricity + cost_cc_water_supply + cost_ts + cost_ngb_hw_nature_gas + cost_ngb_hw_water_supply + cost_esec_water_supply
                     profits_total = income_total - cost_total
                     income.append(income_total)
                     cost.append(cost_total)
@@ -432,8 +501,12 @@ def cooling_season_header_system(cold_load, hot_water_load, electricity_load, ic
         # 内燃机数量+1
         ice_num += 1
 
+    # 在txt文件中修改蓄能水罐剩余的蓄冷量数据
+
+
+
     # 返回计算结果
-    return profits, income, cost, station_cold_out_all, station_electricity_out_all, ice1_load_ratio_result, ice2_load_ratio_result, cc1_load_ratio_result, cc2_load_ratio_result, cc3_load_ratio_result, cc4_load_ratio_result, lb_cold_load_result, lb_hot_water_result, ngb_hw_hot_water_result
+    return profits, income, cost, station_cold_out_all, station_electricity_out_all, ice1_load_ratio_result, ice2_load_ratio_result, cc1_load_ratio_result, cc2_load_ratio_result, cc3_load_ratio_result, cc4_load_ratio_result, lb_cold_load_result, lb_hot_water_result, ngb_hw_hot_water_result, esec1_load_ratio, esec2_load_ratio, esec3_load_ratio, esec_cold_load_out
 
 
 def cooling_season_unit_system(cold_load, hot_water_load, electricity_load, ice1, ice2, cc1, cc2, cc3, cc4, lb1_wp_cooling_water, lb1_wp_chilled_water, lb1_wp_hot_water, lb2_wp_cooling_water, lb2_wp_chilled_water, lb2_wp_hot_water, ngb_hot_water, gc):
@@ -690,9 +763,16 @@ def print_cooling_season(ans):
     lb_hot_water = ans[12][cooling_season_index]
     # 天然气锅炉制生活热水量
     ngb_hw_hot_water = ans[13][cooling_season_index]
+    # 蓄能水罐水泵负荷率
+    esec1_load_ratio = ans[14]
+    esec2_load_ratio = ans[15]
+    esec3_load_ratio = ans[16]
+    # 蓄能水罐制冷量
+    esec_cold_load_out = ans[17]
 
     # 打印出结果
-    print("能源站利润最大值为： " + str(station_profitis_max) + "\n" + "能源站成本最小值为： " + str(station_cost_min) + "\n"  + "能源站供冷功率为： " + str(station_cold_out_all) + "\n" + "能源站供电功率为： " + str(station_electricity_out_all) + "\n" + "内燃机1负荷率为： " + str(ice1_load_ratio) + "\n" + "内燃机2负荷率为： " + str(ice2_load_ratio) + "\n" + "离心式冷水机1负荷率为： " + str(cc1_load_ratio) + "\n" + "离心式冷水机2负荷率为： " + str(cc2_load_ratio) + "\n" + "离心式冷水机3负荷率为： " + str(cc3_load_ratio) + "\n" + "离心式冷水机4负荷率为： " + str(cc4_load_ratio) + "\n" + "溴化锂设备供冷功率为： " + str(lb_cold_load) + "\n" + "溴化锂供生活热水功率为： " + str(lb_hot_water) + "\n" + "天然气锅炉供生活热水功率为： " + str(ngb_hw_hot_water) + "\n")
+    print("能源站利润最大值为： " + str(station_profitis_max) + "\n" + "能源站成本最小值为： " + str(station_cost_min) + "\n"  + "能源站供冷功率为： " + str(station_cold_out_all) + "\n" + "蓄能装置冷负荷功率为： " + str(esec_cold_load_out) + "\n" + "能源站供电功率为： " + str(station_electricity_out_all) + "\n" + "内燃机1负荷率为： " + str(ice1_load_ratio) + "\n" + "内燃机2负荷率为： " + str(ice2_load_ratio) + "\n" + "离心式冷水机1负荷率为： " + str(cc1_load_ratio) + "\n" + "离心式冷水机2负荷率为： " + str(cc2_load_ratio) + "\n" + "离心式冷水机3负荷率为： " + str(cc3_load_ratio) + "\n" + "离心式冷水机4负荷率为： " + str(cc4_load_ratio) + "\n" + "溴化锂设备供冷功率为： " + str(lb_cold_load) + "\n" + "溴化锂供生活热水功率为： " + str(lb_hot_water) + "\n" + "天然气锅炉供生活热水功率为： " + str(ngb_hw_hot_water) + "\n" + "蓄能水罐水泵1负荷率： " + str(esec1_load_ratio) + "\n" + "蓄能水罐水泵2负荷率： " + str(esec2_load_ratio) + "\n" + "蓄能水罐水泵3负荷率： " + str(esec3_load_ratio) + "\n")
+
 
 def test_csc_header_system(cold_load, hot_water_load, gc):
     """指定负荷率，测试母管制系统制冷季计算"""
@@ -724,6 +804,14 @@ def test_csc_header_system(cold_load, hot_water_load, gc):
     lb2_wp_hot_water = Water_Pump(44, False, gc)
     # 实例化天然气生活热水锅炉用到的水泵
     ngb_wp_hot_water = Water_Pump(44, False, gc)
+    # 实例化1组3个蓄冷水罐的循环水泵（水泵3用1备）
+    esec1_wp_chilled_water = Water_Pump(50, False, gc)
+    esec2_wp_chilled_water = Water_Pump(50, False, gc)
+    esec3_wp_chilled_water = Water_Pump(50, False, gc)
+    # 实例化3个蓄冷水罐（实际上只有1个水罐，但是有3个水泵，将水泵假想3等分，作为3个水罐，与水泵一一对应去计算）
+    esec1 = Energy_Storage_Equipment_Cold(1000, 0.1, 8000, esec1_wp_chilled_water, gc)
+    esec2 = Energy_Storage_Equipment_Cold(1000, 0.1, 8000, esec2_wp_chilled_water, gc)
+    esec3 = Energy_Storage_Equipment_Cold(1000, 0.1, 8000, esec3_wp_chilled_water, gc)
 
     # 实例化生活热水锅炉
     ngb_hot_water = Natural_Gas_Boiler_hot_water(2800, 0.2, ngb_wp_hot_water, gc)
