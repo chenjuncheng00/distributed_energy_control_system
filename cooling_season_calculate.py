@@ -194,7 +194,7 @@ def cooling_season_header_system(cold_load, hot_water_load, electricity_load, ic
     now_hour = now.hour # 当前的小时
     # 根据预设的非谷电时间段列表，判断目前处于什么时间段
     hour_state = 0 #用于判断目前是否处于非谷电时间段的判断因子，0表示处于谷电时间段，1表示不处于谷电时间段
-    for h in gc.hour_esec_out:
+    for h in gc.hour_ese_out:
         if now_hour == h:
             hour_state = 1
             break
@@ -268,6 +268,7 @@ def cooling_season_header_system(cold_load, hot_water_load, electricity_load, ic
         esec_cold_load_out = - esec_cold_load_out
     # 根据蓄冷设备的情况对需要其他设备提供的冷负荷进行修正
     cold_load -= esec_cold_load_out
+
     # 内燃机启动数量，可以是0，可以是1，也可以是2
     while ice_num <= ice_num_max:
         # 重置内燃机、冷水机设备负荷率
@@ -502,8 +503,7 @@ def cooling_season_header_system(cold_load, hot_water_load, electricity_load, ic
         ice_num += 1
 
     # 在txt文件中修改蓄能水罐剩余的蓄冷量数据
-
-
+    esecsrw(hour_state, esec1, esec2, esec3, esec1_load_ratio, esec2_load_ratio, esec3_load_ratio, esec1_cold_stock, esec2_cold_stock, esec3_cold_stock)
 
     # 返回计算结果
     return profits, income, cost, station_cold_out_all, station_electricity_out_all, ice1_load_ratio_result, ice2_load_ratio_result, cc1_load_ratio_result, cc2_load_ratio_result, cc3_load_ratio_result, cc4_load_ratio_result, lb_cold_load_result, lb_hot_water_result, ngb_hw_hot_water_result, esec1_load_ratio, esec2_load_ratio, esec3_load_ratio, esec_cold_load_out
