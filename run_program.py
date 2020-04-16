@@ -1,19 +1,19 @@
 # 如要正常使用本程序，需要导入以下几个第三方程序库
 # numpy,tensorflow
 
+import datetime
 from cooling_season_calculate import cooling_season_function as csf, print_cooling_season as pcs
 from heating_season_calculate import heating_season_function as hsf, print_heating_season as phs
 from transition_season_calculate import transition_season_function as tsf, print_transition_season as pts
 from global_constant import Global_Constant
-import datetime
 
 def run_program():
     """执行主程序"""
     # 实例化一个全局常量类
     gc = Global_Constant()
     # 负荷情况
-    cold_load = 8000
-    heat_load = 0
+    cold_load = 0
+    heat_load = 4000
     hot_water_load = 1000
     electricity_load = 4000
     # 判断输入的冷热负荷是否超过最大允许值
@@ -44,11 +44,11 @@ def run_program():
 
 
 def test():
-    """测试模块"""
-    now = datetime.datetime.now()
-    print(now.year)
+    """测试"""
+
 
 
 # 执行程序
-#run_program()
-test()
+run_program()
+
+# test()
