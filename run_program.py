@@ -5,6 +5,7 @@ from cooling_season_calculate import cooling_season_function as csf, print_cooli
 from heating_season_calculate import heating_season_function as hsf, print_heating_season as phs
 from transition_season_calculate import transition_season_function as tsf, print_transition_season as pts
 from global_constant import Global_Constant
+import datetime
 
 def run_program():
     """执行主程序"""
@@ -42,5 +43,12 @@ def run_program():
         print("输入的负荷信息有误，请检查！")
 
 
+def test():
+    """测试模块"""
+    now = datetime.datetime.now()
+    print(now.year)
+
+
 # 执行程序
 #run_program()
+test()

@@ -103,6 +103,7 @@ def cooling_season_header_system(cold_load, hot_water_load, electricity_load, ic
         ice1_load_ratio_min = 1
     else:
         ice1_load_ratio_min = 0
+
     # 列表，储存能源站向外供冷供电量
     station_electricity_out_all = []
     station_cold_out_all = []
@@ -119,11 +120,15 @@ def cooling_season_header_system(cold_load, hot_water_load, electricity_load, ic
     cc2_load_ratio_result = []
     cc3_load_ratio_result = []
     cc4_load_ratio_result = []
-    # 列表，储存3台蓄能水罐
+    # 列表，储存3台蓄能水罐（实际上是3台水泵）的负荷率计算结果
+    esec1_load_ratio_result = []
+    esec2_load_ratio_result = []
+    esec3_load_ratio_result = []
     # 列表，储存整个能源站的收入、成本、利润
     income = []
     cost = []
     profits = []
+
     # 天然气锅炉不可以低于最低运行负荷率，从而确定溴化锂制热水负荷最大值
     ngb_hot_water_load_min = ngb_hot_water.heating_power_rated * ngb_hot_water.load_min
     # 2台溴化锂设备制备生活热水的最大功率
@@ -171,17 +176,22 @@ def cooling_season_header_system(cold_load, hot_water_load, electricity_load, ic
         ice_num_max_cold = 2
     else:
         ice_num_max_cold = ice_num_max_cold_1
-    # 两个结果取小值
-    ice_num_max = min(ice_num_max_cold, ice_num_max_elec)
+    # 两个结果取小值（结果为内燃机运行数量最大值的第一个结果）
+    ice_num_max_a = min(ice_num_max_cold, ice_num_max_elec)
 
     # 内燃机启动数量初始值
     cc_cooling_power_rated_total = cc1.cooling_power_rated + cc2.cooling_power_rated + cc3.cooling_power_rated + cc4.cooling_power_rated # 离心式冷水机额定制冷量之和
     if cold_load - min(gc.lb1_cold_max, gc.lb2_cold_max) > cc_cooling_power_rated_total and cold_load - gc.lb1_cold_max- gc.lb2_cold_max <= cc_cooling_power_rated_total:
-        ice_num = 2
+        ice_num_a = 2
     elif cold_load > cc_cooling_power_rated_total and cold_load - min(gc.lb1_cold_max, gc.lb2_cold_max) <= cc_cooling_power_rated_total:
-        ice_num = 1
+        ice_num_a = 1
     else:
-        ice_num = 0
+        ice_num_a = 0
+
+    # 根据时间判断现在的用电时间段，如果是谷电时间，则不允许内燃机，内燃机最大数量和时间
+    ice_num_max = 2
+    ice_num = 1
+
     # 内燃机启动数量，可以是0，可以是1，也可以是2
     while ice_num <= ice_num_max:
         # 重置内燃机、冷水机设备负荷率
