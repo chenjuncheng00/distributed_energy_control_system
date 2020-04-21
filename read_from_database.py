@@ -352,7 +352,7 @@ def read_from_database_lb_utility():
     # 溴化锂机组冷却水回水母管温度（新增测点）
     state6, record6 = syncbase.get_reatime_data_by_name('lb_cooling_water_return_temperature')
     if state6:
-        lb_cooling_water_return_temperature = record31.value
+        lb_cooling_water_return_temperature = record6.value
     else:
         lb_cooling_water_return_temperature = 0
     # 溴化锂空调水（冷/热）能量
