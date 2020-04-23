@@ -45,12 +45,12 @@ def load_data_centrifugal_chiller_cop_model(file_name):
 def train_water_pump_model():
     """水泵的神经网络模型"""
     # 导入训练数据
-    # 天然气采暖锅炉水泵数据
-    (x_train, y_train) = load_data_water_pump_model("./water_pump_model/natural_gas_boiler_heating_water_pump/natural_gas_boiler_heating_water_pump_data.txt")
-    # 离心式冷水机冷却水泵数据
-    # (x_train, y_train) = load_data_water_pump_model("./water_pump_model/centrifugal_chiller_cooling_water_pump/centrifugal_chiller_cooling_water_pump_data.txt")
-    # 离心式冷水机冷冻水泵数据
-    # (x_train, y_train) = load_data_water_pump_model("./water_pump_model/centrifugal_chiller_chilled_water_pump/centrifugal_chiller_chilled_water_pump_data.txt")
+    # 340t/h水泵
+    (x_train, y_train) = load_data_water_pump_model("./water_pump_model/wp_340t/wp_340t_data.txt")
+    # 600t/h水泵
+    #(x_train, y_train) = load_data_water_pump_model("./water_pump_model/wp_600t/wp_600t_data.txt")
+    # 710t/h水泵
+    #(x_train, y_train) = load_data_water_pump_model("./water_pump_model/wp_710t/wp_710t_data.txt")
 
     # 构建模型
     model = tf.keras.Sequential([
@@ -74,12 +74,12 @@ def train_water_pump_model():
     print(result)
 
     # 保存训练好的模型
-    # 天然气锅炉水泵模型
-    # model.save('./water_pump_model/natural_gas_boiler_heating_water_pump/natural_gas_boiler_heating_water_pump_model.h5')
-    # 离心式冷水机冷却水泵数据
-    # model.save('./water_pump_model/centrifugal_chiller_cooling_water_pump/centrifugal_chiller_cooling_water_pump_model.h5')
-    # 离心式冷水机冷冻水泵模型
-    # model.save('./water_pump_model/centrifugal_chiller_chilled_water_pump/centrifugal_chiller_chilled_water_pump_model.h5')
+    # 340t/h水泵
+    # model.save('./water_pump_model/wp_340t/wp_340t_model.h5')
+    # 600t/h水泵
+    # model.save('./water_pump_model/wp_600t/wp_600t_model.h5')
+    # 710t/h水泵
+    # model.save('./water_pump_model/wp_710t/wp_710t_model.h5')
 
     #加载模型
     # model = tf.keras.models.load_model('path_to_my_model.h5')

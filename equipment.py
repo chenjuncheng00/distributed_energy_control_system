@@ -1181,74 +1181,77 @@ class Water_Pump():
         # 水泵是否变频
         self.frequency_scaling = frequency_scaling
         # 水泵神经网络模型
-        self.model_centrifugal_chiller_cooling_water_pump = gc.model_centrifugal_chiller_cooling_water_pump
-        self.model_centrifugal_chiller_chilled_water_pump = gc.model_centrifugal_chiller_chilled_water_pump
-        self.model_nature_gas_boiler_heating_water_pump = gc.model_nature_gas_boiler_heating_water_pump
+        self.model_wp_710t = gc.model_wp_710t
+        self.model_wp_600t = gc.model_wp_600t
+        self.model_wp_340t = gc.model_wp_340t
 
     def pump_performance_data(self, water_flow, frequency):
         """各种泵的性能数据计算：扬程、耗电功率"""
         # 清空已有的tf模型
         tf.keras.backend.clear_session()
         # 从训练好的神经网络中计算水泵的的耗电功率
-        # 离心式冷冷水机组的冷却水泵
-        if self.water_flow_rated == 710:
-            """离心式冷水机组冷却水泵"""
-            # 直接使用训练好的神经网络参数进行矩阵运算
-            # 输入
-            x1 = (frequency - 5) / (50 - 5)
-            x2 = (water_flow - 50) / (800 - 50)
-            X_1 = np.array([x1, x2], dtype='float32')
-            X = np.mat(X_1)
-            # 加载训练好的神经网络模型（离心式冷水机冷却水泵）
-            ans = self.model_centrifugal_chiller_cooling_water_pump.predict(X)
-            # 计算预测结果
-            pump_head = ans[0][0] * (34.98-0.28) + 0.28
-            power_consumption = ans[0][1] * (77.65 - 0.0603) + 0.0603
+        # 简化模型，仿真系统所有的水泵模型都用同一个，放大缩小，默认均使用600t/h的模型
+        
 
-        elif self.water_flow_rated == 600:
-            """离心式冷水机组冷冻水泵"""
 
-            # 直接使用训练好的神经网络参数进行矩阵运算
-            # 输入
-            x1 = (frequency - 5) / (50 - 5)
-            x2 = (water_flow - 40) / (650 - 40)
-            X_1 = np.array([x1, x2], dtype='float32')
-            X = np.mat(X_1)
-            # 加载训练好的神经网络模型（离心式冷水机冷冻水泵）
-            ans = self.model_centrifugal_chiller_chilled_water_pump.predict(X)
-            # 计算预测结果
-            pump_head = ans[0][0] * (42.39 - 0.4) + 0.4
-            power_consumption = ans[0][1] * (79.64 - 0.0652) + 0.0652
-
-        elif self.water_flow_rated == 330:
-            """天然气采暖锅炉采暖水泵"""
-
-            # 直接使用训练好的神经网络参数进行矩阵运算
-            # 输入
-            x1 = (frequency - 5) / (50 - 5)
-            x2 = (water_flow - 10) / (375 - 10)
-            X_1 = np.array([x1, x2], dtype='float32')
-            X = np.mat(X_1)
-            # 加载训练好的神经网络模型（天然气采暖锅炉采暖水泵）
-            ans = self.model_nature_gas_boiler_heating_water_pump.predict(X)
-            # 计算预测结果
-            pump_head = ans[0][0] * (39.8125 - 0.0246) + 0.0246
-            power_consumption = ans[0][1] * (45.165 - 0.0205) + 0.0205
-
-        else:
-            """其它的水泵没有模型训练数据"""
-            """其余的水泵均为定频水平，功率和扬程取粗略的定值即可"""
-            if self.water_flow_rated == 335:
-                """溴化锂冷却水泵"""
-                pump_head = 34.3
-                power_consumption = 35.8
-            elif self.water_flow_rated == 170:
-                """溴化锂冷冻/采暖水泵"""
-                pump_head = 40
-                power_consumption = 22.9
-            else:
-                """生活热水循环水泵"""
-                pump_head = 33.4
-                power_consumption = 5.5
+        # if self.water_flow_rated == 710:
+        #     """710t/h水泵"""
+        #     # 直接使用训练好的神经网络参数进行矩阵运算
+        #     # 输入
+        #     x1 = (frequency - 5) / (50 - 5)
+        #     x2 = (water_flow - 50) / (800 - 50)
+        #     X_1 = np.array([x1, x2], dtype='float32')
+        #     X = np.mat(X_1)
+        #     # 加载训练好的神经网络模型（离心式冷水机冷却水泵）
+        #     ans = self.model_wp_710t.predict(X)
+        #     # 计算预测结果
+        #     pump_head = ans[0][0] * (34.98-0.28) + 0.28
+        #     power_consumption = ans[0][1] * (77.65 - 0.0603) + 0.0603
+        #
+        # elif self.water_flow_rated == 600:
+        #     """600t/h水泵"""
+        #
+        #     # 直接使用训练好的神经网络参数进行矩阵运算
+        #     # 输入
+        #     x1 = (frequency - 5) / (50 - 5)
+        #     x2 = (water_flow - 40) / (650 - 40)
+        #     X_1 = np.array([x1, x2], dtype='float32')
+        #     X = np.mat(X_1)
+        #     # 加载训练好的神经网络模型（离心式冷水机冷冻水泵）
+        #     ans = self.model_wp_600t.predict(X)
+        #     # 计算预测结果
+        #     pump_head = ans[0][0] * (42.39 - 0.4) + 0.4
+        #     power_consumption = ans[0][1] * (79.64 - 0.0652) + 0.0652
+        #
+        # elif self.water_flow_rated == 330:
+        #     """340t/h水泵"""
+        #
+        #     # 直接使用训练好的神经网络参数进行矩阵运算
+        #     # 输入
+        #     x1 = (frequency - 5) / (50 - 5)
+        #     x2 = (water_flow - 10) / (375 - 10)
+        #     X_1 = np.array([x1, x2], dtype='float32')
+        #     X = np.mat(X_1)
+        #     # 加载训练好的神经网络模型（天然气采暖锅炉采暖水泵）
+        #     ans = self.model_wp_340t.predict(X)
+        #     # 计算预测结果
+        #     pump_head = ans[0][0] * (39.8125 - 0.0246) + 0.0246
+        #     power_consumption = ans[0][1] * (45.165 - 0.0205) + 0.0205
+        #
+        # else:
+        #     """其它的水泵没有模型训练数据"""
+        #     """其余的水泵均为定频水平，功率和扬程取粗略的定值即可"""
+        #     if self.water_flow_rated == 335:
+        #         """溴化锂冷却水泵"""
+        #         pump_head = 34.3
+        #         power_consumption = 35.8
+        #     elif self.water_flow_rated == 170:
+        #         """溴化锂冷冻/采暖水泵"""
+        #         pump_head = 40
+        #         power_consumption = 22.9
+        #     else:
+        #         """生活热水循环水泵"""
+        #         pump_head = 33.4
+        #         power_consumption = 5.5
 
         return pump_head, power_consumption

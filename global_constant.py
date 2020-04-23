@@ -77,6 +77,6 @@ class Global_Constant():
         self.model_centrifugal_chiller_cop_1 = tf.keras.models.load_model('./centrifugal_chiller_cop_model/centrifugal_chiller_cop_model_0.5_to_1.h5')
         self.model_centrifugal_chiller_cop_2 = tf.keras.models.load_model('./centrifugal_chiller_cop_model/centrifugal_chiller_cop_model_0.1_to_0.5.h5')
         # 水泵功率和扬程神经网络模型
-        self.model_centrifugal_chiller_cooling_water_pump = tf.keras.models.load_model('./water_pump_model/centrifugal_chiller_cooling_water_pump/centrifugal_chiller_cooling_water_pump_model.h5')
-        self.model_centrifugal_chiller_chilled_water_pump = tf.keras.models.load_model('./water_pump_model/centrifugal_chiller_chilled_water_pump/centrifugal_chiller_chilled_water_pump_model.h5')
-        self.model_nature_gas_boiler_heating_water_pump = tf.keras.models.load_model('./water_pump_model/natural_gas_boiler_heating_water_pump/natural_gas_boiler_heating_water_pump_model.h5')
+        self.model_wp_710t = tf.keras.models.load_model('./water_pump_model/wp_710t/wp_710t_model.h5')
+        self.model_wp_600t = tf.keras.models.load_model('./water_pump_model/wp_600t/wp_600t_model.h5')
+        self.model_wp_340t = tf.keras.models.load_model('./water_pump_model/wp_340t/wp_340t_model.h5')
