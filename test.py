@@ -2,24 +2,7 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 
-def cold_load():
-    # 项目冷负荷
-    return 8000
-
-def heat_load():
-    # 项目热负荷
-    return 5000
-
-def hot_water_load():
-    # 项目生活热水负荷
-    return 0
-
-def electricity_load():
-    # 项目电负荷
-    return 3000
-
-
-def load_data_cold_load_model(file_name):
+def load_data_model_test(file_name):
     """神经网络负荷预测模型数据读取，冷负荷"""
     # 获取训练用的输入(训练样本的输入x，有两个输入)；和训练用的输出（训练样本的输出y，有两个输出）
     # 读取txt文件
@@ -41,16 +24,16 @@ def load_data_cold_load_model(file_name):
     return np.mat(trainx_data), np.mat(trainy_data)
 
 
-def train_load_forecast_model():
+def train_model_test():
     """负荷预测的神经网络模型"""
     # 导入训练数据
     # 冷负荷模型训练数据
-    (x_train, y_train) = load_data_cold_load_model("./load_forecast_model/cold_load_forecast_model_data_train.txt")
+    (x_train, y_train) = load_data_model_test("./load_forecast_model/1_train.txt")
 
     # 构建模型
     model = tf.keras.Sequential([
-        tf.keras.layers.Dense(50, input_shape=(6,)), # Dense:建立全连接神经网络，第一层是输入层，6个输入，50个输出
-        tf.keras.layers.Dense(50, activation='sigmoid'), # 第二层采用径向基函数，50个神经元
+        tf.keras.layers.Dense(40, input_shape=(16,)), # Dense:建立全连接神经网络，第一层是输入层，6个输入，50个输出
+        tf.keras.layers.Dense(40, activation='sigmoid'), # 第二层采用径向基函数，50个神经元
         tf.keras.layers.Dense(1) # 第三层输出层，1个输出
     ])
     # 配置模型
@@ -60,28 +43,13 @@ def train_load_forecast_model():
     model.summary()
     # 训练
     model.fit(x_train, y_train, batch_size=5, epochs=50)
-    # 预测
-    x_test = np.mat([0.548201499, 0.447000455, 0.093969255, 0.1, 0.380416971, 0.310639827])
-    y_test = np.mat([0.289704519])
-    err = model.evaluate(x_test, y_test)# 预测值和实际值的差值
-    result = model.predict(x_test)#预测值
-    print(err)
-    print(result)
 
     # 保存训练好的模型
-    # model.save('./load_forecast_model/cold_load_forecast_model.h5')
+    # model.save('./load_forecast_model/1_model.h5')
 
-    #加载模型
-    # model = tf.keras.models.load_model('path_to_my_model.h5')
-
-
-def model_pre():
-    """批量测试"""
-    # 加载模型
-    model = tf.keras.models.load_model('./load_forecast_model/cold_load_forecast_model.h5')
-
+    #批量预测
     # 输入
-    file_name = "./load_forecast_model/cold_load_forecast_model_data_test.txt"
+    file_name = "./load_forecast_model/1_test.txt"
     f = open(file_name)  # 打开文件
     testx_data = []  # 测试用的输入矩阵
     testy_data = []  # 测试用的输出矩阵
@@ -104,11 +72,6 @@ def model_pre():
     plt.plot(Y)
     plt.show()
 
-    # print(ans)
+train_model_test()
 
 
-
-
-
-# train_load_forecast_model()
-model_pre()
