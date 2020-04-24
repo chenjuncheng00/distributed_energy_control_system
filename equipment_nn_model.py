@@ -70,7 +70,7 @@ def train_water_pump_model():
     y_test = np.mat([0.292433102, 0.106844533])
     err = model.evaluate(x_test, y_test)# 预测值和实际值的差值
     result = model.predict(x_test)#预测值
-    #print(err)
+    print(err)
     print(result)
 
     # 保存训练好的模型
