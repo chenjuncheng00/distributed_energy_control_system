@@ -9,41 +9,35 @@ def triple_supply_cold_function(ice1_load_ratio, ice2_load_ratio, lb1_hot_water,
     lb2_cold_out_now = triple_supply_in_out_cold(ice2_load_ratio, lb2_hot_water, ice2, gc, lb2_wp_cooling_water, lb2_wp_chilled_water,lb2_wp_hot_water)[0]
     lb_cold_out_now_sum = lb1_cold_out_now + lb2_cold_out_now
     # 计算2个三联供系统向外供电量
-    # 如果是母管制系统
-    if gc.header_system == True:
-        # 内燃机发电功率
-        ice1_electricity_power_out_cold = triple_supply_in_out_cold(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_cooling_water, lb1_wp_chilled_water, lb1_wp_hot_water)[4]
-        ice2_electricity_power_out_cold = triple_supply_in_out_cold(ice2_load_ratio, lb2_hot_water, ice2, gc, lb2_wp_cooling_water, lb2_wp_chilled_water, lb2_wp_hot_water)[4]
-        ice_electricity_power_out_total_cold = ice1_electricity_power_out_cold + ice2_electricity_power_out_cold
-        # 内燃机本体耗电功率
-        ice1_power_consumption_cold = triple_supply_in_out_cold(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_cooling_water, lb1_wp_chilled_water, lb1_wp_hot_water)[5]
-        ice2_power_consumption_cold = triple_supply_in_out_cold(ice2_load_ratio, lb2_hot_water, ice2, gc, lb2_wp_cooling_water, lb2_wp_chilled_water, lb2_wp_hot_water)[5]
-        ice_power_consumption_total_cold = ice1_power_consumption_cold + ice2_power_consumption_cold
-        # 溴化锂冷冻水、冷却水流量
-        lb1_chilled_water_flow = triple_supply_in_out_cold(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_cooling_water, lb1_wp_chilled_water, lb1_wp_hot_water)[6]
-        lb1_cooling_water_flow = triple_supply_in_out_cold(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_cooling_water, lb1_wp_chilled_water, lb1_wp_hot_water)[7]
-        lb2_chilled_water_flow = triple_supply_in_out_cold(ice2_load_ratio, lb2_hot_water, ice2, gc, lb2_wp_cooling_water, lb2_wp_chilled_water, lb2_wp_hot_water)[6]
-        lb2_cooling_water_flow = triple_supply_in_out_cold(ice2_load_ratio, lb2_hot_water, ice2, gc, lb2_wp_cooling_water, lb2_wp_chilled_water, lb2_wp_hot_water)[7]
-        # 流量汇总
-        lb_chilled_water_flow_total = lb1_chilled_water_flow + lb2_chilled_water_flow
-        lb_cooling_water_flow_total = lb1_cooling_water_flow + lb2_cooling_water_flow
-        # 计算溴化锂设备辅机耗电功率
-        # 目前运行的溴化锂设备数量
-        if ice1_load_ratio > 0 and ice2_load_ratio > 0:
-            lb_num = 2
-        else:
-            lb_num = 1
-        # 每一个水泵的流量
-        lb_chilled_water_flow = lb_chilled_water_flow_total/lb_num
-        lb_cooling_water_flow = lb_cooling_water_flow_total/lb_num
-        # 溴化锂辅机耗电功率
-        lb_auxiliary_equipment_power_consumption_cold_total = lb_num*(lb1_wp_cooling_water.pump_performance_data(lb_cooling_water_flow, 50)[1] + lb1_wp_chilled_water.pump_performance_data(lb_chilled_water_flow, 50)[1])
-        ts_electricity_cold_out_now_sum = ice_electricity_power_out_total_cold - ice_power_consumption_total_cold - lb_auxiliary_equipment_power_consumption_cold_total
+    # 内燃机发电功率
+    ice1_electricity_power_out_cold = triple_supply_in_out_cold(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_cooling_water, lb1_wp_chilled_water, lb1_wp_hot_water)[4]
+    ice2_electricity_power_out_cold = triple_supply_in_out_cold(ice2_load_ratio, lb2_hot_water, ice2, gc, lb2_wp_cooling_water, lb2_wp_chilled_water, lb2_wp_hot_water)[4]
+    ice_electricity_power_out_total_cold = ice1_electricity_power_out_cold + ice2_electricity_power_out_cold
+    # 内燃机本体耗电功率
+    ice1_power_consumption_cold = triple_supply_in_out_cold(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_cooling_water, lb1_wp_chilled_water, lb1_wp_hot_water)[5]
+    ice2_power_consumption_cold = triple_supply_in_out_cold(ice2_load_ratio, lb2_hot_water, ice2, gc, lb2_wp_cooling_water, lb2_wp_chilled_water, lb2_wp_hot_water)[5]
+    ice_power_consumption_total_cold = ice1_power_consumption_cold + ice2_power_consumption_cold
+    # 溴化锂冷冻水、冷却水流量
+    lb1_chilled_water_flow = triple_supply_in_out_cold(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_cooling_water, lb1_wp_chilled_water, lb1_wp_hot_water)[6]
+    lb1_cooling_water_flow = triple_supply_in_out_cold(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_cooling_water, lb1_wp_chilled_water, lb1_wp_hot_water)[7]
+    lb2_chilled_water_flow = triple_supply_in_out_cold(ice2_load_ratio, lb2_hot_water, ice2, gc, lb2_wp_cooling_water, lb2_wp_chilled_water, lb2_wp_hot_water)[6]
+    lb2_cooling_water_flow = triple_supply_in_out_cold(ice2_load_ratio, lb2_hot_water, ice2, gc, lb2_wp_cooling_water, lb2_wp_chilled_water, lb2_wp_hot_water)[7]
+    # 流量汇总
+    lb_chilled_water_flow_total = lb1_chilled_water_flow + lb2_chilled_water_flow
+    lb_cooling_water_flow_total = lb1_cooling_water_flow + lb2_cooling_water_flow
+    # 计算溴化锂设备辅机耗电功率
+    # 目前运行的溴化锂设备数量
+    if ice1_load_ratio > 0 and ice2_load_ratio > 0:
+        lb_num = 2
     else:
-        # 如果是单元制系统
-        ts1_electricity_cold_out_now = triple_supply_in_out_cold(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_cooling_water, lb1_wp_chilled_water,lb1_wp_hot_water)[1]
-        ts2_electricity_cold_out_now = triple_supply_in_out_cold(ice2_load_ratio, lb2_hot_water, ice2, gc, lb2_wp_cooling_water, lb2_wp_chilled_water,lb2_wp_hot_water)[1]
-        ts_electricity_cold_out_now_sum = ts1_electricity_cold_out_now + ts2_electricity_cold_out_now
+        lb_num = 1
+    # 每一个水泵的流量
+    lb_chilled_water_flow = lb_chilled_water_flow_total/lb_num
+    lb_cooling_water_flow = lb_cooling_water_flow_total/lb_num
+    # 溴化锂辅机耗电功率
+    lb_auxiliary_equipment_power_consumption_cold_total = lb_num*(lb1_wp_cooling_water.pump_performance_data(lb_cooling_water_flow, 50)[1] + lb1_wp_chilled_water.pump_performance_data(lb_chilled_water_flow, 50)[1])
+    ts_electricity_cold_out_now_sum = ice_electricity_power_out_total_cold - ice_power_consumption_total_cold - lb_auxiliary_equipment_power_consumption_cold_total
+
     # 计算2个三联供系统的成本
     # 天然气消耗量
     ts1_natural_gas_consumption = triple_supply_in_out_cold(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_cooling_water, lb1_wp_chilled_water,lb1_wp_hot_water)[2]
@@ -102,37 +96,31 @@ def triple_supply_heat_function(ice1_load_ratio, ice2_load_ratio, lb1_hot_water,
     lb2_heat_out_now = triple_supply_in_out_heat(ice2_load_ratio, lb2_hot_water, ice2, gc, lb2_wp_heating_water, lb2_wp_hot_water)[0]
     lb_heat_out_now_sum = lb1_heat_out_now + lb2_heat_out_now
     # 计算2个三联供系统向外供电量
-    # 如果是母管制系统
-    if gc.header_system == True:
-        # 内燃机发电功率
-        ice1_electricity_power_out_heat = triple_supply_in_out_heat(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_heating_water, lb1_wp_hot_water)[4]
-        ice2_electricity_power_out_heat = triple_supply_in_out_heat(ice2_load_ratio, lb2_hot_water, ice2, gc, lb2_wp_heating_water, lb2_wp_hot_water)[4]
-        ice_electricity_power_out_total_heat = ice1_electricity_power_out_heat + ice2_electricity_power_out_heat
-        # 内燃机本体耗电功率
-        ice1_power_consumption_heat = triple_supply_in_out_heat(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_heating_water, lb1_wp_hot_water)[5]
-        ice2_power_consumption_heat = triple_supply_in_out_heat(ice2_load_ratio, lb2_hot_water, ice2, gc, lb2_wp_heating_water, lb2_wp_hot_water)[5]
-        ice_power_consumption_total_heat = ice1_power_consumption_heat + ice2_power_consumption_heat
-        # 溴化锂采暖水流量
-        lb1_heating_water_flow = triple_supply_in_out_heat(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_heating_water, lb1_wp_hot_water)[6]
-        lb2_heating_water_flow = triple_supply_in_out_heat(ice2_load_ratio, lb2_hot_water, ice2, gc, lb2_wp_heating_water, lb2_wp_hot_water)[6]
-        # 流量汇总
-        lb_heating_water_flow_total = lb1_heating_water_flow + lb2_heating_water_flow
-        # 计算溴化锂设备辅机耗电功率
-        # 目前运行的溴化锂设备数量
-        if ice1_load_ratio > 0 and ice2_load_ratio > 0:
-            lb_num = 2
-        else:
-            lb_num = 1
-        # 每一个水泵的流量
-        lb_heating_water_flow = lb_heating_water_flow_total / lb_num
-        # 溴化锂辅机耗电功率
-        lb_auxiliary_equipment_power_consumption_cold_total = lb_num * (lb1_wp_heating_water.pump_performance_data(lb_heating_water_flow, 50)[1])
-        ts_electricity_heat_out_now_sum = ice_electricity_power_out_total_heat - ice_power_consumption_total_heat - lb_auxiliary_equipment_power_consumption_cold_total
+    # 内燃机发电功率
+    ice1_electricity_power_out_heat = triple_supply_in_out_heat(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_heating_water, lb1_wp_hot_water)[4]
+    ice2_electricity_power_out_heat = triple_supply_in_out_heat(ice2_load_ratio, lb2_hot_water, ice2, gc, lb2_wp_heating_water, lb2_wp_hot_water)[4]
+    ice_electricity_power_out_total_heat = ice1_electricity_power_out_heat + ice2_electricity_power_out_heat
+    # 内燃机本体耗电功率
+    ice1_power_consumption_heat = triple_supply_in_out_heat(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_heating_water, lb1_wp_hot_water)[5]
+    ice2_power_consumption_heat = triple_supply_in_out_heat(ice2_load_ratio, lb2_hot_water, ice2, gc, lb2_wp_heating_water, lb2_wp_hot_water)[5]
+    ice_power_consumption_total_heat = ice1_power_consumption_heat + ice2_power_consumption_heat
+    # 溴化锂采暖水流量
+    lb1_heating_water_flow = triple_supply_in_out_heat(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_heating_water, lb1_wp_hot_water)[6]
+    lb2_heating_water_flow = triple_supply_in_out_heat(ice2_load_ratio, lb2_hot_water, ice2, gc, lb2_wp_heating_water, lb2_wp_hot_water)[6]
+    # 流量汇总
+    lb_heating_water_flow_total = lb1_heating_water_flow + lb2_heating_water_flow
+    # 计算溴化锂设备辅机耗电功率
+    # 目前运行的溴化锂设备数量
+    if ice1_load_ratio > 0 and ice2_load_ratio > 0:
+        lb_num = 2
     else:
-        # 如果是单元制系统
-        ts1_electricity_heat_out_now = triple_supply_in_out_heat(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_heating_water, lb1_wp_hot_water)[1]
-        ts2_electricity_heat_out_now = triple_supply_in_out_heat(ice2_load_ratio, lb2_hot_water, ice2, gc, lb2_wp_heating_water, lb2_wp_hot_water)[1]
-        ts_electricity_heat_out_now_sum = ts1_electricity_heat_out_now + ts2_electricity_heat_out_now
+        lb_num = 1
+    # 每一个水泵的流量
+    lb_heating_water_flow = lb_heating_water_flow_total / lb_num
+    # 溴化锂辅机耗电功率
+    lb_auxiliary_equipment_power_consumption_cold_total = lb_num * (lb1_wp_heating_water.pump_performance_data(lb_heating_water_flow, 50)[1])
+    ts_electricity_heat_out_now_sum = ice_electricity_power_out_total_heat - ice_power_consumption_total_heat - lb_auxiliary_equipment_power_consumption_cold_total
+
     # 计算2个三联供系统的成本
     # 天然气消耗量
     ts1_natural_gas_consumption = triple_supply_in_out_heat(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_heating_water, lb1_wp_hot_water)[2]
@@ -185,25 +173,17 @@ def triple_supply_transition_function(ice1_load_ratio, ice2_load_ratio, lb1_hot_
     """过渡季三联供系统计算方程"""
     # 过渡季仅有生活热水负荷需求，没有冷负荷和热负荷需求，输入需要的生活热水负荷，反算此时的内燃机负荷率
     # 计算2个三联供系统向外供电量
-    # 如果是母管制系统
-    if gc.header_system == True:
-        # 母管制系统发电量仅仅减去内燃机本体耗电量，溴化锂设备制生活热水的耗电量单独计算，不在此处计算
-        # 内燃机发电功率
-        ice1_electricity_power_out_transition = triple_supply_in_out_transition(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_hot_water)[3]
-        ice2_electricity_power_out_transition = triple_supply_in_out_transition(ice2_load_ratio, lb2_hot_water, ice2, gc, lb2_wp_hot_water)[3]
-        ice_electricity_power_out_total_transition = ice1_electricity_power_out_transition + ice2_electricity_power_out_transition
-        # 内燃机本体耗电功率
-        ice1_power_consumption_transition = triple_supply_in_out_transition(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_hot_water)[4]
-        ice2_power_consumption_transition = triple_supply_in_out_transition(ice2_load_ratio, lb2_hot_water, ice2, gc, lb2_wp_hot_water)[4]
-        ice_power_consumption_total_transition = ice1_power_consumption_transition + ice2_power_consumption_transition
-        # 三联供向外供电量
-        ts_electricity_transition_out_now_sum = ice_electricity_power_out_total_transition - ice_power_consumption_total_transition
-    # 如果是单元制系统
-    else:
-        # 单元制系统发电量减去内燃机本体耗电量和溴化锂设备制生活热水的耗电量
-        ts1_electricity_transition_out_now = triple_supply_in_out_transition(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_hot_water)[0]
-        ts2_electricity_transition_out_now = triple_supply_in_out_transition(ice2_load_ratio, lb2_hot_water, ice2, gc, lb2_wp_hot_water)[0]
-        ts_electricity_transition_out_now_sum = ts1_electricity_transition_out_now + ts2_electricity_transition_out_now
+    # 母管制系统发电量仅仅减去内燃机本体耗电量，溴化锂设备制生活热水的耗电量单独计算，不在此处计算
+    # 内燃机发电功率
+    ice1_electricity_power_out_transition = triple_supply_in_out_transition(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_hot_water)[3]
+    ice2_electricity_power_out_transition = triple_supply_in_out_transition(ice2_load_ratio, lb2_hot_water, ice2, gc, lb2_wp_hot_water)[3]
+    ice_electricity_power_out_total_transition = ice1_electricity_power_out_transition + ice2_electricity_power_out_transition
+    # 内燃机本体耗电功率
+    ice1_power_consumption_transition = triple_supply_in_out_transition(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_hot_water)[4]
+    ice2_power_consumption_transition = triple_supply_in_out_transition(ice2_load_ratio, lb2_hot_water, ice2, gc, lb2_wp_hot_water)[4]
+    ice_power_consumption_total_transition = ice1_power_consumption_transition + ice2_power_consumption_transition
+    # 三联供向外供电量
+    ts_electricity_transition_out_now_sum = ice_electricity_power_out_total_transition - ice_power_consumption_total_transition
     # 计算2个三联供系统的成本
     # 天然气消耗量
     ts1_natural_gas_consumption = triple_supply_in_out_transition(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_hot_water)[1]
@@ -298,12 +278,9 @@ def lithium_bromide_cold_function(hot_water_load, load_ratio, lb_cold, gc):
     chilled_water_flow = lb_cold.chilled_water_flow(load_ratio, residual_heat_cooling_ratio)
     # 冷却水流量
     cooling_water_flow = lb_cold.cooling_water_flow(load_ratio, residual_heat_cooling_ratio)
-    # 如果是母管制系统，生活热水流量为0，生活热水泵耗电功率在别的程序中单独计算，这里不做计算
-    if gc.header_system == True:
-        hot_water_flow = 0
-    else:
-        # 生活热水流量
-        hot_water_flow = lb_cold.hot_water_flow(hot_water_load, hot_water_temperature_difference)
+    # 母管制系统，生活热水流量为0，生活热水泵耗电功率在别的程序中单独计算，这里不做计算
+    hot_water_flow = 0
+
     # 以下辅机耗电计算针对的是单元制系统，及泵与设备一对一布置；如果是母管制系统，要重新计算
     # 制冷辅机耗电
     auxiliary_equipment_power_consumption_cooling = lb_cold.auxiliary_equipment_power_consumption_cooling(cooling_water_flow, chilled_water_flow)
@@ -337,12 +314,9 @@ def lithium_bromide_heat_function(hot_water_load, load_ratio, lb_heat, gc):
         residual_heat_heating_ratio = 1 - (hot_water_residual_heat_consumption / lb_heat.residual_heat_power)
     # 采暖水流量
     heating_water_flow = lb_heat.heating_water_flow(load_ratio, residual_heat_heating_ratio)
-    # 如果是母管制系统，生活热水流量为0，生活热水泵耗电功率在别的程序中单独计算，这里不做计算
-    if gc.header_system == True:
-        hot_water_flow = 0
-    else:
-        # 生活热水流量
-        hot_water_flow = lb_heat.hot_water_flow(hot_water_load, hot_water_temperature_difference)
+    # 母管制系统，生活热水流量为0，生活热水泵耗电功率在别的程序中单独计算，这里不做计算
+    hot_water_flow = 0
+
     # 以下辅机耗电计算针对的是单元制系统，及泵与设备一对一布置；如果是母管制系统，需要单独重新计算
     # 制热辅机耗电
     auxiliary_equipment_power_consumption_heating = lb_heat.auxiliary_equipment_power_consumption_heating(heating_water_flow)
@@ -368,12 +342,9 @@ def lithium_bromide_transition_function(hot_water_load, load_ratio, lb_transitio
     residual_heat_remaining = lb_transition.residual_heat_remaining(hot_water_residual_heat_consumption)
     # 溴化锂生活热水温差
     hot_water_temperature_difference = lb_transition.hot_water_temperature_difference(load_ratio)
-    # 如果是母管制系统，生活热水流量为0，生活热水泵耗电功率在别的程序中单独计算，这里不做计算
-    if gc.header_system == True:
-        hot_water_flow = 0
-    else:
-        # 生活热水流量(单元制系统)
-        hot_water_flow = lb_transition.hot_water_flow(hot_water_load, hot_water_temperature_difference)
+    # 母管制系统，生活热水流量为0，生活热水泵耗电功率在别的程序中单独计算，这里不做计算
+    hot_water_flow = 0
+
     # 以下辅机耗电计算针对的是单元制系统，及泵与设备一对一布置；如果是母管制系统，需要单独重新计算
     # 生活热水辅机耗电
     auxiliary_equipment_power_consumption_hot_water = lb_transition.auxiliary_equipment_power_consumption_hot_water(hot_water_flow)
