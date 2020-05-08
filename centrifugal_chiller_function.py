@@ -4,28 +4,8 @@ from global_constant import Global_Constant
 
 def centrifugal_chiller_function(cold_load, cc1, cc2, cc3, cc4, gc):
     """离心式冷水机组制冷负荷计算函数"""
-    # 离心式冷水机组与水泵的布置方式，header_system（母管制）
-    if gc.header_system == True:
-        ans = centrifugal_chiller_header_system(cold_load, cc1, cc2, cc3, cc4, gc)
-    else:
-        ans = centrifugal_chiller_unit_system(cold_load, cc1, cc2, cc3, cc4, gc)
-
-    # 读取计算结果
-    cost = ans[0]
-    cc1_load_ratio_result = ans[1]
-    cc2_load_ratio_result = ans[2]
-    cc3_load_ratio_result = ans[3]
-    cc4_load_ratio_result = ans[4]
-    total_power_consumption = ans[5]
-    total_water_supply = ans[6]
-
-    # 返回计算结果
-    return cost, cc1_load_ratio_result, cc2_load_ratio_result, cc3_load_ratio_result, cc4_load_ratio_result, total_power_consumption, total_water_supply
-
-
-def centrifugal_chiller_header_system(cold_load, cc1, cc2, cc3, cc4, gc):
-    """不同管道布置方式的离心式冷水机计算"""
-    # 母管制系统计算（水泵与离心式冷水机组不是一对一布置，麻城项目采用的就是这种布置方法）
+    # 不同管道布置方式的离心式冷水机计算
+    # 母管制系统计算（水泵与离心式冷水机组不是一对一布置）
     # 获取4台离心式冷水机是否为变频，根据是否为变频，设置不同的计算步长
     # 离心式冷水机1
     if cc1.frequency_scaling == True:
@@ -139,8 +119,14 @@ def centrifugal_chiller_header_system(cold_load, cc1, cc2, cc3, cc4, gc):
                 cc4_centrifugal_chiller_power_consumption = centrifugal_chiller_cost(cc4, gc, cc4_load_ratio)[3]
                 # 计算4个设备的冷冻水流量、冷却水流量
                 # 冷冻水和冷却水总流量
-                chilled_water_flow_total = centrifugal_chiller_cost(cc1, gc, cc1_load_ratio)[4] + centrifugal_chiller_cost(cc2, gc, cc2_load_ratio)[4] + centrifugal_chiller_cost(cc3, gc, cc3_load_ratio)[4] + centrifugal_chiller_cost(cc4, gc, cc4_load_ratio)[4]
-                cooling_water_flow_total = centrifugal_chiller_cost(cc1, gc, cc1_load_ratio)[5] + centrifugal_chiller_cost(cc2, gc, cc2_load_ratio)[5] + centrifugal_chiller_cost(cc3, gc, cc3_load_ratio)[5] + centrifugal_chiller_cost(cc4, gc, cc4_load_ratio)[5]
+                chilled_water_flow_total = centrifugal_chiller_cost(cc1, gc, cc1_load_ratio)[4] + \
+                                           centrifugal_chiller_cost(cc2, gc, cc2_load_ratio)[4] + \
+                                           centrifugal_chiller_cost(cc3, gc, cc3_load_ratio)[4] + \
+                                           centrifugal_chiller_cost(cc4, gc, cc4_load_ratio)[4]
+                cooling_water_flow_total = centrifugal_chiller_cost(cc1, gc, cc1_load_ratio)[5] + \
+                                           centrifugal_chiller_cost(cc2, gc, cc2_load_ratio)[5] + \
+                                           centrifugal_chiller_cost(cc3, gc, cc3_load_ratio)[5] + \
+                                           centrifugal_chiller_cost(cc4, gc, cc4_load_ratio)[5]
                 # 每个水泵的流量为总流量均分（后期可细化流量分配比例）
                 cc1_chilled_water_flow = chilled_water_flow_total / cc_num
                 cc2_chilled_water_flow = chilled_water_flow_total / cc_num
@@ -151,10 +137,14 @@ def centrifugal_chiller_header_system(cold_load, cc1, cc2, cc3, cc4, gc):
                 cc3_cooling_water_flow = cooling_water_flow_total / cc_num
                 cc4_cooling_water_flow = cooling_water_flow_total / cc_num
                 # 辅助设备耗电功率
-                cc1_auxiliary_equipment_power_consumption = centrifugal_chiller_auxiliary_equipment_cost(cc1, gc, cc1_chilled_water_flow, cc1_cooling_water_flow)[0]
-                cc2_auxiliary_equipment_power_consumption = centrifugal_chiller_auxiliary_equipment_cost(cc2, gc, cc2_chilled_water_flow, cc2_cooling_water_flow)[0]
-                cc3_auxiliary_equipment_power_consumption = centrifugal_chiller_auxiliary_equipment_cost(cc3, gc, cc3_chilled_water_flow, cc3_cooling_water_flow)[0]
-                cc4_auxiliary_equipment_power_consumption = centrifugal_chiller_auxiliary_equipment_cost(cc4, gc, cc4_chilled_water_flow, cc4_cooling_water_flow)[0]
+                cc1_auxiliary_equipment_power_consumption = \
+                centrifugal_chiller_auxiliary_equipment_cost(cc1, gc, cc1_chilled_water_flow, cc1_cooling_water_flow)[0]
+                cc2_auxiliary_equipment_power_consumption = \
+                centrifugal_chiller_auxiliary_equipment_cost(cc2, gc, cc2_chilled_water_flow, cc2_cooling_water_flow)[0]
+                cc3_auxiliary_equipment_power_consumption = \
+                centrifugal_chiller_auxiliary_equipment_cost(cc3, gc, cc3_chilled_water_flow, cc3_cooling_water_flow)[0]
+                cc4_auxiliary_equipment_power_consumption = \
+                centrifugal_chiller_auxiliary_equipment_cost(cc4, gc, cc4_chilled_water_flow, cc4_cooling_water_flow)[0]
                 # 耗电量总计
                 cc_power_consumption_total = cc1_centrifugal_chiller_power_consumption + cc2_centrifugal_chiller_power_consumption + cc3_centrifugal_chiller_power_consumption + cc4_centrifugal_chiller_power_consumption + cc1_auxiliary_equipment_power_consumption + cc2_auxiliary_equipment_power_consumption + cc3_auxiliary_equipment_power_consumption + cc4_auxiliary_equipment_power_consumption
                 total_power_consumption.append(cc_power_consumption_total)
@@ -171,251 +161,6 @@ def centrifugal_chiller_header_system(cold_load, cc1, cc2, cc3, cc4, gc):
                 break
         # 增加离心式冷水机数量
         cc_num += 1
-
-    # 返回计算结果
-    return cost, cc1_load_ratio_result, cc2_load_ratio_result, cc3_load_ratio_result, cc4_load_ratio_result, total_power_consumption, total_water_supply
-
-
-def centrifugal_chiller_unit_system(cold_load, cc1, cc2, cc3, cc4, gc):
-    """不同管道布置方式的离心式冷水机计算"""
-    # 单元制系统计算（水泵与离心式冷水机组一对一布置）
-    # 获取4台离心式冷水机是否为变频，根据是否为变频，设置不同的计算步长
-    # 离心式冷水机1
-    if cc1.frequency_scaling == True:
-        cc1_step = 1
-    else:
-        cc1_step = 10
-    # 离心式冷水机2
-    if cc2.frequency_scaling == True:
-        cc2_step = 1
-    else:
-        cc2_step = 10
-    # 离心式冷水机3
-    if cc3.frequency_scaling == True:
-        cc3_step = 1
-    else:
-        cc3_step = 10
-    # 离心式冷水机4
-    if cc4.frequency_scaling == True:
-        cc4_step = 1
-    else:
-        cc4_step = 10
-
-    # 申明一个列表，储存计算出的总成本
-    cost = []
-    # 列表，储存4台离心式冷水机的总耗电功率
-    total_power_consumption = []
-    # 列表， 储存4台离心式冷水机的总补水量
-    total_water_supply = []
-    # 列表，储存4台设备计算出的负荷率结果
-    cc1_load_ratio_result = []
-    cc2_load_ratio_result = []
-    cc3_load_ratio_result = []
-    cc4_load_ratio_result = []
-
-    # 确定需要几台设备，向上取整
-    centrifugal_chiller_num_1 = math.ceil(cold_load / cc1.cooling_power_rated)
-    centrifugal_chiller_num = min(centrifugal_chiller_num_1, 4) #但是最大数量不可以大于4
-
-    # 列表，储存4台设备计算出的负荷率结果
-    cc_load_ratio_result_all = [0, 0, 0, 0]
-    # 初始化设备1的负荷率,设备负荷率不可以小于设定的最小值，变量用处储存计算过程中4台设备的实时负荷率
-    cc1_load_ratio = cc1.load_min
-
-    if centrifugal_chiller_num == 1:
-        while cc1_load_ratio <= 1 + gc.load_ratio_error_coefficient:
-            # 计算设备的制冷出力
-            cc1_cold_out_now = cc1_load_ratio * cc1.cooling_power_rated
-            cc_cold_out_now_sum = cc1_cold_out_now
-            if cc_cold_out_now_sum < cold_load:
-                # 增加设备1负荷率
-                cc1_load_ratio += cc1_step / 100
-            else:
-                # 保存4个设备的负荷率
-                cc_load_ratio_result_all[0] = cc1_load_ratio
-                cc1_load_ratio_result.append(cc_load_ratio_result_all[0])
-                cc2_load_ratio_result.append(0)
-                cc3_load_ratio_result.append(0)
-                cc4_load_ratio_result.append(0)
-                # 计算1个设备的总耗电功率
-                cc1_power_consumption = centrifugal_chiller_cost(cc1, gc, cc1_load_ratio)[1]
-                cc_power_consumption_total = cc1_power_consumption
-                total_power_consumption.append(cc_power_consumption_total)
-                # 计算1个设备的总补水量
-                cc1_water_supply = centrifugal_chiller_cost(cc1, gc, cc1_load_ratio)[2]
-                cc_water_supply_total = cc1_water_supply
-                total_water_supply.append(cc_water_supply_total)
-                # 计算1个设备的成本
-                cc1_cost = centrifugal_chiller_cost(cc1, gc, cc1_load_ratio)[0]
-                cc_cost_total = cc1_cost
-                cost.append(cc_cost_total)
-                break
-
-    # 列表，储存4台设备计算出的负荷率结果
-    cc_load_ratio_result_all = [0, 0, 0, 0]
-    # 初始化设备1、2、3、4的负荷率,设备负荷率不可以小于设定的最小值，变量用处储存计算过程中4太设备的实时负荷率
-    cc1_load_ratio = cc1.load_min
-    cc2_load_ratio = cc2.load_min
-
-    if centrifugal_chiller_num == 1 or centrifugal_chiller_num == 2:
-        while cc1_load_ratio <= 1 + gc.load_ratio_error_coefficient:
-            while cc2_load_ratio <= 1 + gc.load_ratio_error_coefficient:
-                # 计算2个设备的制冷出力
-                cc1_cold_out_now = cc1_load_ratio * cc1.cooling_power_rated
-                cc2_cold_out_now = cc2_load_ratio * cc2.cooling_power_rated
-                cc_cold_out_now_sum = cc1_cold_out_now + cc2_cold_out_now
-                if cc_cold_out_now_sum < cold_load:
-                    # 增加设备2负荷率
-                    cc2_load_ratio += cc2_step / 100
-                else:
-                    # 保存4个设备的负荷率
-                    cc_load_ratio_result_all[0] = cc1_load_ratio
-                    cc_load_ratio_result_all[1] = cc2_load_ratio
-                    cc1_load_ratio_result.append(cc_load_ratio_result_all[0])
-                    cc2_load_ratio_result.append(cc_load_ratio_result_all[1])
-                    cc3_load_ratio_result.append(0)
-                    cc4_load_ratio_result.append(0)
-                    # 计算2个设备的总耗电功率
-                    cc1_power_consumption = centrifugal_chiller_cost(cc1, gc, cc1_load_ratio)[1]
-                    cc2_power_consumption = centrifugal_chiller_cost(cc2, gc, cc2_load_ratio)[1]
-                    cc_power_consumption_total = cc1_power_consumption + cc2_power_consumption
-                    total_power_consumption.append(cc_power_consumption_total)
-                    # 计算2个设备的总补水量
-                    cc1_water_supply = centrifugal_chiller_cost(cc1, gc, cc1_load_ratio)[2]
-                    cc2_water_supply = centrifugal_chiller_cost(cc2, gc, cc2_load_ratio)[2]
-                    cc_water_supply_total = cc1_water_supply + cc2_water_supply
-                    total_water_supply.append(cc_water_supply_total)
-                    # 计算2个设备的成本
-                    cc1_cost = centrifugal_chiller_cost(cc1, gc, cc1_load_ratio)[0]
-                    cc2_cost = centrifugal_chiller_cost(cc2, gc, cc2_load_ratio)[0]
-                    cc_cost_total = cc1_cost + cc2_cost
-                    cost.append(cc_cost_total)
-                    break
-            # 增加设备1负荷率，并将设备2负荷率重置回最小值
-            cc1_load_ratio += cc1_step / 100
-            cc2_load_ratio = cc2.load_min
-
-    # 列表，储存4台设备计算出的负荷率结果
-    cc_load_ratio_result_all = [0, 0, 0, 0]
-    # 初始化设备1、2、3、4的负荷率,设备负荷率不可以小于设定的最小值，变量用处储存计算过程中4太设备的实时负荷率
-    cc1_load_ratio = cc1.load_min
-    cc2_load_ratio = cc2.load_min
-    cc3_load_ratio = cc3.load_min
-
-    if centrifugal_chiller_num == 2 or centrifugal_chiller_num == 3:
-        while cc1_load_ratio <= 1 + gc.load_ratio_error_coefficient:
-            while cc2_load_ratio <= 1 + gc.load_ratio_error_coefficient:
-                while cc3_load_ratio <= 1 + gc.load_ratio_error_coefficient:
-                    # 计算3个设备的制冷出力
-                    cc1_cold_out_now = cc1_load_ratio * cc1.cooling_power_rated
-                    cc2_cold_out_now = cc2_load_ratio * cc2.cooling_power_rated
-                    cc3_cold_out_now = cc3_load_ratio * cc3.cooling_power_rated
-                    cc_cold_out_now_sum = cc1_cold_out_now + cc2_cold_out_now + cc3_cold_out_now
-                    if cc_cold_out_now_sum < cold_load:
-                        # 增加设备3负荷率
-                        cc3_load_ratio += cc3_step / 100
-                    else:
-                        # 保存3个设备的负荷率
-                        cc_load_ratio_result_all[0] = cc1_load_ratio
-                        cc_load_ratio_result_all[1] = cc2_load_ratio
-                        cc_load_ratio_result_all[2] = cc3_load_ratio
-                        cc1_load_ratio_result.append(cc_load_ratio_result_all[0])
-                        cc2_load_ratio_result.append(cc_load_ratio_result_all[1])
-                        cc3_load_ratio_result.append(cc_load_ratio_result_all[2])
-                        cc4_load_ratio_result.append(0)
-                        # 计算3个设备的总耗电功率
-                        cc1_power_consumption = centrifugal_chiller_cost(cc1, gc, cc1_load_ratio)[1]
-                        cc2_power_consumption = centrifugal_chiller_cost(cc2, gc, cc2_load_ratio)[1]
-                        cc3_power_consumption = centrifugal_chiller_cost(cc3, gc, cc3_load_ratio)[1]
-                        cc_power_consumption_total = cc1_power_consumption + cc2_power_consumption + cc3_power_consumption
-                        total_power_consumption.append(cc_power_consumption_total)
-                        # 计算3个设备的总补水量
-                        cc1_water_supply = centrifugal_chiller_cost(cc1, gc, cc1_load_ratio)[2]
-                        cc2_water_supply = centrifugal_chiller_cost(cc2, gc, cc2_load_ratio)[2]
-                        cc3_water_supply = centrifugal_chiller_cost(cc3, gc, cc3_load_ratio)[2]
-                        cc_water_supply_total = cc1_water_supply + cc2_water_supply + cc3_water_supply
-                        total_water_supply.append(cc_water_supply_total)
-                        # 计算3个设备的成本
-                        cc1_cost = centrifugal_chiller_cost(cc1, gc, cc1_load_ratio)[0]
-                        cc2_cost = centrifugal_chiller_cost(cc2, gc, cc2_load_ratio)[0]
-                        cc3_cost = centrifugal_chiller_cost(cc3, gc, cc3_load_ratio)[0]
-                        cc_cost_total = cc1_cost + cc2_cost + cc3_cost
-                        cost.append(cc_cost_total)
-                        break
-                # 增加设备2负荷率，并将设备3负荷率重置回最小值
-                cc2_load_ratio += cc2_step / 100
-                cc3_load_ratio = cc3.load_min
-            # 增加设备1的负荷率，并将设备2、3的负荷率重置为最小值
-            cc1_load_ratio += cc1_step / 100
-            cc2_load_ratio = cc2.load_min
-            cc3_load_ratio = cc3.load_min
-
-    # 列表，储存4台设备计算出的负荷率结果
-    cc_load_ratio_result_all = [0, 0, 0, 0]
-    # 初始化设备1、2、3、4的负荷率,设备负荷率不可以小于设定的最小值，变量用处储存计算过程中4太设备的实时负荷率
-    cc1_load_ratio = cc1.load_min
-    cc2_load_ratio = cc2.load_min
-    cc3_load_ratio = cc3.load_min
-    cc4_load_ratio = cc4.load_min
-
-    if centrifugal_chiller_num == 3 or centrifugal_chiller_num == 4:
-        while cc1_load_ratio <= 1 + gc.load_ratio_error_coefficient:
-            while cc2_load_ratio <= 1 + gc.load_ratio_error_coefficient:
-                while cc3_load_ratio <= 1 + gc.load_ratio_error_coefficient:
-                    while cc4_load_ratio <= 1 + gc.load_ratio_error_coefficient:
-                        # 计算4个设备的制冷出力
-                        cc1_cold_out_now = cc1_load_ratio * cc1.cooling_power_rated
-                        cc2_cold_out_now = cc2_load_ratio * cc2.cooling_power_rated
-                        cc3_cold_out_now = cc3_load_ratio * cc3.cooling_power_rated
-                        cc4_cold_out_now = cc4_load_ratio * cc4.cooling_power_rated
-                        cc_cold_out_now_sum = cc1_cold_out_now + cc2_cold_out_now + cc3_cold_out_now + cc4_cold_out_now
-                        if cc_cold_out_now_sum < cold_load:
-                            # 增加设备4负荷率
-                            cc4_load_ratio += cc4_step / 100
-                        else:
-                            # 保存4个设备的负荷率
-                            cc_load_ratio_result_all[0] = cc1_load_ratio
-                            cc_load_ratio_result_all[1] = cc2_load_ratio
-                            cc_load_ratio_result_all[2] = cc3_load_ratio
-                            cc_load_ratio_result_all[3] = cc4_load_ratio
-                            cc1_load_ratio_result.append(cc_load_ratio_result_all[0])
-                            cc2_load_ratio_result.append(cc_load_ratio_result_all[1])
-                            cc3_load_ratio_result.append(cc_load_ratio_result_all[2])
-                            cc4_load_ratio_result.append(cc_load_ratio_result_all[3])
-                            # 计算4个设备的总耗电功率
-                            cc1_power_consumption = centrifugal_chiller_cost(cc1, gc, cc1_load_ratio)[1]
-                            cc2_power_consumption = centrifugal_chiller_cost(cc2, gc, cc2_load_ratio)[1]
-                            cc3_power_consumption = centrifugal_chiller_cost(cc3, gc, cc3_load_ratio)[1]
-                            cc4_power_consumption = centrifugal_chiller_cost(cc4, gc, cc4_load_ratio)[1]
-                            cc_power_consumption_total = cc1_power_consumption + cc2_power_consumption + cc3_power_consumption + cc4_power_consumption
-                            total_power_consumption.append(cc_power_consumption_total)
-                            # 计算4个设备的总补水量
-                            cc1_water_supply = centrifugal_chiller_cost(cc1, gc, cc1_load_ratio)[2]
-                            cc2_water_supply = centrifugal_chiller_cost(cc2, gc, cc2_load_ratio)[2]
-                            cc3_water_supply = centrifugal_chiller_cost(cc3, gc, cc3_load_ratio)[2]
-                            cc4_water_supply = centrifugal_chiller_cost(cc4, gc, cc4_load_ratio)[2]
-                            cc_water_supply_total = cc1_water_supply + cc2_water_supply + cc3_water_supply + cc4_water_supply
-                            total_water_supply.append(cc_water_supply_total)
-                            # 计算4个设备的成本
-                            cc1_cost = centrifugal_chiller_cost(cc1, gc, cc1_load_ratio)[0]
-                            cc2_cost = centrifugal_chiller_cost(cc2, gc, cc2_load_ratio)[0]
-                            cc3_cost = centrifugal_chiller_cost(cc3, gc, cc3_load_ratio)[0]
-                            cc4_cost = centrifugal_chiller_cost(cc4, gc, cc4_load_ratio)[0]
-                            cc_cost_total = cc1_cost + cc2_cost + cc3_cost + cc4_cost
-                            cost.append(cc_cost_total)
-                            break
-                    # 增加设备3负荷率，并将设备4负荷率重置回0
-                    cc3_load_ratio += cc3_step / 100
-                    cc4_load_ratio = cc4.load_min
-                # 增加设备2的负荷率，并将设备3、4的负荷率重置为最小值
-                cc2_load_ratio += cc2_step / 100
-                cc3_load_ratio = cc3.load_min
-                cc4_load_ratio = cc4.load_min
-            # 增加设备1的负荷率，并将设备2、3、4的负荷率重置为最小值
-            cc1_load_ratio += cc1_step / 100
-            cc2_load_ratio = cc2.load_min
-            cc3_load_ratio = cc3.load_min
-            cc4_load_ratio = cc4.load_min
 
     # 返回计算结果
     return cost, cc1_load_ratio_result, cc2_load_ratio_result, cc3_load_ratio_result, cc4_load_ratio_result, total_power_consumption, total_water_supply

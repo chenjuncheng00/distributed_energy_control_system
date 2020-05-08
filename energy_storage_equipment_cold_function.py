@@ -2,25 +2,12 @@ import math
 from equipment import Energy_Storage_Equipment_Cold, Water_Pump
 from global_constant import Global_Constant
 
+
 def energy_storage_equipment_cold_function(cold_load_a, esec1, esec2, esec3, gc):
     """蓄能水罐在供冷和蓄冷时的计算函数"""
     # 实质上是蓄能水罐的1组多个水泵直接的寻优计算
     # 目前仅完成了母管制系统计算程序开发
-    ans_esec = energy_storage_equipment_cold_header_system(cold_load_a, esec1, esec2, esec3, gc)
-    # 读取计算结果
-    cost = ans_esec[0]
-    esec1_load_ratio_result = ans_esec[1]
-    esec2_load_ratio_result = ans_esec[2]
-    esec3_load_ratio_result = ans_esec[3]
-    total_power_consumption = ans_esec[4]
-    total_water_supply = ans_esec[5]
-
-    # 返回计算结果
-    return cost, esec1_load_ratio_result, esec2_load_ratio_result, esec3_load_ratio_result, total_power_consumption, total_water_supply
-
-
-def energy_storage_equipment_cold_header_system(cold_load_a, esec1, esec2, esec3, gc):
-    """蓄能水罐，母管制系统"""
+    # 蓄能水罐，母管制系统
     # 传入的cold_load_a，是一个初试的冷负荷需求量，用于判断目前是蓄冷状态还是供冷状态，如果水罐可以满足cold_load_a的需求，则采用cold_load_a去计算，否则进行修正
     # 判断水罐对应的水泵是变频还是定频，以此采用不同的计算策略
     # 目前的程序仅支持1组多个水泵全部是定频或者全部是变频的情况

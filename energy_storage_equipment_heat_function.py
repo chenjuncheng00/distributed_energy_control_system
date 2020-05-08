@@ -2,25 +2,12 @@ import math
 from equipment import Energy_Storage_Equipment_Heat, Water_Pump
 from global_constant import Global_Constant
 
+
 def energy_storage_equipment_heat_function(heat_load_a, eseh1, eseh2, eseh3, gc):
     """蓄能水罐在供热和蓄热时的计算函数"""
     # 实质上是蓄能水罐的1组多个水泵直接的寻优计算
     # 目前仅完成了母管制系统计算程序开发
-    ans_eseh = energy_storage_equipment_heat_header_system(heat_load_a, eseh1, eseh2, eseh3, gc)
-    # 读取计算结果
-    cost = ans_eseh[0]
-    eseh1_load_ratio_result = ans_eseh[1]
-    eseh2_load_ratio_result = ans_eseh[2]
-    eseh3_load_ratio_result = ans_eseh[3]
-    total_power_consumption = ans_eseh[4]
-    total_water_supply = ans_eseh[5]
-
-    # 返回计算结果
-    return cost, eseh1_load_ratio_result, eseh2_load_ratio_result, eseh3_load_ratio_result, total_power_consumption, total_water_supply
-
-
-def energy_storage_equipment_heat_header_system(heat_load_a, eseh1, eseh2, eseh3, gc):
-    """蓄能水罐，母管制系统"""
+    # 蓄能水罐，母管制系统
     # 传入的heat_load_a，是一个初试的热负荷需求量，用于判断目前是蓄热状态还是供热状态，如果水罐可以满足heat_load_a的需求，则采用heat_load_a去计算，否则进行修正
     # 判断水罐对应的水泵是变频还是定频，以此采用不同的计算策略
     # 目前的程序仅支持1组多个水泵全部是定频或者全部是变频的情况
