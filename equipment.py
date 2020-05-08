@@ -1190,7 +1190,6 @@ class Water_Pump():
         # 清空已有的tf模型
         tf.keras.backend.clear_session()
         # 从训练好的神经网络中计算水泵的的耗电功率
-        # 简化模型，仿真系统所有的水泵模型都用同一个，放大缩小，默认均使用600t/h的模型
 
         if self.water_flow_rated == 710:
             """710t/h水泵"""
