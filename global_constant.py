@@ -8,8 +8,6 @@ class Global_Constant():
         self.heat_load_max = 8700
         # 允许的最大生活热水负荷
         self.hot_water_load_max = 4500
-        # 系统布置方式是否为母管制
-        self.header_system = True
         # 烟气热水型溴化锂设备在制冷季是否供生活热水
         self.lb_hot_water_switch_cooling_season = False
         # 烟气热水型溴化锂设备在采暖季是否供生活热水
