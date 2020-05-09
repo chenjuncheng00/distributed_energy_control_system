@@ -47,6 +47,9 @@ def energy_storage_equipment_cold_function(cold_load_a, esec1, esec2, esec3, gc)
     esec1_cold_stock = energy_storage_equipment_cold_storage_residual_read()[0]
     esec2_cold_stock = energy_storage_equipment_cold_storage_residual_read()[1]
     esec3_cold_stock = energy_storage_equipment_cold_storage_residual_read()[2]
+    esec_cold_stock_sum = esec1_cold_stock + esec2_cold_stock + esec3_cold_stock
+    # 3个水罐的额定蓄冷量总和
+    esec_cooling_storage_rated_sum = esec1.cooling_storage_rated + esec2.cooling_storage_rated + esec3.cooling_storage_rated
 
     if cold_load_a > 0:
         # 如果此时是供冷工况（冷负荷功率值大于0），但是水罐内的可以供冷总量等于0，则水罐关闭（实际上是水泵关闭），得到的负荷率结果用来判断这个水泵是否可以开启的标签
@@ -188,8 +191,11 @@ def energy_storage_equipment_cold_function(cold_load_a, esec1, esec2, esec3, gc)
                 else:
                     esec3_cold_out_now = 0
                 esec_cold_out_now_sum = - (esec1_cold_out_now + esec2_cold_out_now + esec3_cold_out_now)
-
-            if abs(esec_cold_out_now_sum) < abs(cold_load) - gc.project_load_error or abs(esec_cold_out_now_sum) >= esec1_cold_stock + esec2_cold_stock + esec3_cold_stock - gc.project_load_error:
+            # print(esec_cold_out_now_sum, abs(cold_load) - gc.project_load_error, esec1_cold_stock + esec2_cold_stock + esec3_cold_stock - gc.project_load_error)
+            # 根据目前是供冷状态还是蓄冷状态分别判断
+            # cold_load_a>0是供冷状态 , cold_load_a<0是蓄冷状态
+            if (cold_load_a > 0 and abs(esec_cold_out_now_sum) < abs(cold_load) - gc.project_load_error and abs(esec_cold_out_now_sum) < esec_cold_stock_sum - gc.project_load_error) \
+                or (cold_load_a < 0 and abs(esec_cold_out_now_sum) < abs(cold_load) - gc.project_load_error and abs(esec_cold_out_now_sum) < esec_cooling_storage_rated_sum - esec_cold_stock_sum - gc.project_load_error):
                 # 负荷都取绝对值
                 # 增加公用负荷率
                 esec_load_ratio += esec_step / 100
@@ -413,9 +419,9 @@ def test_energy_storage_equipment_cold_function():
     """测试蓄能水罐计算"""
     gc = Global_Constant()
     # 实例化1组3个蓄冷水罐的循环水泵（水泵3用1备）
-    esec1_wp_chilled_water = Water_Pump(50, False, gc)
-    esec2_wp_chilled_water = Water_Pump(50, False, gc)
-    esec3_wp_chilled_water = Water_Pump(50, False, gc)
+    esec1_wp_chilled_water = Water_Pump(50, False, 35, gc)
+    esec2_wp_chilled_water = Water_Pump(50, False, 35, gc)
+    esec3_wp_chilled_water = Water_Pump(50, False, 35, gc)
     # 实例化3个蓄冷水罐（实际上只有1个水罐，但是有3个水泵，将水泵假想3等分，作为3个水罐，与水泵一一对应去计算）
     esec1 = Energy_Storage_Equipment_Cold(1000, 0.1, 8000, esec1_wp_chilled_water, gc)
     esec2 = Energy_Storage_Equipment_Cold(1000, 0.1, 8000, esec2_wp_chilled_water, gc)

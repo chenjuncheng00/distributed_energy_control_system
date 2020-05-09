@@ -250,14 +250,14 @@ def test_centrifugal_chiller_function():
     # 实例化4个离心式冷水机的各种水泵
     gc = Global_Constant()
     cc_wp = False
-    cc1_wp_chilled_water = Water_Pump(600, cc_wp, gc)
-    cc2_wp_chilled_water = Water_Pump(600, cc_wp, gc)
-    cc3_wp_chilled_water = Water_Pump(600, cc_wp, gc)
-    cc4_wp_chilled_water = Water_Pump(600, cc_wp, gc)
-    cc1_wp_cooling_water = Water_Pump(710, cc_wp, gc)
-    cc2_wp_cooling_water = Water_Pump(710, cc_wp, gc)
-    cc3_wp_cooling_water = Water_Pump(710, cc_wp, gc)
-    cc4_wp_cooling_water = Water_Pump(710, cc_wp, gc)
+    cc1_wp_chilled_water = Water_Pump(600, cc_wp, 38, gc)
+    cc2_wp_chilled_water = Water_Pump(600, cc_wp, 38, gc)
+    cc3_wp_chilled_water = Water_Pump(600, cc_wp, 38, gc)
+    cc4_wp_chilled_water = Water_Pump(600, cc_wp, 38, gc)
+    cc1_wp_cooling_water = Water_Pump(710, cc_wp, 32, gc)
+    cc2_wp_cooling_water = Water_Pump(710, cc_wp, 32, gc)
+    cc3_wp_cooling_water = Water_Pump(710, cc_wp, 32, gc)
+    cc4_wp_cooling_water = Water_Pump(710, cc_wp, 32, gc)
     # 实例化4个离心式冷水机类
     cc1 = Centrifugal_Chiller(3164, 0.2, False, cc1_wp_chilled_water, cc1_wp_cooling_water, gc)
     cc2 = Centrifugal_Chiller(3164, 0.2, False, cc2_wp_chilled_water, cc2_wp_cooling_water, gc)

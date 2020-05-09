@@ -12,10 +12,10 @@ def transition_season_function(hot_water_load, electricity_load, gc):
     ice1 = Internal_Combustion_Engine(792, gc, 0.5)
     ice2 = Internal_Combustion_Engine(792, gc, 0.5)
     # 实例化2台溴化锂设备用到的各种水泵，2个生活热水水泵
-    lb1_wp_hot_water = Water_Pump(44, False, gc)
-    lb2_wp_hot_water = Water_Pump(44, False, gc)
+    lb1_wp_hot_water = Water_Pump(44, False, 34, gc)
+    lb2_wp_hot_water = Water_Pump(44, False, 34, gc)
     # 实例化天然气生活热水锅炉用到的水泵
-    ngb_wp_hot_water = Water_Pump(44, False, gc)
+    ngb_wp_hot_water = Water_Pump(44, False, 34, gc)
 
     # 实例化生活热水锅炉
     ngb_hot_water = Natural_Gas_Boiler_hot_water(2800, 0.2, ngb_wp_hot_water, gc)

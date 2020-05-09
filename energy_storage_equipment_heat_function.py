@@ -47,6 +47,9 @@ def energy_storage_equipment_heat_function(heat_load_a, eseh1, eseh2, eseh3, gc)
     eseh1_heat_stock = energy_storage_equipment_heat_storage_residual_read()[0]
     eseh2_heat_stock = energy_storage_equipment_heat_storage_residual_read()[1]
     eseh3_heat_stock = energy_storage_equipment_heat_storage_residual_read()[2]
+    eseh_heat_stock_sum = eseh1_heat_stock + eseh2_heat_stock + eseh3_heat_stock
+    # 3个水罐的额定蓄热量总和
+    eseh_heating_storage_rated_sum = eseh1.heating_storage_rated + eseh2.heating_storage_rated + eseh3.heating_storage_rated
 
     if heat_load_a > 0:
         # 如果此时是供热工况（热负荷功率值大于0），但是水罐内的可以供热总量等于0，则水罐关闭（实际上是水泵关闭），得到的负荷率结果用来判断这个水泵是否可以开启的标签
@@ -139,6 +142,7 @@ def energy_storage_equipment_heat_function(heat_load_a, eseh1, eseh2, eseh3, gc)
         heat_load = 0
     else:
         heat_load = max(heat_load_a, heat_load_b)
+
     # 水泵启动数量初始值
     eseh_num = 1
     while eseh_num <= eseh_num_max:
@@ -188,8 +192,11 @@ def energy_storage_equipment_heat_function(heat_load_a, eseh1, eseh2, eseh3, gc)
                 else:
                     eseh3_heat_out_now = 0
                 eseh_heat_out_now_sum = - (eseh1_heat_out_now + eseh2_heat_out_now + eseh3_heat_out_now)
-
-            if abs(eseh_heat_out_now_sum) < abs(heat_load) - gc.project_load_error or abs(eseh_heat_out_now_sum) >= eseh1_heat_stock + eseh2_heat_stock + eseh3_heat_stock - gc.project_load_error:
+            # print(eseh_heat_out_now_sum, heat_load - gc.project_load_error, eseh1_heat_stock + eseh2_heat_stock + eseh3_heat_stock - gc.project_load_error)
+            # 根据目前是供热状态还是蓄热状态分别判断
+            # heat_load_a>0是供热状态 , heat_load_a<0是蓄热状态
+            if (heat_load_a > 0 and abs(eseh_heat_out_now_sum) < abs(heat_load) - gc.project_load_error and abs(eseh_heat_out_now_sum) < eseh_heat_stock_sum - gc.project_load_error) \
+               or (heat_load_a < 0 and abs(eseh_heat_out_now_sum) < abs(heat_load) - gc.project_load_error and abs(eseh_heat_out_now_sum) < eseh_heating_storage_rated_sum - eseh_heat_stock_sum - gc.project_load_error):
                 # 负荷都取绝对值
                 # 增加公用负荷率
                 eseh_load_ratio += eseh_step / 100
@@ -413,9 +420,9 @@ def test_energy_storage_equipment_heat_function():
     """测试蓄能水罐计算"""
     gc = Global_Constant()
     # 实例化1组3个蓄热水罐的循环水泵（水泵3用1备）
-    eseh1_wp_heating_water = Water_Pump(50, False, gc)
-    eseh2_wp_heating_water = Water_Pump(50, False, gc)
-    eseh3_wp_heating_water = Water_Pump(50, False, gc)
+    eseh1_wp_heating_water = Water_Pump(50, False, 35, gc)
+    eseh2_wp_heating_water = Water_Pump(50, False, 35, gc)
+    eseh3_wp_heating_water = Water_Pump(50, False, 35, gc)
     # 实例化3个蓄热水罐（实际上只有1个水罐，但是有3个水泵，将水泵假想3等分，作为3个水罐，与水泵一一对应去计算）
     eseh1 = Energy_Storage_Equipment_Heat(1000, 0.1, 8000, eseh1_wp_heating_water, gc)
     eseh2 = Energy_Storage_Equipment_Heat(1000, 0.1, 8000, eseh2_wp_heating_water, gc)
