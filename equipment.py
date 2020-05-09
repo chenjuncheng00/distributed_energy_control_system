@@ -440,7 +440,7 @@ class Air_Source_Heat_Pump_Cold():
         #返回结果
         return ans
 
-    def air_source_heat_pump_cold_cop(self, load_ratio, chilled_water_temperature):
+    def air_source_heat_pump_cold_cop(self, load_ratio, chilled_water_temperature, environment_temperature):
         cop = 3.32
         # 返回结果
         return cop
