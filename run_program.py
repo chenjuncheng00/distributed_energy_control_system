@@ -1,7 +1,6 @@
 # 如要正常使用本程序，需要导入以下几个第三方程序库
 # numpy,tensorflow
 
-import datetime
 from cooling_season_calculate import cooling_season_function as csf, print_cooling_season as pcs
 from heating_season_calculate import heating_season_function as hsf, print_heating_season as phs
 from transition_season_calculate import transition_season_function as tsf, print_transition_season as pts

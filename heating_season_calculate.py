@@ -14,28 +14,28 @@ def heating_season_function(heat_load, hot_water_load, electricity_load, gc):
     ice1 = Internal_Combustion_Engine(792, gc, 0.5)
     ice2 = Internal_Combustion_Engine(792, gc, 0.5)
     # 实例化2个天然气采暖锅炉水泵
-    ngbh1_wp_heating_water = Water_Pump(330, False, gc)
-    ngbh2_wp_heating_water = Water_Pump(330, False, gc)
+    ngbh1_wp_heating_water = Water_Pump(330, False, 32, gc)
+    ngbh2_wp_heating_water = Water_Pump(330, False, 32, gc)
     # 实例化2个天然气采暖锅炉对象
     ngbh1 = Natural_Gas_Boiler_heat(3500, 0.2, ngbh1_wp_heating_water, gc)
     ngbh2 = Natural_Gas_Boiler_heat(3500, 0.2, ngbh2_wp_heating_water, gc)
     # 实例化2台溴化锂设备用到的各种水泵，2个采暖水泵
-    lb1_wp_heating_water = Water_Pump(170, False, gc)
-    lb2_wp_heating_water = Water_Pump(170, False, gc)
+    lb1_wp_heating_water = Water_Pump(170, False, 38, gc)
+    lb2_wp_heating_water = Water_Pump(170, False, 38, gc)
     # 实例化1组3个蓄热水罐的循环水泵（水泵3用1备）
-    eseh1_wp_heating_water = Water_Pump(50, False, gc)
-    eseh2_wp_heating_water = Water_Pump(50, False, gc)
-    eseh3_wp_heating_water = Water_Pump(50, False, gc)
+    eseh1_wp_heating_water = Water_Pump(50, False, 35, gc)
+    eseh2_wp_heating_water = Water_Pump(50, False, 35, gc)
+    eseh3_wp_heating_water = Water_Pump(50, False, 35, gc)
     # 实例化3个蓄热水罐（实际上只有1个水罐，但是有3个水泵，将水泵假想3等分，作为3个水罐，与水泵一一对应去计算）
     eseh1 = Energy_Storage_Equipment_Heat(700, 0.1, 5600, eseh1_wp_heating_water, gc)
     eseh2 = Energy_Storage_Equipment_Heat(700, 0.1, 5600, eseh2_wp_heating_water, gc)
     eseh3 = Energy_Storage_Equipment_Heat(700, 0.1, 5600, eseh3_wp_heating_water, gc)
 
     # 实例化2台溴化锂设备用到的各种水泵，2个生活热水水泵
-    lb1_wp_hot_water = Water_Pump(44, False, gc)
-    lb2_wp_hot_water = Water_Pump(44, False, gc)
+    lb1_wp_hot_water = Water_Pump(44, False, 34, gc)
+    lb2_wp_hot_water = Water_Pump(44, False, 34, gc)
     # 实例化天然气生活热水锅炉用到的水泵
-    ngb_wp_hot_water = Water_Pump(44, False, gc)
+    ngb_wp_hot_water = Water_Pump(44, False, 34, gc)
 
     # 实例化生活热水锅炉
     ngb_hot_water = Natural_Gas_Boiler_hot_water(2800, 0.2, ngb_wp_hot_water, gc)
