@@ -203,8 +203,8 @@ def cooling_season_function(cold_load, hot_water_load, electricity_load, gc):
         else:
             cold_load_esec = 0
 
-    # 蓄冷装置负荷为0时不进行蓄冷装置计算
-    if cold_load_esec == 0:
+    # 蓄冷装置负荷为0时，或处于蓄冷状态，但蓄冷设备已满，不进行蓄冷装置计算
+    if cold_load_esec == 0 or (cold_load_esec < 0 and abs(esec_cooling_storage_rated_sum - esec_cold_stock_sum) < gc.project_load_error):
         esec1_load_ratio = 0
         esec2_load_ratio = 0
         esec3_load_ratio = 0
@@ -522,39 +522,40 @@ def test_csc_header_system(cold_load, hot_water_load, gc):
     # 实例化两个内燃机对象
     ice1 = Internal_Combustion_Engine(792, gc, 0.5)
     ice2 = Internal_Combustion_Engine(792, gc, 0.5)
-    # 实例化4个离心式冷水机的各种水泵
+    # 实例化4个离心式冷水机的各种水泵（离心式热泵的制冷工况采用离心式冷水机的计算模型）
     cc_wp = False
-    cc1_wp_chilled_water = Water_Pump(600, cc_wp, gc)
-    cc2_wp_chilled_water = Water_Pump(600, cc_wp, gc)
-    cc3_wp_chilled_water = Water_Pump(600, cc_wp, gc)
-    cc4_wp_chilled_water = Water_Pump(600, cc_wp, gc)
-    cc1_wp_cooling_water = Water_Pump(710, cc_wp, gc)
-    cc2_wp_cooling_water = Water_Pump(710, cc_wp, gc)
-    cc3_wp_cooling_water = Water_Pump(710, cc_wp, gc)
-    cc4_wp_cooling_water = Water_Pump(710, cc_wp, gc)
-    # 实例化4个离心式冷水机类
+    cc1_wp_chilled_water = Water_Pump(600, cc_wp, 38, gc)
+    cc2_wp_chilled_water = Water_Pump(600, cc_wp, 38, gc)
+    cc3_wp_chilled_water = Water_Pump(600, cc_wp, 38, gc)
+    cc4_wp_chilled_water = Water_Pump(600, cc_wp, 38, gc)
+    cc1_wp_cooling_water = Water_Pump(710, cc_wp, 32, gc)
+    cc2_wp_cooling_water = Water_Pump(710, cc_wp, 32, gc)
+    cc3_wp_cooling_water = Water_Pump(710, cc_wp, 32, gc)
+    cc4_wp_cooling_water = Water_Pump(710, cc_wp, 32, gc)
+    # 实例化4个离心式冷水机类（离心式热泵的制冷工况采用离心式冷水机的计算模型）
     cc1 = Centrifugal_Chiller(3164, 0.2, False, cc1_wp_chilled_water, cc1_wp_cooling_water, gc)
     cc2 = Centrifugal_Chiller(3164, 0.2, False, cc2_wp_chilled_water, cc2_wp_cooling_water, gc)
     cc3 = Centrifugal_Chiller(3164, 0.2, False, cc3_wp_chilled_water, cc3_wp_cooling_water, gc)
     cc4 = Centrifugal_Chiller(3164, 0.2, False, cc4_wp_chilled_water, cc4_wp_cooling_water, gc)
     # 实例化2台溴化锂设备用到的各种水泵，2个冷却水泵，2个冷冻水泵，2个生活热水水泵
-    lb1_wp_cooling_water = Water_Pump(335, False, gc)
-    lb2_wp_cooling_water = Water_Pump(335, False, gc)
-    lb1_wp_chilled_water = Water_Pump(170, False, gc)
-    lb2_wp_chilled_water = Water_Pump(170, False, gc)
-    # 如果是母管制系统
-    lb1_wp_hot_water = Water_Pump(44, False, gc)
-    lb2_wp_hot_water = Water_Pump(44, False, gc)
-    # 实例化天然气生活热水锅炉用到的水泵
-    ngb_wp_hot_water = Water_Pump(44, False, gc)
+    lb1_wp_cooling_water = Water_Pump(335, False, 32, gc)
+    lb2_wp_cooling_water = Water_Pump(335, False, 32, gc)
+    lb1_wp_chilled_water = Water_Pump(170, False, 38, gc)
+    lb2_wp_chilled_water = Water_Pump(170, False, 38, gc)
     # 实例化1组3个蓄冷水罐的循环水泵（水泵3用1备）
-    esec1_wp_chilled_water = Water_Pump(50, False, gc)
-    esec2_wp_chilled_water = Water_Pump(50, False, gc)
-    esec3_wp_chilled_water = Water_Pump(50, False, gc)
+    esec1_wp_chilled_water = Water_Pump(50, False, 35, gc)
+    esec2_wp_chilled_water = Water_Pump(50, False, 35, gc)
+    esec3_wp_chilled_water = Water_Pump(50, False, 35, gc)
     # 实例化3个蓄冷水罐（实际上只有1个水罐，但是有3个水泵，将水泵假想3等分，作为3个水罐，与水泵一一对应去计算）
     esec1 = Energy_Storage_Equipment_Cold(1000, 0.1, 8000, esec1_wp_chilled_water, gc)
     esec2 = Energy_Storage_Equipment_Cold(1000, 0.1, 8000, esec2_wp_chilled_water, gc)
     esec3 = Energy_Storage_Equipment_Cold(1000, 0.1, 8000, esec3_wp_chilled_water, gc)
+
+    # 实例化水泵
+    lb1_wp_hot_water = Water_Pump(44, False, 35, gc)
+    lb2_wp_hot_water = Water_Pump(44, False, 35, gc)
+    # 实例化天然气生活热水锅炉用到的水泵
+    ngb_wp_hot_water = Water_Pump(44, False, 35, gc)
 
     # 实例化生活热水锅炉
     ngb_hot_water = Natural_Gas_Boiler_hot_water(2800, 0.2, ngb_wp_hot_water, gc)

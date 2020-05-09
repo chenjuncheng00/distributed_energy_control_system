@@ -362,7 +362,7 @@ def test_triple_supply_in_out_transition():
     gc = Global_Constant()
     # 实例化对象
     ice = Internal_Combustion_Engine(792, gc, 0.5)
-    wp_hot_water = Water_Pump(44, False, gc)
+    wp_hot_water = Water_Pump(44, False, 35, gc)
     ans = triple_supply_in_out_transition(load_ratio_ice, hot_water_load, ice, gc, wp_hot_water)
     print(ans)
 

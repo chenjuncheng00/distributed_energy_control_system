@@ -190,8 +190,8 @@ def heating_season_function(heat_load, hot_water_load, electricity_load, gc):
         else:
             heat_load_eseh = 0
 
-    # 蓄热装置负荷为0时不进行蓄热装置计算
-    if heat_load_eseh == 0:
+    # 蓄热装置负荷为0，或处于蓄热状态，但蓄热设备已满，时不进行蓄热装置计算
+    if heat_load_eseh == 0 or (heat_load_eseh < 0 and abs(eseh_heating_storage_rated_sum - eseh_heat_stock_sum) < gc.project_load_error):
         eseh1_load_ratio = 0
         eseh2_load_ratio = 0
         eseh3_load_ratio = 0

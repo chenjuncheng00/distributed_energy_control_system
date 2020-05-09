@@ -54,6 +54,8 @@ class Global_Constant():
         self.buy_electricity_price = 0.6707
         # 项目负荷误差容错系数
         self.project_load_error = 50
+        # 蓄冷蓄热负荷误差容错系数
+        self.ese_load_error = 5
         # 设备负荷率误差容错系数
         self.load_ratio_error_coefficient = 0.005
         # 溴化锂设备供应冷热的一些常量

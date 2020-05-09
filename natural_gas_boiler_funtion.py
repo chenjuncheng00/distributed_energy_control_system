@@ -178,8 +178,8 @@ def test_ngbf():
     # 实例化一个全局常量类
     gc = Global_Constant()
     # 实例化2个天然气采暖锅炉水泵
-    ngbh1_wp_heating_water = Water_Pump(330, False, gc)
-    ngbh2_wp_heating_water = Water_Pump(330, False, gc)
+    ngbh1_wp_heating_water = Water_Pump(330, False, 32, gc)
+    ngbh2_wp_heating_water = Water_Pump(330, False, 32, gc)
     # 实例化2个天然气采暖锅炉对象
     ngbh1 = Natural_Gas_Boiler_heat(3500, 0.2, ngbh1_wp_heating_water, gc)
     ngbh2 = Natural_Gas_Boiler_heat(3500, 0.2, ngbh2_wp_heating_water, gc)
