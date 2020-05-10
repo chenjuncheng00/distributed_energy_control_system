@@ -86,7 +86,7 @@ def centrifugal_heat_pump_function_heat(heat_load, chp1, chp2, chp3, chp4, gc):
             chp3_heat_out_now = chp3_load_ratio * chp3.heating_power_rated
             chp4_heat_out_now = chp4_load_ratio * chp4.heating_power_rated
             chp_heat_out_now_sum = chp1_heat_out_now + chp2_heat_out_now + chp3_heat_out_now + chp4_heat_out_now
-            print(chp_num, chp1_heat_out_now, chp2_heat_out_now, chp3_heat_out_now, chp4_heat_out_now)
+            # print(chp_num, chp1_heat_out_now, chp2_heat_out_now, chp3_heat_out_now, chp4_heat_out_now)
             if chp_heat_out_now_sum < heat_load:
                 # 增加设备1、2、3、4负荷率
                 if chp_num >= 1:

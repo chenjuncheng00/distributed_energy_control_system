@@ -678,6 +678,753 @@ def read_from_database_cc_utility():
     return cc_chilled_water_supply_temperature, cc_chilled_water_supply_flow, cc_chilled_water_return_temperature, cc_cooling_water_supply_temperature, cc_cooling_water_supply_flow, cc_cooling_water_return_temperature, cc_chilled_water_energy
 
 
+def read_from_database_chp1():
+    """利用SyncBASE，从数据库中读取数据"""
+    # 读取离心式热泵1的数据
+    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
+    syncbase.open()
+
+    # 1#离心式热泵
+    # 运行状态（新增逻辑点）
+    state1, record1 = syncbase.get_reatime_data_by_name('chp1_state')
+    if state1:
+        chp1_state = record1.value
+    else:
+        chp1_state = False
+    # 故障信号（新增逻辑点）
+    state2, record2 = syncbase.get_reatime_data_by_name('chp1_fault')
+    if state2:
+        chp1_fault = record2.value
+    else:
+        chp1_fault = True
+    # 采暖水供水温度
+    state3, record3 = syncbase.get_reatime_data_by_name('chp1_heat_water_supply_temperature')
+    if state3:
+        chp1_heat_water_supply_temperature = record3.value
+    else:
+        chp1_heat_water_supply_temperature = 0
+    # 采暖水供水流量（新增测点）
+    state4, record4 = syncbase.get_reatime_data_by_name('chp1_heat_water_supply_flow')
+    if state4:
+        chp1_heat_water_supply_flow = record4.value
+    else:
+        chp1_heat_water_supply_flow = 0
+    # 采暖水回水温度
+    state5, record5 = syncbase.get_reatime_data_by_name('chp1_heat_water_return_temperature')
+    if state5:
+        chp1_heat_water_return_temperature = record5.value
+    else:
+        chp1_heat_water_return_temperature = 0
+    # 低温热源水供水温度
+    state6, record6 = syncbase.get_reatime_data_by_name('chp1_source_water_supply_temperature')
+    if state6:
+        chp1_source_water_supply_temperature = record6.value
+    else:
+        chp1_source_water_supply_temperature = 0
+    # 低温热源水供水流量（新增测点）
+    state7, record7 = syncbase.get_reatime_data_by_name('chp1_source_water_supply_flow')
+    if state7:
+        chp1_source_water_supply_flow = record7.value
+    else:
+        chp1_source_water_supply_flow = 0
+    # 低温热源水回水温度
+    state8, record8 = syncbase.get_reatime_data_by_name('chp1_source_water_return_temperature')
+    if state8:
+        chp1_source_water_return_temperature = record8.value
+    else:
+        chp1_source_water_return_temperature = 0
+
+    # 关闭syncbase
+    syncbase.close()
+    del syncbase
+
+    return chp1_state, chp1_fault, chp1_heat_water_supply_temperature,chp1_heat_water_supply_flow, chp1_heat_water_return_temperature, chp1_source_water_supply_temperature,chp1_source_water_supply_flow, chp1_source_water_return_temperature
+
+
+def read_from_database_chp2():
+    """利用SyncBASE，从数据库中读取数据"""
+    # 读取离心式热泵2的数据
+    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
+    syncbase.open()
+
+    # 2#离心式热泵
+    # 运行状态（新增逻辑点）
+    state1, record1 = syncbase.get_reatime_data_by_name('chp2_state')
+    if state1:
+        chp2_state = record1.value
+    else:
+        chp2_state = False
+    # 故障信号（新增逻辑点）
+    state2, record2 = syncbase.get_reatime_data_by_name('chp2_fault')
+    if state2:
+        chp2_fault = record2.value
+    else:
+        chp2_fault = True
+    # 采暖水供水温度
+    state3, record3 = syncbase.get_reatime_data_by_name('chp2_heat_water_supply_temperature')
+    if state3:
+        chp2_heat_water_supply_temperature = record3.value
+    else:
+        chp2_heat_water_supply_temperature = 0
+    # 采暖水供水流量（新增测点）
+    state4, record4 = syncbase.get_reatime_data_by_name('chp2_heat_water_supply_flow')
+    if state4:
+        chp2_heat_water_supply_flow = record4.value
+    else:
+        chp2_heat_water_supply_flow = 0
+    # 采暖水回水温度
+    state5, record5 = syncbase.get_reatime_data_by_name('chp2_heat_water_return_temperature')
+    if state5:
+        chp2_heat_water_return_temperature = record5.value
+    else:
+        chp2_heat_water_return_temperature = 0
+    # 低温热源水供水温度
+    state6, record6 = syncbase.get_reatime_data_by_name('chp2_source_water_supply_temperature')
+    if state6:
+        chp2_source_water_supply_temperature = record6.value
+    else:
+        chp2_source_water_supply_temperature = 0
+    # 低温热源水供水流量（新增测点）
+    state7, record7 = syncbase.get_reatime_data_by_name('chp2_source_water_supply_flow')
+    if state7:
+        chp2_source_water_supply_flow = record7.value
+    else:
+        chp2_source_water_supply_flow = 0
+    # 低温热源水回水温度
+    state8, record8 = syncbase.get_reatime_data_by_name('chp2_source_water_return_temperature')
+    if state8:
+        chp2_source_water_return_temperature = record8.value
+    else:
+        chp2_source_water_return_temperature = 0
+
+    # 关闭syncbase
+    syncbase.close()
+    del syncbase
+
+    return chp2_state, chp2_fault, chp2_heat_water_supply_temperature,chp2_heat_water_supply_flow, chp2_heat_water_return_temperature, chp2_source_water_supply_temperature,chp2_source_water_supply_flow, chp2_source_water_return_temperature
+
+
+def read_from_database_chp3():
+    """利用SyncBASE，从数据库中读取数据"""
+    # 读取离心式热泵3的数据
+    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
+    syncbase.open()
+
+    # 3#离心式热泵
+    # 运行状态（新增逻辑点）
+    state1, record1 = syncbase.get_reatime_data_by_name('chp3_state')
+    if state1:
+        chp3_state = record1.value
+    else:
+        chp3_state = False
+    # 故障信号（新增逻辑点）
+    state2, record2 = syncbase.get_reatime_data_by_name('chp3_fault')
+    if state2:
+        chp3_fault = record2.value
+    else:
+        chp3_fault = True
+    # 采暖水供水温度
+    state3, record3 = syncbase.get_reatime_data_by_name('chp3_heat_water_supply_temperature')
+    if state3:
+        chp3_heat_water_supply_temperature = record3.value
+    else:
+        chp3_heat_water_supply_temperature = 0
+    # 采暖水供水流量（新增测点）
+    state4, record4 = syncbase.get_reatime_data_by_name('chp3_heat_water_supply_flow')
+    if state4:
+        chp3_heat_water_supply_flow = record4.value
+    else:
+        chp3_heat_water_supply_flow = 0
+    # 采暖水回水温度
+    state5, record5 = syncbase.get_reatime_data_by_name('chp3_heat_water_return_temperature')
+    if state5:
+        chp3_heat_water_return_temperature = record5.value
+    else:
+        chp3_heat_water_return_temperature = 0
+    # 低温热源水供水温度
+    state6, record6 = syncbase.get_reatime_data_by_name('chp3_source_water_supply_temperature')
+    if state6:
+        chp3_source_water_supply_temperature = record6.value
+    else:
+        chp3_source_water_supply_temperature = 0
+    # 低温热源水供水流量（新增测点）
+    state7, record7 = syncbase.get_reatime_data_by_name('chp3_source_water_supply_flow')
+    if state7:
+        chp3_source_water_supply_flow = record7.value
+    else:
+        chp3_source_water_supply_flow = 0
+    # 低温热源水回水温度
+    state8, record8 = syncbase.get_reatime_data_by_name('chp3_source_water_return_temperature')
+    if state8:
+        chp3_source_water_return_temperature = record8.value
+    else:
+        chp3_source_water_return_temperature = 0
+
+    # 关闭syncbase
+    syncbase.close()
+    del syncbase
+
+    return chp3_state, chp3_fault, chp3_heat_water_supply_temperature,chp3_heat_water_supply_flow, chp3_heat_water_return_temperature, chp3_source_water_supply_temperature,chp3_source_water_supply_flow, chp3_source_water_return_temperature
+
+
+def read_from_database_chp4():
+    """利用SyncBASE，从数据库中读取数据"""
+    # 读取离心式热泵4的数据
+    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
+    syncbase.open()
+
+    # 4#离心式热泵
+    # 运行状态（新增逻辑点）
+    state1, record1 = syncbase.get_reatime_data_by_name('chp4_state')
+    if state1:
+        chp4_state = record1.value
+    else:
+        chp4_state = False
+    # 故障信号（新增逻辑点）
+    state2, record2 = syncbase.get_reatime_data_by_name('chp4_fault')
+    if state2:
+        chp4_fault = record2.value
+    else:
+        chp4_fault = True
+    # 采暖水供水温度
+    state3, record3 = syncbase.get_reatime_data_by_name('chp4_heat_water_supply_temperature')
+    if state3:
+        chp4_heat_water_supply_temperature = record3.value
+    else:
+        chp4_heat_water_supply_temperature = 0
+    # 采暖水供水流量（新增测点）
+    state4, record4 = syncbase.get_reatime_data_by_name('chp4_heat_water_supply_flow')
+    if state4:
+        chp4_heat_water_supply_flow = record4.value
+    else:
+        chp4_heat_water_supply_flow = 0
+    # 采暖水回水温度
+    state5, record5 = syncbase.get_reatime_data_by_name('chp4_heat_water_return_temperature')
+    if state5:
+        chp4_heat_water_return_temperature = record5.value
+    else:
+        chp4_heat_water_return_temperature = 0
+    # 低温热源水供水温度
+    state6, record6 = syncbase.get_reatime_data_by_name('chp4_source_water_supply_temperature')
+    if state6:
+        chp4_source_water_supply_temperature = record6.value
+    else:
+        chp4_source_water_supply_temperature = 0
+    # 低温热源水供水流量（新增测点）
+    state7, record7 = syncbase.get_reatime_data_by_name('chp4_source_water_supply_flow')
+    if state7:
+        chp4_source_water_supply_flow = record7.value
+    else:
+        chp4_source_water_supply_flow = 0
+    # 低温热源水回水温度
+    state8, record8 = syncbase.get_reatime_data_by_name('chp4_source_water_return_temperature')
+    if state8:
+        chp4_source_water_return_temperature = record8.value
+    else:
+        chp4_source_water_return_temperature = 0
+
+    # 关闭syncbase
+    syncbase.close()
+    del syncbase
+
+    return chp4_state, chp4_fault, chp4_heat_water_supply_temperature,chp4_heat_water_supply_flow, chp4_heat_water_return_temperature, chp4_source_water_supply_temperature,chp4_source_water_supply_flow, chp4_source_water_return_temperature
+
+
+def read_from_database_chp_utility():
+    """利用SyncBASE，从数据库中读取数据"""
+    # 读取离心式热泵公用部分的数据
+    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
+    syncbase.open()
+
+    # 离心式热泵公用
+    # 离心式热泵采暖水供水母管温度
+    state1, record1 = syncbase.get_reatime_data_by_name('chp_heat_water_supply_temperature')
+    if state1:
+        chp_heat_water_supply_temperature = record1.value
+    else:
+        chp_heat_water_supply_temperature = 0
+    # 离心式热泵采暖水供水母管流量(新增测点)
+    state2, record2 = syncbase.get_reatime_data_by_name('chp_heat_water_supply_flow')
+    if state2:
+        chp_heat_water_supply_flow = record2.value
+    else:
+        chp_heat_water_supply_flow = 0
+    # 离心式热泵采暖水回水母管温度
+    state3, record3 = syncbase.get_reatime_data_by_name('chp_heat_water_return_temperature')
+    if state3:
+        chp_heat_water_return_temperature = record3.value
+    else:
+        chp_heat_water_return_temperature = 0
+    # 离心式热泵热源水供水母管温度(新增测点)
+    state4, record4 = syncbase.get_reatime_data_by_name('chp_source_water_supply_temperature')
+    if state4:
+        chp_source_water_supply_temperature = record4.value
+    else:
+        chp_source_water_supply_temperature = 0
+    # 离心式热泵热源水供水母管流量(新增测点)
+    state5, record5 = syncbase.get_reatime_data_by_name('chp_source_water_supply_flow')
+    if state5:
+        chp_source_water_supply_flow = record5.value
+    else:
+        chp_source_water_supply_flow = 0
+    # 离心式热泵热源水回水母管温度(新增测点)
+    state6, record6 = syncbase.get_reatime_data_by_name('chp_source_water_return_temperature')
+    if state6:
+        chp_source_water_return_temperature = record6.value
+    else:
+        chp_source_water_return_temperature = 0
+    # 离心式热泵空调热水能量
+    state7, record7 = syncbase.get_reatime_data_by_name('chp_heat_water_energy')
+    if state7:
+        chp_heat_water_energy = record7.value
+    else:
+        chp_heat_water_energy = 0
+
+    # 关闭syncbase
+    syncbase.close()
+    del syncbase
+
+    return chp_heat_water_supply_temperature, chp_heat_water_supply_flow, chp_heat_water_return_temperature, chp_source_water_supply_temperature, chp_source_water_supply_flow, chp_source_water_return_temperature, chp_heat_water_energy
+
+
+def read_from_database_ashp1():
+    """利用SyncBASE，从数据库中读取数据"""
+    # 读取空气源热泵1的数据
+    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
+    syncbase.open()
+
+    # 1#空气源热泵
+    # 运行状态（新增逻辑点）
+    state1, record1 = syncbase.get_reatime_data_by_name('ashp1_state')
+    if state1:
+        ashp1_state = record1.value
+    else:
+        ashp1_state = False
+    # 故障信号（新增逻辑点）
+    state2, record2 = syncbase.get_reatime_data_by_name('ashp1_fault')
+    if state2:
+        ashp1_fault = record2.value
+    else:
+        ashp1_fault = True
+    # 冷热水供水温度
+    state3, record3 = syncbase.get_reatime_data_by_name('ashp1_water_supply_temperature')
+    if state3:
+        ashp1_water_supply_temperature = record3.value
+    else:
+        ashp1_water_supply_temperature = 0
+    # 冷热水供水流量（新增测点）
+    state4, record4 = syncbase.get_reatime_data_by_name('ashp1_water_supply_flow')
+    if state4:
+        ashp1_water_supply_flow = record4.value
+    else:
+        ashp1_water_supply_flow = 0
+    # 冷热水回水温度
+    state5, record5 = syncbase.get_reatime_data_by_name('ashp1_water_return_temperature')
+    if state5:
+        ashp1_water_return_temperature = record5.value
+    else:
+        ashp1_water_return_temperature = 0
+
+    # 关闭syncbase
+    syncbase.close()
+    del syncbase
+
+    return ashp1_state, ashp1_fault, ashp1_water_supply_temperature, ashp1_water_supply_flow, ashp1_water_return_temperature
+
+
+def read_from_database_ashp2():
+    """利用SyncBASE，从数据库中读取数据"""
+    # 读取空气源热泵2的数据
+    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
+    syncbase.open()
+
+    # 2#空气源热泵
+    # 运行状态（新增逻辑点）
+    state1, record1 = syncbase.get_reatime_data_by_name('ashp2_state')
+    if state1:
+        ashp2_state = record1.value
+    else:
+        ashp2_state = False
+    # 故障信号（新增逻辑点）
+    state2, record2 = syncbase.get_reatime_data_by_name('ashp2_fault')
+    if state2:
+        ashp2_fault = record2.value
+    else:
+        ashp2_fault = True
+    # 冷热水供水温度
+    state3, record3 = syncbase.get_reatime_data_by_name('ashp2_water_supply_temperature')
+    if state3:
+        ashp2_water_supply_temperature = record3.value
+    else:
+        ashp2_water_supply_temperature = 0
+    # 冷热水供水流量（新增测点）
+    state4, record4 = syncbase.get_reatime_data_by_name('ashp2_water_supply_flow')
+    if state4:
+        ashp2_water_supply_flow = record4.value
+    else:
+        ashp2_water_supply_flow = 0
+    # 冷热水回水温度
+    state5, record5 = syncbase.get_reatime_data_by_name('ashp2_water_return_temperature')
+    if state5:
+        ashp2_water_return_temperature = record5.value
+    else:
+        ashp2_water_return_temperature = 0
+
+    # 关闭syncbase
+    syncbase.close()
+    del syncbase
+
+    return ashp2_state, ashp2_fault, ashp2_water_supply_temperature, ashp2_water_supply_flow, ashp2_water_return_temperature
+
+
+def read_from_database_ashp3():
+    """利用SyncBASE，从数据库中读取数据"""
+    # 读取空气源热泵3的数据
+    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
+    syncbase.open()
+
+    # 3#空气源热泵
+    # 运行状态（新增逻辑点）
+    state1, record1 = syncbase.get_reatime_data_by_name('ashp3_state')
+    if state1:
+        ashp3_state = record1.value
+    else:
+        ashp3_state = False
+    # 故障信号（新增逻辑点）
+    state2, record2 = syncbase.get_reatime_data_by_name('ashp3_fault')
+    if state2:
+        ashp3_fault = record2.value
+    else:
+        ashp3_fault = True
+    # 冷热水供水温度
+    state3, record3 = syncbase.get_reatime_data_by_name('ashp3_water_supply_temperature')
+    if state3:
+        ashp3_water_supply_temperature = record3.value
+    else:
+        ashp3_water_supply_temperature = 0
+    # 冷热水供水流量（新增测点）
+    state4, record4 = syncbase.get_reatime_data_by_name('ashp3_water_supply_flow')
+    if state4:
+        ashp3_water_supply_flow = record4.value
+    else:
+        ashp3_water_supply_flow = 0
+    # 冷热水回水温度
+    state5, record5 = syncbase.get_reatime_data_by_name('ashp3_water_return_temperature')
+    if state5:
+        ashp3_water_return_temperature = record5.value
+    else:
+        ashp3_water_return_temperature = 0
+
+    # 关闭syncbase
+    syncbase.close()
+    del syncbase
+
+    return ashp3_state, ashp3_fault, ashp3_water_supply_temperature, ashp3_water_supply_flow, ashp3_water_return_temperature
+
+
+def read_from_database_ashp4():
+    """利用SyncBASE，从数据库中读取数据"""
+    # 读取空气源热泵4的数据
+    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
+    syncbase.open()
+
+    # 4#空气源热泵
+    # 运行状态（新增逻辑点）
+    state1, record1 = syncbase.get_reatime_data_by_name('ashp4_state')
+    if state1:
+        ashp4_state = record1.value
+    else:
+        ashp4_state = False
+    # 故障信号（新增逻辑点）
+    state2, record2 = syncbase.get_reatime_data_by_name('ashp4_fault')
+    if state2:
+        ashp4_fault = record2.value
+    else:
+        ashp4_fault = True
+    # 冷热水供水温度
+    state3, record3 = syncbase.get_reatime_data_by_name('ashp4_water_supply_temperature')
+    if state3:
+        ashp4_water_supply_temperature = record3.value
+    else:
+        ashp4_water_supply_temperature = 0
+    # 冷热水供水流量（新增测点）
+    state4, record4 = syncbase.get_reatime_data_by_name('ashp4_water_supply_flow')
+    if state4:
+        ashp4_water_supply_flow = record4.value
+    else:
+        ashp4_water_supply_flow = 0
+    # 冷热水回水温度
+    state5, record5 = syncbase.get_reatime_data_by_name('ashp4_water_return_temperature')
+    if state5:
+        ashp4_water_return_temperature = record5.value
+    else:
+        ashp4_water_return_temperature = 0
+
+    # 关闭syncbase
+    syncbase.close()
+    del syncbase
+
+    return ashp4_state, ashp4_fault, ashp4_water_supply_temperature, ashp4_water_supply_flow, ashp4_water_return_temperature
+
+
+def read_from_database_ashp_utility():
+    """利用SyncBASE，从数据库中读取数据"""
+    # 读取空气源热泵公用部分的数据
+    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
+    syncbase.open()
+
+    # 空气源热泵公用
+    # 空气源热泵冷热水供水母管温度
+    state1, record1 = syncbase.get_reatime_data_by_name('ashp_water_supply_temperature')
+    if state1:
+        ashp_water_supply_temperature = record1.value
+    else:
+        ashp_water_supply_temperature = 0
+    # 空气源热泵冷热水供水母管流量(新增测点)
+    state2, record2 = syncbase.get_reatime_data_by_name('ashp_water_supply_flow')
+    if state2:
+        ashp_water_supply_flow = record2.value
+    else:
+        ashp_water_supply_flow = 0
+    # 空气源热泵冷热水回水母管温度
+    state3, record3 = syncbase.get_reatime_data_by_name('ashp_water_return_temperature')
+    if state3:
+        ashp_water_return_temperature = record3.value
+    else:
+        ashp_water_return_temperature = 0
+    # 空气源热泵空调冷热水能量
+    state7, record7 = syncbase.get_reatime_data_by_name('ashp_water_energy')
+    if state7:
+        ashp_water_energy = record7.value
+    else:
+        ashp_water_energy = 0
+
+    # 关闭syncbase
+    syncbase.close()
+    del syncbase
+
+    return ashp_water_supply_temperature, ashp_water_supply_flow, ashp_water_return_temperature, ashp_water_energy
+
+
+def read_from_database_ese1():
+    """利用SyncBASE，从数据库中读取数据"""
+    # 读取蓄冷蓄热装置1的数据
+    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
+    syncbase.open()
+
+    # 1#蓄冷蓄热装置
+    # 运行状态（新增逻辑点）
+    state1, record1 = syncbase.get_reatime_data_by_name('ese1_state')
+    if state1:
+        ese1_state = record1.value
+    else:
+        ese1_state = False
+    # 故障信号（新增逻辑点）
+    state2, record2 = syncbase.get_reatime_data_by_name('ese1_fault')
+    if state2:
+        ese1_fault = record2.value
+    else:
+        ese1_fault = True
+    # 冷热水供水温度
+    state3, record3 = syncbase.get_reatime_data_by_name('ese1_water_supply_temperature')
+    if state3:
+        ese1_water_supply_temperature = record3.value
+    else:
+        ese1_water_supply_temperature = 0
+    # 冷热水供水流量（新增测点）
+    state4, record4 = syncbase.get_reatime_data_by_name('ese1_water_supply_flow')
+    if state4:
+        ese1_water_supply_flow = record4.value
+    else:
+        ese1_water_supply_flow = 0
+    # 冷热水回水温度
+    state5, record5 = syncbase.get_reatime_data_by_name('ese1_water_return_temperature')
+    if state5:
+        ese1_water_return_temperature = record5.value
+    else:
+        ese1_water_return_temperature = 0
+
+    # 关闭syncbase
+    syncbase.close()
+    del syncbase
+
+    return ese1_state, ese1_fault, ese1_water_supply_temperature, ese1_water_supply_flow, ese1_water_return_temperature
+
+
+def read_from_database_ese2():
+    """利用SyncBASE，从数据库中读取数据"""
+    # 读取蓄冷蓄热装置2的数据
+    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
+    syncbase.open()
+
+    # 2#蓄冷蓄热装置
+    # 运行状态（新增逻辑点）
+    state1, record1 = syncbase.get_reatime_data_by_name('ese2_state')
+    if state1:
+        ese2_state = record1.value
+    else:
+        ese2_state = False
+    # 故障信号（新增逻辑点）
+    state2, record2 = syncbase.get_reatime_data_by_name('ese2_fault')
+    if state2:
+        ese2_fault = record2.value
+    else:
+        ese2_fault = True
+    # 冷热水供水温度
+    state3, record3 = syncbase.get_reatime_data_by_name('ese2_water_supply_temperature')
+    if state3:
+        ese2_water_supply_temperature = record3.value
+    else:
+        ese2_water_supply_temperature = 0
+    # 冷热水供水流量（新增测点）
+    state4, record4 = syncbase.get_reatime_data_by_name('ese2_water_supply_flow')
+    if state4:
+        ese2_water_supply_flow = record4.value
+    else:
+        ese2_water_supply_flow = 0
+    # 冷热水回水温度
+    state5, record5 = syncbase.get_reatime_data_by_name('ese2_water_return_temperature')
+    if state5:
+        ese2_water_return_temperature = record5.value
+    else:
+        ese2_water_return_temperature = 0
+
+    # 关闭syncbase
+    syncbase.close()
+    del syncbase
+
+    return ese2_state, ese2_fault, ese2_water_supply_temperature, ese2_water_supply_flow, ese2_water_return_temperature
+
+
+def read_from_database_ese3():
+    """利用SyncBASE，从数据库中读取数据"""
+    # 读取蓄冷蓄热装置3的数据
+    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
+    syncbase.open()
+
+    # 3#蓄冷蓄热装置
+    # 运行状态（新增逻辑点）
+    state1, record1 = syncbase.get_reatime_data_by_name('ese3_state')
+    if state1:
+        ese3_state = record1.value
+    else:
+        ese3_state = False
+    # 故障信号（新增逻辑点）
+    state2, record2 = syncbase.get_reatime_data_by_name('ese3_fault')
+    if state2:
+        ese3_fault = record2.value
+    else:
+        ese3_fault = True
+    # 冷热水供水温度
+    state3, record3 = syncbase.get_reatime_data_by_name('ese3_water_supply_temperature')
+    if state3:
+        ese3_water_supply_temperature = record3.value
+    else:
+        ese3_water_supply_temperature = 0
+    # 冷热水供水流量（新增测点）
+    state4, record4 = syncbase.get_reatime_data_by_name('ese3_water_supply_flow')
+    if state4:
+        ese3_water_supply_flow = record4.value
+    else:
+        ese3_water_supply_flow = 0
+    # 冷热水回水温度
+    state5, record5 = syncbase.get_reatime_data_by_name('ese3_water_return_temperature')
+    if state5:
+        ese3_water_return_temperature = record5.value
+    else:
+        ese3_water_return_temperature = 0
+
+    # 关闭syncbase
+    syncbase.close()
+    del syncbase
+
+    return ese3_state, ese3_fault, ese3_water_supply_temperature, ese3_water_supply_flow, ese3_water_return_temperature
+
+
+def read_from_database_ese4():
+    """利用SyncBASE，从数据库中读取数据"""
+    # 读取蓄冷蓄热装置4的数据
+    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
+    syncbase.open()
+
+    # 4#蓄冷蓄热装置
+    # 运行状态（新增逻辑点）
+    state1, record1 = syncbase.get_reatime_data_by_name('ese4_state')
+    if state1:
+        ese4_state = record1.value
+    else:
+        ese4_state = False
+    # 故障信号（新增逻辑点）
+    state2, record2 = syncbase.get_reatime_data_by_name('ese4_fault')
+    if state2:
+        ese4_fault = record2.value
+    else:
+        ese4_fault = True
+    # 冷热水供水温度
+    state3, record3 = syncbase.get_reatime_data_by_name('ese4_water_supply_temperature')
+    if state3:
+        ese4_water_supply_temperature = record3.value
+    else:
+        ese4_water_supply_temperature = 0
+    # 冷热水供水流量（新增测点）
+    state4, record4 = syncbase.get_reatime_data_by_name('ese4_water_supply_flow')
+    if state4:
+        ese4_water_supply_flow = record4.value
+    else:
+        ese4_water_supply_flow = 0
+    # 冷热水回水温度
+    state5, record5 = syncbase.get_reatime_data_by_name('ese4_water_return_temperature')
+    if state5:
+        ese4_water_return_temperature = record5.value
+    else:
+        ese4_water_return_temperature = 0
+
+    # 关闭syncbase
+    syncbase.close()
+    del syncbase
+
+    return ese4_state, ese4_fault, ese4_water_supply_temperature, ese4_water_supply_flow, ese4_water_return_temperature
+
+
+def read_from_database_ese_utility():
+    """利用SyncBASE，从数据库中读取数据"""
+    # 读取蓄冷蓄热装置公用部分的数据
+    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
+    syncbase.open()
+
+    # 蓄冷蓄热装置公用
+    # 蓄冷蓄热装置冷热水供水母管温度
+    state1, record1 = syncbase.get_reatime_data_by_name('ese_water_supply_temperature')
+    if state1:
+        ese_water_supply_temperature = record1.value
+    else:
+        ese_water_supply_temperature = 0
+    # 蓄冷蓄热装置冷热水供水母管流量(新增测点)
+    state2, record2 = syncbase.get_reatime_data_by_name('ese_water_supply_flow')
+    if state2:
+        ese_water_supply_flow = record2.value
+    else:
+        ese_water_supply_flow = 0
+    # 蓄冷蓄热装置冷热水回水母管温度
+    state3, record3 = syncbase.get_reatime_data_by_name('ese_water_return_temperature')
+    if state3:
+        ese_water_return_temperature = record3.value
+    else:
+        ese_water_return_temperature = 0
+    # 蓄冷蓄热装置空调冷热水能量
+    state7, record7 = syncbase.get_reatime_data_by_name('ese_water_energy')
+    if state7:
+        ese_water_energy = record7.value
+    else:
+        ese_water_energy = 0
+
+    # 关闭syncbase
+    syncbase.close()
+    del syncbase
+
+    return ese_water_supply_temperature, ese_water_supply_flow, ese_water_return_temperature, ese_water_energy
+
+
 def read_from_database_ngb1():
     """利用SyncBASE，从数据库中读取数据"""
     # 读取天然气热水锅炉1的数据
@@ -969,3 +1716,46 @@ def system_utility():
 
     return manifold_temperature, water_collector_temperature, hot_water_supply_pipe_temperature, hot_water_return_pipe_temperature, natural_gas_pipe_flow_1, natural_gas_pipe_flow_2, hot_water_energy
 
+
+def environment():
+    """利用SyncBASE，从数据库中读取数据"""
+    # 读取系环境数据
+    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
+    syncbase.open()
+
+    # 环境干球温度
+    state1, record1 = syncbase.get_reatime_data_by_name('environment_temperature')
+    if state1:
+        environment_temperature = record1.value
+    else:
+        environment_temperature = 0
+    # 环境湿度
+    state2, record2 = syncbase.get_reatime_data_by_name('environment_humidity')
+    if state2:
+        environment_humidity = record2.value
+    else:
+        environment_humidity = 0
+    # 太阳辐射强度
+    state3, record3 = syncbase.get_reatime_data_by_name('sun_radiation')
+    if state3:
+        sun_radiation = record3.value
+    else:
+        sun_radiation = 0
+    # 风速
+    state4, record4 = syncbase.get_reatime_data_by_name('wind_speed')
+    if state4:
+        wind_speed = record4.value
+    else:
+        wind_speed = 0
+    # 风向
+    state5, record5 = syncbase.get_reatime_data_by_name('wind_direction')
+    if state5:
+        wind_direction = record5.value
+    else:
+        wind_direction = 0
+
+    # 关闭syncbase
+    syncbase.close()
+    del syncbase
+
+    return environment_temperature, environment_humidity, sun_radiation, wind_speed, wind_direction

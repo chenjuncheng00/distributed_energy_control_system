@@ -1,6 +1,7 @@
 import math
 import numpy as np
 import tensorflow as tf
+from global_constant import Global_Constant
 
 class Centrifugal_Chiller():
     """类：离心式冷水机；螺杆式冷水机组、离心式热泵、水源热泵、地源热泵的制冷工况同样适用"""
@@ -234,8 +235,7 @@ class Centrifugal_Heat_Pump():
         # 离心式热泵机组额定低温热源水供回水温差
         self.heat_source_water_temperature_difference_rated = gc.heat_source_water_temperature_difference_rated
         # 离心式热泵机组制热COP神经网络模型
-        # self.model_centrifugal_heat_pump_cop_1 = gc.model_centrifugal_heat_pump_cop_cop_1  # 离心式热泵机组负荷率范围：50%~100%
-        # self.model_centrifugal_heat_pump_cop_2 = gc.model_centrifugal_heat_pump_cop_cop_2  # 离心式热泵机组负荷率范围：10%~50%
+
 
     def centrifugal_heat_pump_cop(self, load_ratio, heating_water_temperature, heat_source_water_temperature):
         # 离心式热泵机组制热COP
@@ -250,7 +250,8 @@ class Centrifugal_Heat_Pump():
     def heat_source_water_flow_rated(self):
         # 计算低温热源水额定流量，低温热源水的功率+电功率=制热输出功率
         # 计算满负荷时候的制热COP
-        cop = self.centrifugal_heat_pump_cop(1, 55, 25)
+        gc = Global_Constant()
+        cop = self.centrifugal_heat_pump_cop(1, gc.heating_water_temperature, 25)
         # 计算满负荷时候的电负荷功率
         electric_power_consumption_rated = self.heating_power_rated / cop
         # 计算满负荷时候的低温热源水功率
@@ -416,8 +417,7 @@ class Air_Source_Heat_Pump_Cold():
         # 空气源热泵制冷额定冷冻水供回水温差
         self.chilled_water_temperature_difference_rated = gc.chilled_water_temperature_difference_rated
         # 空气源热泵制冷COP神经网络模型
-        # self.model_centrifugal_chiller_cop_1 = gc.model_centrifugal_chiller_cop_1  # 离心式冷水机负荷率范围：50%~100%
-        # self.model_centrifugal_chiller_cop_2 = gc.model_centrifugal_chiller_cop_2  # 离心式冷水机负荷率范围：10%~50%
+
 
     def chilled_water_flow_rated(self):
         # 如果冷冻水泵定频，始终等于最大流量

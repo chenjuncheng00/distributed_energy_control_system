@@ -2,8 +2,6 @@ import tensorflow as tf
 
 class Global_Constant():
     def __init__(self):
-        # 环境温度
-        self.environment_temperature = 35
         # 允许的最大冷负荷
         self.cold_load_max = 14500
         # 允许的最大热负荷
