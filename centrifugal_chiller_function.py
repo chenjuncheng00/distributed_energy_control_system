@@ -137,14 +137,10 @@ def centrifugal_chiller_function(cold_load, cc1, cc2, cc3, cc4, gc):
                 cc3_cooling_water_flow = cooling_water_flow_total / cc_num
                 cc4_cooling_water_flow = cooling_water_flow_total / cc_num
                 # 辅助设备耗电功率
-                cc1_auxiliary_equipment_power_consumption = \
-                centrifugal_chiller_auxiliary_equipment_cost(cc1, gc, cc1_chilled_water_flow, cc1_cooling_water_flow)[0]
-                cc2_auxiliary_equipment_power_consumption = \
-                centrifugal_chiller_auxiliary_equipment_cost(cc2, gc, cc2_chilled_water_flow, cc2_cooling_water_flow)[0]
-                cc3_auxiliary_equipment_power_consumption = \
-                centrifugal_chiller_auxiliary_equipment_cost(cc3, gc, cc3_chilled_water_flow, cc3_cooling_water_flow)[0]
-                cc4_auxiliary_equipment_power_consumption = \
-                centrifugal_chiller_auxiliary_equipment_cost(cc4, gc, cc4_chilled_water_flow, cc4_cooling_water_flow)[0]
+                cc1_auxiliary_equipment_power_consumption = centrifugal_chiller_auxiliary_equipment_cost(cc1, gc, cc1_chilled_water_flow, cc1_cooling_water_flow)[0]
+                cc2_auxiliary_equipment_power_consumption = centrifugal_chiller_auxiliary_equipment_cost(cc2, gc, cc2_chilled_water_flow, cc2_cooling_water_flow)[0]
+                cc3_auxiliary_equipment_power_consumption = centrifugal_chiller_auxiliary_equipment_cost(cc3, gc, cc3_chilled_water_flow, cc3_cooling_water_flow)[0]
+                cc4_auxiliary_equipment_power_consumption = centrifugal_chiller_auxiliary_equipment_cost(cc4, gc, cc4_chilled_water_flow, cc4_cooling_water_flow)[0]
                 # 耗电量总计
                 cc_power_consumption_total = cc1_centrifugal_chiller_power_consumption + cc2_centrifugal_chiller_power_consumption + cc3_centrifugal_chiller_power_consumption + cc4_centrifugal_chiller_power_consumption + cc1_auxiliary_equipment_power_consumption + cc2_auxiliary_equipment_power_consumption + cc3_auxiliary_equipment_power_consumption + cc4_auxiliary_equipment_power_consumption
                 total_power_consumption.append(cc_power_consumption_total)

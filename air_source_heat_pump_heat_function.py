@@ -180,7 +180,7 @@ def air_source_heat_pump_cost_heat(ashph, gc, load_ratio):
     # 计算此时的风冷螺杆热泵采暖水出口温度
     heating_water_temperature = gc.heating_water_temperature
     # 风冷螺杆热泵制热COP,某一负荷率条件下
-    air_source_heat_pump_cop = ashph.air_source_heat_pump_heat_cop(load_ratio, heating_water_temperature, gc.environment_temperature)
+    air_source_heat_pump_cop = ashph.air_source_heat_pump_heat_cop(load_ratio, heating_water_temperature, 30)
     # 风冷螺杆热泵本体耗电功率,某一负荷率条件下
     air_source_heat_pump_power_consumption = ashph.air_source_heat_pump_heat_power_consumption(load_ratio, air_source_heat_pump_cop)
     # 以下辅机耗电计算针对的是单元制系统，及泵与设备一对一布置；如果是母管制系统，需要单独重新计算
