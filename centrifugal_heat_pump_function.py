@@ -53,9 +53,23 @@ def centrifugal_heat_pump_function_heat(heat_load, chp1, chp2, chp3, chp4, gc):
         chp_num_max_1 = chp_num_max_2
     # 最大数量不可以超过4
     if chp_num_max_1 > 4:
-        chp_num_max = 4
+        chp_num_max_a = 4
     else:
-        chp_num_max = chp_num_max_1
+        chp_num_max_a = chp_num_max_1
+
+    # 如果某个设备的额定功率为0，则不参与计算，从而控制参与计算的设备的最大数量
+    chp_power_0_num = 0 # 初始化额定功率为0的设备数量
+    if chp1.heating_power_rated == 0:
+        chp_power_0_num += 1
+    if chp2.heating_power_rated == 0:
+        chp_power_0_num += 1
+    if chp3.heating_power_rated == 0:
+        chp_power_0_num += 1
+    if chp4.heating_power_rated == 0:
+        chp_power_0_num += 1
+    chp_num_max_b = 4 - chp_power_0_num
+    # 重新修正设备最大数量
+    chp_num_max = min(chp_num_max_a, chp_num_max_b)
 
     # 离心式热泵启动数量初始值
     chp_num = 1

@@ -85,34 +85,32 @@ def print_two_stage_heat_pump_function(ans):
 def test_two_stage_heat_pump_function():
     """测试双级热泵制热"""
     gc = Global_Constant()
-    heat_load = 2000
+    heat_load = 6500
     # 离心式热泵
-    chp_wp = False
-    chp1_wp_heating_water = Water_Pump(270, chp_wp, 35, gc)
-    chp2_wp_heating_water = Water_Pump(270, chp_wp, 35, gc)
-    chp3_wp_heating_water = Water_Pump(270, chp_wp, 35, gc)
-    chp4_wp_heating_water = Water_Pump(270, chp_wp, 35, gc)
-    chp1_wp_heat_source_water = Water_Pump(210, chp_wp, 35, gc)
-    chp2_wp_heat_source_water = Water_Pump(210, chp_wp, 35, gc)
-    chp3_wp_heat_source_water = Water_Pump(210, chp_wp, 35, gc)
-    chp4_wp_heat_source_water = Water_Pump(210, chp_wp, 35, gc)
-    chp1 = Centrifugal_Heat_Pump(1500, 0.2, False, chp1_wp_heating_water, chp1_wp_heat_source_water, gc)
-    chp2 = Centrifugal_Heat_Pump(1500, 0.2, False, chp2_wp_heating_water, chp2_wp_heat_source_water, gc)
-    chp3 = Centrifugal_Heat_Pump(1500, 0.2, False, chp3_wp_heating_water, chp3_wp_heat_source_water, gc)
-    chp4 = Centrifugal_Heat_Pump(1500, 0.2, False, chp4_wp_heating_water, chp4_wp_heat_source_water, gc)
+    chp1_wp_heating_water = Water_Pump(330, True, 35, gc)
+    chp2_wp_heating_water = Water_Pump(330, True, 35, gc)
+    chp3_wp_heating_water = Water_Pump(0, True, 0, gc)
+    chp4_wp_heating_water = Water_Pump(0, True, 0, gc)
+    chp1_wp_heat_source_water = Water_Pump(550, True, 35, gc)
+    chp2_wp_heat_source_water = Water_Pump(550, True, 35, gc)
+    chp3_wp_heat_source_water = Water_Pump(0, True, 0, gc)
+    chp4_wp_heat_source_water = Water_Pump(0, True, 0, gc)
+    chp1 = Centrifugal_Heat_Pump(3500, 0.2, False, chp1_wp_heating_water, chp1_wp_heat_source_water, gc)
+    chp2 = Centrifugal_Heat_Pump(3500, 0.2, False, chp2_wp_heating_water, chp2_wp_heat_source_water, gc)
+    chp3 = Centrifugal_Heat_Pump(0, 0.2, False, chp3_wp_heating_water, chp3_wp_heat_source_water, gc)
+    chp4 = Centrifugal_Heat_Pump(0, 0.2, False, chp4_wp_heating_water, chp4_wp_heat_source_water, gc)
     # 空气源热泵
-    ashph_wp = False
-    ashph1_wp_heating_water = Water_Pump(150, ashph_wp, 35, gc)
-    ashph2_wp_heating_water = Water_Pump(150, ashph_wp, 35, gc)
-    ashph3_wp_heating_water = Water_Pump(150, ashph_wp, 35, gc)
-    ashph4_wp_heating_water = Water_Pump(150, ashph_wp, 35, gc)
-    ashph1 = Air_Source_Heat_Pump_Heat(760, 0.2, False, ashph1_wp_heating_water, gc)
-    ashph2 = Air_Source_Heat_Pump_Heat(760, 0.2, False, ashph2_wp_heating_water, gc)
-    ashph3 = Air_Source_Heat_Pump_Heat(760, 0.2, False, ashph3_wp_heating_water, gc)
-    ashph4 = Air_Source_Heat_Pump_Heat(760, 0.2, False, ashph4_wp_heating_water, gc)
+    ashph1_wp_heating_water = Water_Pump(330, True, 35, gc)
+    ashph2_wp_heating_water = Water_Pump(330, True, 35, gc)
+    ashph3_wp_heating_water = Water_Pump(330, True, 35, gc)
+    ashph4_wp_heating_water = Water_Pump(330, True, 35, gc)
+    ashph1 = Air_Source_Heat_Pump_Heat(1640, 0.2, True, ashph1_wp_heating_water, gc)
+    ashph2 = Air_Source_Heat_Pump_Heat(1640, 0.2, True, ashph2_wp_heating_water, gc)
+    ashph3 = Air_Source_Heat_Pump_Heat(1640, 0.2, True, ashph3_wp_heating_water, gc)
+    ashph4 = Air_Source_Heat_Pump_Heat(1640, 0.2, True, ashph4_wp_heating_water, gc)
     # 测试结果
     ans = two_stage_heat_pump_function(heat_load, chp1, chp2, chp3, chp4, ashph1, ashph2, ashph3, ashph4, gc)
     print_two_stage_heat_pump_function(ans)
 
-# test_two_stage_heat_pump_function()
+test_two_stage_heat_pump_function()
 

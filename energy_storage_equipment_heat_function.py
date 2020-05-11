@@ -98,8 +98,21 @@ def energy_storage_equipment_heat_function(heat_load_a, eseh1, eseh2, eseh3, gc)
         eseh_num_max_b -= 1
     else:
         eseh_num_max_b -= 0
-    # 确定最终的数量最大值
-    eseh_num_max = min(eseh_num_max_a, eseh_num_max_b)
+    # 确定数量最大值
+    eseh_num_max_c = min(eseh_num_max_a, eseh_num_max_b)
+
+    # 如果某个设备的额定功率为0，则不参与计算，从而控制参与计算的设备的最大数量
+    eseh_power_0_num = 0  # 初始化额定功率为0的设备数量
+    if eseh1.heating_power_rated == 0:
+        eseh_power_0_num += 1
+    if eseh2.heating_power_rated == 0:
+        eseh_power_0_num += 1
+    if eseh3.heating_power_rated == 0:
+        eseh_power_0_num += 1
+    eseh_num_max_d = 3 - eseh_power_0_num
+    # 重新修正设备最大数量
+    eseh_num_max = min(eseh_num_max_c, eseh_num_max_d)
+
     # 修正热负荷(heat_load)
     # 如果此时是供热工况（热负荷功率值大于0）
     if heat_load_a > 0:
