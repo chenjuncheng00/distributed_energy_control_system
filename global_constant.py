@@ -3,9 +3,9 @@ import tensorflow as tf
 class Global_Constant():
     def __init__(self):
         # 允许的最大冷负荷
-        self.cold_load_max = 14500
+        self.cold_load_max = 28000
         # 允许的最大热负荷
-        self.heat_load_max = 8700
+        self.heat_load_max = 14000
         # 允许的最大生活热水负荷
         self.hot_water_load_max = 4500
         # 烟气热水型溴化锂设备在制冷季是否供生活热水
@@ -60,14 +60,14 @@ class Global_Constant():
         self.load_ratio_error_coefficient = 0.005
         # 溴化锂设备供应冷热的一些常量
         # 溴化锂1、2的生活热水负荷最大值
-        self.lb1_hot_water_max = 850
-        self.lb2_hot_water_max = 850
+        self.lb1_hot_water_max = 1600
+        self.lb2_hot_water_max = 1600
         # 溴化锂1、2的冷负荷最大值
-        self.lb1_cold_max = 930
-        self.lb2_cold_max = 930
+        self.lb1_cold_max = 1750
+        self.lb2_cold_max = 1750
         # 溴化锂1、2的热负荷最大值
-        self.lb1_heat_max = 850
-        self.lb2_heat_max = 850
+        self.lb1_heat_max = 1600
+        self.lb2_heat_max = 1600
         # 溴化锂设备生活热水计算步长
         self.lb1_hot_water_step = 50
         self.lb2_hot_water_step = 50

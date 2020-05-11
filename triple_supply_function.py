@@ -283,7 +283,7 @@ def lithium_bromide_cold_function(hot_water_load, load_ratio, lb_cold, gc):
 
     # 以下辅机耗电计算针对的是单元制系统，及泵与设备一对一布置；如果是母管制系统，要重新计算
     # 制冷辅机耗电
-    auxiliary_equipment_power_consumption_cooling = lb_cold.auxiliary_equipment_power_consumption_cooling(cooling_water_flow, chilled_water_flow)
+    auxiliary_equipment_power_consumption_cooling = lb_cold.auxiliary_equipment_power_consumption_cooling(cooling_water_flow, chilled_water_flow, residual_heat_cooling_ratio)
     # 生活热水辅机耗电
     auxiliary_equipment_power_consumption_hot_water = lb_cold.auxiliary_equipment_power_consumption_hot_water(hot_water_flow)
     # 制冷季总辅机耗电
@@ -319,7 +319,7 @@ def lithium_bromide_heat_function(hot_water_load, load_ratio, lb_heat, gc):
 
     # 以下辅机耗电计算针对的是单元制系统，及泵与设备一对一布置；如果是母管制系统，需要单独重新计算
     # 制热辅机耗电
-    auxiliary_equipment_power_consumption_heating = lb_heat.auxiliary_equipment_power_consumption_heating(heating_water_flow)
+    auxiliary_equipment_power_consumption_heating = lb_heat.auxiliary_equipment_power_consumption_heating(heating_water_flow, residual_heat_heating_ratio)
     # 生活热水辅机耗电
     auxiliary_equipment_power_consumption_hot_water = lb_heat.auxiliary_equipment_power_consumption_hot_water(hot_water_flow)
     # 采暖季总辅机耗电
