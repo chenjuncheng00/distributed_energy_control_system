@@ -53,9 +53,23 @@ def air_source_heat_pump_function_heat(heat_load, ashph1, ashph2, ashph3, ashph4
         ashph_num_max_1 = ashph_num_max_2
     # 最大数量不可以超过4
     if ashph_num_max_1 > 4:
-        ashph_num_max = 4
+        ashph_num_max_a = 4
     else:
-        ashph_num_max = ashph_num_max_1
+        ashph_num_max_a = ashph_num_max_1
+
+    # 如果某个设备的额定功率为0，则不参与计算，从而控制参与计算的设备的最大数量
+    ashph_power_0_num = 0  # 初始化额定功率为0的设备数量
+    if ashph1.heating_power_rated == 0:
+        ashph_power_0_num += 1
+    if ashph2.heating_power_rated == 0:
+        ashph_power_0_num += 1
+    if ashph3.heating_power_rated == 0:
+        ashph_power_0_num += 1
+    if ashph4.heating_power_rated == 0:
+        ashph_power_0_num += 1
+    ashph_num_max_b = 4 - ashph_power_0_num
+    # 重新修正设备最大数量
+    ashph_num_max = min(ashph_num_max_a, ashph_num_max_b)
 
     # 风冷螺杆热泵启动数量初始值
     ashph_num = 1

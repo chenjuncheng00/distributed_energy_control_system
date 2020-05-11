@@ -1,9 +1,10 @@
 import math
 import datetime
-from equipment import Natural_Gas_Boiler_heat, Internal_Combustion_Engine, Water_Pump, Natural_Gas_Boiler_hot_water, Energy_Storage_Equipment_Heat
+from equipment import Natural_Gas_Boiler_heat, Internal_Combustion_Engine, Water_Pump, Natural_Gas_Boiler_hot_water, Energy_Storage_Equipment_Heat, Centrifugal_Heat_Pump_Heat, Air_Source_Heat_Pump_Heat
 from triple_supply_function import triple_supply_heat_function as tshf
 from natural_gas_boiler_funtion import natural_gas_boiler_heat_funtion as ngbhf, natural_gas_boiler_heat_result as ngbhr, natural_gas_boiler_in_out_hot_water as ngbiohw
 from energy_storage_equipment_heat_function import energy_storage_equipment_heat_function as esehf, energy_storage_equipment_heat_result as esehr, energy_storage_equipment_heat_storage_residual_read as esehsrr, energy_storage_equipment_heat_storage_residual_write as esehsrw
+from two_stage_heat_pump_function import two_stage_heat_pump_function as tshpf
 
 def heating_season_function(heat_load, hot_water_load, electricity_load, gc):
     """采暖季计算"""
@@ -11,39 +12,65 @@ def heating_season_function(heat_load, hot_water_load, electricity_load, gc):
     print("正在进行采暖季计算.........")
 
     # 实例化两个内燃机对象
-    ice1 = Internal_Combustion_Engine(792, gc, 0.5)
-    ice2 = Internal_Combustion_Engine(792, gc, 0.5)
-    # 实例化2个天然气采暖锅炉水泵
-    ngbh1_wp_heating_water = Water_Pump(330, False, 32, gc)
-    ngbh2_wp_heating_water = Water_Pump(330, False, 32, gc)
-    # 实例化2个天然气采暖锅炉对象
-    ngbh1 = Natural_Gas_Boiler_heat(3500, 0.2, ngbh1_wp_heating_water, gc)
-    ngbh2 = Natural_Gas_Boiler_heat(3500, 0.2, ngbh2_wp_heating_water, gc)
+    ice1 = Internal_Combustion_Engine(1500, gc, 0.5)
+    ice2 = Internal_Combustion_Engine(1500, gc, 0.5)
+    # # 实例化2个天然气采暖锅炉水泵
+    # ngbh1_wp_heating_water = Water_Pump(330, True, 32, gc)
+    # ngbh2_wp_heating_water = Water_Pump(330, True, 32, gc)
+    # # 实例化2个天然气采暖锅炉对象
+    # ngbh1 = Natural_Gas_Boiler_heat(3500, 0.2, ngbh1_wp_heating_water, gc)
+    # ngbh2 = Natural_Gas_Boiler_heat(3500, 0.2, ngbh2_wp_heating_water, gc)
+    # 实例化2台离心式热泵
+    chph1_wp_heating_water = Water_Pump(330, True, 35, gc)
+    chph2_wp_heating_water = Water_Pump(330, True, 35, gc)
+    chph3_wp_heating_water = Water_Pump(0, True, 0, gc)
+    chph4_wp_heating_water = Water_Pump(0, True, 0, gc)
+    chph1_wp_heat_source_water = Water_Pump(550, True, 35, gc)
+    chph2_wp_heat_source_water = Water_Pump(550, True, 35, gc)
+    chph3_wp_heat_source_water = Water_Pump(0, True, 0, gc)
+    chph4_wp_heat_source_water = Water_Pump(0, True, 0, gc)
+    chph1 = Centrifugal_Heat_Pump_Heat(3500, 0.1, True, chph1_wp_heating_water, chph1_wp_heat_source_water, gc)
+    chph2 = Centrifugal_Heat_Pump_Heat(3500, 0.1, True, chph2_wp_heating_water, chph2_wp_heat_source_water, gc)
+    chph3 = Centrifugal_Heat_Pump_Heat(0, 0.1, True, chph3_wp_heating_water, chph3_wp_heat_source_water, gc)
+    chph4 = Centrifugal_Heat_Pump_Heat(0, 0.1, True, chph4_wp_heating_water, chph4_wp_heat_source_water, gc)
+    # 实例化4台风冷螺杆式热泵
+    ashph1_wp_heating_water = Water_Pump(330, True, 35, gc)
+    ashph2_wp_heating_water = Water_Pump(330, True, 35, gc)
+    ashph3_wp_heating_water = Water_Pump(330, True, 35, gc)
+    ashph4_wp_heating_water = Water_Pump(330, True, 35, gc)
+    ashph1 = Air_Source_Heat_Pump_Heat(1640, 0.1, True, ashph1_wp_heating_water, gc)
+    ashph2 = Air_Source_Heat_Pump_Heat(1640, 0.1, True, ashph2_wp_heating_water, gc)
+    ashph3 = Air_Source_Heat_Pump_Heat(1640, 0.1, True, ashph3_wp_heating_water, gc)
+    ashph4 = Air_Source_Heat_Pump_Heat(1640, 0.1, True, ashph4_wp_heating_water, gc)
     # 实例化2台溴化锂设备用到的各种水泵，2个采暖水泵
-    lb1_wp_heating_water = Water_Pump(170, False, 38, gc)
-    lb2_wp_heating_water = Water_Pump(170, False, 38, gc)
-    # 实例化1组3个蓄热水罐的循环水泵（水泵3用1备）
-    eseh1_wp_heating_water = Water_Pump(50, False, 35, gc)
-    eseh2_wp_heating_water = Water_Pump(50, False, 35, gc)
-    eseh3_wp_heating_water = Water_Pump(50, False, 35, gc)
+    lb1_wp_heating_water = Water_Pump(150, True, 38, gc)
+    lb2_wp_heating_water = Water_Pump(150, True, 38, gc)
+    # 实例化1组3个蓄热水罐的循环水泵（水泵2用1备）
+    eseh1_wp_heating_water = Water_Pump(330, True, 35, gc)
+    eseh2_wp_heating_water = Water_Pump(330, True, 35, gc)
+    eseh3_wp_heating_water = Water_Pump(0, True, 0, gc)
     # 实例化3个蓄热水罐（实际上只有1个水罐，但是有3个水泵，将水泵假想3等分，作为3个水罐，与水泵一一对应去计算）
-    eseh1 = Energy_Storage_Equipment_Heat(700, 0.1, 5600, eseh1_wp_heating_water, gc)
-    eseh2 = Energy_Storage_Equipment_Heat(700, 0.1, 5600, eseh2_wp_heating_water, gc)
-    eseh3 = Energy_Storage_Equipment_Heat(700, 0.1, 5600, eseh3_wp_heating_water, gc)
+    eseh1 = Energy_Storage_Equipment_Heat(1750, 0.1, 14000, eseh1_wp_heating_water, gc)
+    eseh2 = Energy_Storage_Equipment_Heat(1750, 0.1, 14000, eseh2_wp_heating_water, gc)
+    eseh3 = Energy_Storage_Equipment_Heat(0, 0.1, 0, eseh3_wp_heating_water, gc)
 
     # 实例化2台溴化锂设备用到的各种水泵，2个生活热水水泵
-    lb1_wp_hot_water = Water_Pump(44, False, 34, gc)
-    lb2_wp_hot_water = Water_Pump(44, False, 34, gc)
+    lb1_wp_hot_water = Water_Pump(270, False, 35, gc)
+    lb2_wp_hot_water = Water_Pump(270, False, 35, gc)
     # 实例化天然气生活热水锅炉用到的水泵
-    ngb_wp_hot_water = Water_Pump(44, False, 34, gc)
+    ngb_wp_hot_water = Water_Pump(270, False, 35, gc)
 
     # 实例化生活热水锅炉
     ngb_hot_water = Natural_Gas_Boiler_hot_water(2800, 0.2, ngb_wp_hot_water, gc)
 
     # 如果是母管制系统
     # 母管制系统，采暖季计算
+    # 离心式热泵制热功率之和
+    chph_heating_power_rated_sum = chph1.heating_power_rated + chph2.heating_power_rated + chph3.heating_power_rated + chph4.heating_power_rated
+    # 天然气采暖锅炉制热功率之和
+    # ngbh_heating_power_rated_sum = ngbh1.heating_power_rated + ngbh2.heating_power_rated 
     # 制热设备额定制热量之和
-    eq_heating_power_rated_sum = ngbh1.heating_power_rated + ngbh2.heating_power_rated
+    eq_heating_power_rated_sum = chph_heating_power_rated_sum
     # 生活热水总流量
     hot_water_flow_total = hot_water_load * 3600 / gc.hot_water_temperature_difference_rated / 4.2 / 1000
     # 生活热水泵启动数量，向上取整，每个泵额定流量44t/h
@@ -76,9 +103,19 @@ def heating_season_function(heat_load, hot_water_load, electricity_load, gc):
     # 列表，储存2台内燃机计算出的负荷率结果
     ice1_load_ratio_result = []
     ice2_load_ratio_result = []
+    # 列表，储存4台设备计算出的负荷率结果
+    chph1_load_ratio_result = []
+    chph2_load_ratio_result = []
+    chph3_load_ratio_result = []
+    chph4_load_ratio_result = []
+    # 列表，储存4个风冷螺杆式热泵计算出的负荷率结果
+    ashph1_load_ratio_result = []
+    ashph2_load_ratio_result = []
+    ashph3_load_ratio_result = []
+    ashph4_load_ratio_result = []
     # 列表，储存2台天然气采暖锅炉设备计算出的负荷率结果
-    ngbh1_load_ratio_result = []
-    ngbh2_load_ratio_result = []
+    # ngbh1_load_ratio_result = []
+    # ngbh2_load_ratio_result = []
     # 列表，储存整个能源站的收入、成本、利润
     income = []
     cost = []
@@ -234,12 +271,25 @@ def heating_season_function(heat_load, hot_water_load, electricity_load, gc):
             ice2_load_ratio = 1
         else:
             ice2_load_ratio = 0
-        ngbh1_load_ratio = ngbh1.load_min
-        ngbh2_load_ratio = ngbh2.load_min
+        # 天然气锅炉负荷率默认值
+        # ngbh1_load_ratio = ngbh1.load_min
+        # ngbh2_load_ratio = ngbh2.load_min
+        # 离心式热泵负荷率默认值
+        chph1_load_ratio = chph1.load_min
+        chph2_load_ratio = chph2.load_min
+        chph3_load_ratio = chph3.load_min
+        chph4_load_ratio = chph4.load_min
+        # 风冷螺杆式热泵负荷率默认值
+        ashph1_load_ratio = ashph1.load_min
+        ashph2_load_ratio = ashph2.load_min
+        ashph3_load_ratio = ashph3.load_min
+        ashph4_load_ratio = ashph4.load_min
         # 2台内燃机系统的负荷率
         ice_load_ratio_result_all = [0, 0]
-        # 列表，储存2台设备计算出的负荷率结果
-        ngbh_load_ratio_result_all = [0, 0]
+        # 列表，储存设备计算出的负荷率结果
+        # ngbh_load_ratio_result_all = [0, 0]
+        chph_load_ratio_result_all = [0, 0, 0, 0]
+        ashph_load_ratio_result_all = [0, 0, 0, 0]
         # 溴化锂设备制备生活热水总量的初始值
         lb1_hot_water = 0
         lb2_hot_water = 0
@@ -261,11 +311,15 @@ def heating_season_function(heat_load, hot_water_load, electricity_load, gc):
             ngb_hw_nature_gas_consumption = ngbiohw(ngb_hot_water_load, ngb_hot_water, gc)[1]
             # 天然气生活热水锅炉，补水量计算
             ngb_hw_water_supply = ngbiohw(ngb_hot_water_load, ngb_hot_water, gc)[2]
-            # 天然气采暖锅炉天然气耗量、耗电总功率，制热总功率、补水量默认值
-            ngbh_nature_gas_consumption_total = 0
-            ngbh_power_consumption_total = 0
-            ngbh_heat_out_total = 0
-            ngbh_water_supply_total = 0
+            # 双级热泵耗电量、补水量、制热量默认值
+            chph_heat_out_total = 0
+            tshp_power_consumption_total = 0
+            tshp_water_supply_total = 0
+            # # 天然气采暖锅炉天然气耗量、耗电总功率，制热总功率、补水量默认值
+            # ngbh_nature_gas_consumption_total = 0
+            # ngbh_power_consumption_total = 0
+            # ngbh_heat_out_total = 0
+            # ngbh_water_supply_total = 0
             # 电收入成本默认值
             income_electricity = 0
             cost_electricity = 0
@@ -300,42 +354,76 @@ def heating_season_function(heat_load, hot_water_load, electricity_load, gc):
                 # 计算三联供系统电出力
                 ts_electricity_out_total = tshf(ice1_load_ratio, ice2_load_ratio, lb1_hot_water, lb2_hot_water, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_water, lb1_wp_hot_water, lb2_wp_hot_water, gc)[1]
                 # 天然气采暖锅炉需要补充的热负荷
-                heat_load_natural_gas_boiler = heat_load - ts_heat_out_total
+                # heat_load_natural_gas_boiler = heat_load - ts_heat_out_total
+                # 离心式热泵需要补充的热负荷
+                heat_load_chph_1 = min(heat_load - ts_heat_out_total, chph_heating_power_rated_sum)
+                heat_load_chph = max(heat_load_chph_1, 0)
                 # 如果此时只有内燃机，且内燃机负荷率和设定的热负荷相差很小，则跳出循环
-                if heat_load_natural_gas_boiler >= 0 and abs(heat_load_natural_gas_boiler) <= gc.project_load_error:
-                    # 天然气采暖锅炉不进行计算
-                    ngbh_calculate = False
-                    # 天然气采暖锅炉负荷率都设置为0
-                    ngbh1_load_ratio = 0
-                    ngbh2_load_ratio = 0
-                    # 天然气采暖锅炉的输入输出量
-                    ngbh_nature_gas_consumption_total = 0
-                    ngbh_power_consumption_total = 0
-                    ngbh_heat_out_total = 0
-                    ngbh_water_supply_total = 0
+                if heat_load_chph >= 0 and abs(heat_load_chph) <= gc.project_load_error:
+                    # 双级热泵不进行计算
+                    tshp_calculate = False
+                    # 离心式热泵和风冷热泵负荷率为0
+                    chph1_load_ratio = 0
+                    chph2_load_ratio = 0
+                    chph3_load_ratio = 0
+                    chph4_load_ratio = 0
+                    ashph1_load_ratio = 0
+                    ashph2_load_ratio = 0
+                    ashph3_load_ratio = 0
+                    ashph4_load_ratio = 0
+                    # 双级热泵输入输出为0
+                    chph_heat_out_total = 0
+                    tshp_power_consumption_total = 0
+                    tshp_water_supply_total = 0
+                    # # 天然气采暖锅炉不进行计算
+                    # ngbh_calculate = False
+                    # # 天然气采暖锅炉负荷率都设置为0
+                    # ngbh1_load_ratio = 0
+                    # ngbh2_load_ratio = 0
+                    # # 天然气采暖锅炉的输入输出量
+                    # ngbh_nature_gas_consumption_total = 0
+                    # ngbh_power_consumption_total = 0
+                    # ngbh_heat_out_total = 0
+                    # ngbh_water_supply_total = 0
                 else:
-                    # 天然气采暖锅炉进行计算
-                    ngbh_calculate = True
-                if heat_load_natural_gas_boiler >= 0 and ngbh_calculate == True:
+                    # 双级热泵进行计算
+                    tshp_calculate = True
+                    # # 天然气采暖锅炉进行计算
+                    # ngbh_calculate = True
+                if heat_load_chph >= 0 and tshp_calculate == True:
+                    # 计算双级热泵的运行策略
+                    ans_tshp = tshpf(heat_load_chph, chph1, chph2, chph3, chph4, ashph1, ashph2, ashph3, ashph4, gc)
+                    # 读取计算结果
+                    chph_heat_out_total = ans_tshp[1]
+                    tshp_power_consumption_total = ans_tshp[2]
+                    tshp_water_supply_total = ans_tshp[3]
+                    chph1_load_ratio = ans_tshp[4]
+                    chph2_load_ratio = ans_tshp[5]
+                    chph3_load_ratio = ans_tshp[6]
+                    chph4_load_ratio = ans_tshp[7]
+                    ashph1_load_ratio = ans_tshp[8]
+                    ashph2_load_ratio = ans_tshp[9]
+                    ashph3_load_ratio = ans_tshp[10]
+                    ashph4_load_ratio = ans_tshp[11]
                     # 计算天然气采暖锅炉的运行策略
-                    ans_ngbh = ngbhf(heat_load_natural_gas_boiler, ngbh1, ngbh2, gc)
+                    # ans_ngbh = ngbhf(heat_load_natural_gas_boiler, ngbh1, ngbh2, gc)
                     # 读取此时的天然气采暖锅炉最优计算结果天然气消耗量
-                    ngbh_nature_gas_consumption_total = ngbhr(ans_ngbh, ngbh1, ngbh2)[3]
+                    # ngbh_nature_gas_consumption_total = ngbhr(ans_ngbh, ngbh1, ngbh2)[3]
                     # 读取此时的天然气采暖锅炉最优计算结果耗电功率
-                    ngbh_power_consumption_total = ngbhr(ans_ngbh, ngbh1, ngbh2)[4]
+                    # ngbh_power_consumption_total = ngbhr(ans_ngbh, ngbh1, ngbh2)[4]
                     # 读取此时的天然气采暖锅炉最优计算结果的供热功率
-                    ngbh_heat_out_total = ngbhr(ans_ngbh, ngbh1, ngbh2)[2]
+                    # ngbh_heat_out_total = ngbhr(ans_ngbh, ngbh1, ngbh2)[2]
                     # 天然气采暖锅炉补水总量
-                    ngbh_water_supply_total = ngbhr(ans_ngbh, ngbh1, ngbh2)[5]
+                    # ngbh_water_supply_total = ngbhr(ans_ngbh, ngbh1, ngbh2)[5]
                     # 此时2台设备的负荷率
-                    ngbh1_load_ratio = ngbhr(ans_ngbh, ngbh1, ngbh2)[0]
-                    ngbh2_load_ratio = ngbhr(ans_ngbh, ngbh1, ngbh2)[1]
+                    # ngbh1_load_ratio = ngbhr(ans_ngbh, ngbh1, ngbh2)[0]
+                    # ngbh2_load_ratio = ngbhr(ans_ngbh, ngbh1, ngbh2)[1]
                 # 此时整个能源站的向外供电功率
-                station_electricity_out_total = ts_electricity_out_total - ngbh_power_consumption_total - hw_wp_power_consumption - eseh_power_consumption_total
+                station_electricity_out_total = ts_electricity_out_total - tshp_power_consumption_total - hw_wp_power_consumption - eseh_power_consumption_total
                 # 此时能源站供热总功率
-                station_heat_out_total = ts_heat_out_total + ngbh_heat_out_total + eseh_heat_load_out
+                station_heat_out_total = ts_heat_out_total + chph_heat_out_total + eseh_heat_load_out
                 # 如果仅有溴化锂供热，且制热量大于热负荷需求量，则内燃机负荷往下减
-                if heat_load_natural_gas_boiler <= 0 and station_heat_out_total > heat_load and ts_heat_out_total > 0:
+                if heat_load_chph <= 0 and station_heat_out_total > heat_load and ts_heat_out_total > 0:
                     # 减小内燃机设备1、2负荷率
                     if ice_num >= 1:
                         ice1_load_ratio -= ice1_step / 100
@@ -366,11 +454,28 @@ def heating_season_function(heat_load, hot_water_load, electricity_load, gc):
                     ice_load_ratio_result_all[1] = ice2_load_ratio
                     ice1_load_ratio_result.append(ice_load_ratio_result_all[0])
                     ice2_load_ratio_result.append(ice_load_ratio_result_all[1])
+                    # 储存此时的离心式热泵和风冷螺杆式热泵负荷率
+                    chph_load_ratio_result_all[0] = chph1_load_ratio
+                    chph_load_ratio_result_all[1] = chph2_load_ratio
+                    chph_load_ratio_result_all[2] = chph3_load_ratio
+                    chph_load_ratio_result_all[3] = chph4_load_ratio
+                    chph1_load_ratio_result.append(chph_load_ratio_result_all[0])
+                    chph2_load_ratio_result.append(chph_load_ratio_result_all[1])
+                    chph3_load_ratio_result.append(chph_load_ratio_result_all[2])
+                    chph4_load_ratio_result.append(chph_load_ratio_result_all[3])
+                    ashph_load_ratio_result_all[0] = ashph1_load_ratio
+                    ashph_load_ratio_result_all[1] = ashph2_load_ratio
+                    ashph_load_ratio_result_all[2] = ashph3_load_ratio
+                    ashph_load_ratio_result_all[3] = ashph4_load_ratio
+                    ashph1_load_ratio_result.append(ashph_load_ratio_result_all[0])
+                    ashph2_load_ratio_result.append(ashph_load_ratio_result_all[1])
+                    ashph3_load_ratio_result.append(ashph_load_ratio_result_all[2])
+                    ashph4_load_ratio_result.append(ashph_load_ratio_result_all[3])
                     # 储存此时天然气采暖锅炉的负荷率
-                    ngbh_load_ratio_result_all[0] = ngbh1_load_ratio
-                    ngbh_load_ratio_result_all[1] = ngbh2_load_ratio
-                    ngbh1_load_ratio_result.append(ngbh_load_ratio_result_all[0])
-                    ngbh2_load_ratio_result.append(ngbh_load_ratio_result_all[1])
+                    # ngbh_load_ratio_result_all[0] = ngbh1_load_ratio
+                    # ngbh_load_ratio_result_all[1] = ngbh2_load_ratio
+                    # ngbh1_load_ratio_result.append(ngbh_load_ratio_result_all[0])
+                    # ngbh2_load_ratio_result.append(ngbh_load_ratio_result_all[1])
                     # 储存溴化锂和天然气锅炉供热水量，溴化锂制热量
                     lb_hot_water_result.append(lb_hot_water_total)
                     ngb_hw_hot_water_result.append(ngb_hot_water_load)
@@ -382,23 +487,25 @@ def heating_season_function(heat_load, hot_water_load, electricity_load, gc):
                     else:
                         cost_electricity = - station_electricity_out_total * gc.buy_electricity_price
                     # 供热收入（用热负荷计算，能源站供热量比热负荷多的部分不计算）
-                    income_heat = heat_load * gc.heating_price
+                    income_heat = station_heat_out_total * gc.heating_price
                     # 生活热水收入
                     hot_water_load_total = lb_hot_water_total + ngb_hot_water_load
                     income_hot_water = hot_water_load_total * gc.hot_water_price
                     # 三联供系统总成本（天然气+补水）
                     cost_ts = tshf(ice1_load_ratio, ice2_load_ratio, lb1_hot_water, lb2_hot_water, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_water, lb1_wp_hot_water, lb2_wp_hot_water, gc)[4]
+                    # 双级热泵补水总成本
+                    cost_tshp_water_supply = tshp_water_supply_total * gc.water_price
                     # 天然气采暖锅炉天然气总成本
-                    cost_ngbh_nature_gas = ngbh_nature_gas_consumption_total * gc.natural_gas_price
+                    # cost_ngbh_nature_gas = ngbh_nature_gas_consumption_total * gc.natural_gas_price
                     # 天然气采暖锅炉补水总成本
-                    cost_ngbh_water_supply = ngbh_water_supply_total * gc.water_price
+                    # cost_ngbh_water_supply = ngbh_water_supply_total * gc.water_price
                     # 天然气热水锅炉天然气成本
                     cost_ngb_hw_nature_gas = ngb_hw_nature_gas_consumption * gc.natural_gas_price
                     # 天然气热水锅炉补水成本计算
                     cost_ngb_hw_water_supply = ngb_hw_water_supply * gc.water_price
                     # 总收入成本利润
                     income_total = income_heat + income_electricity + income_hot_water
-                    cost_total = cost_electricity + cost_ngbh_nature_gas + cost_ngbh_water_supply + cost_ts + cost_ngb_hw_nature_gas + cost_ngb_hw_water_supply + cost_eseh_water_supply
+                    cost_total = cost_electricity + cost_tshp_water_supply + cost_ts + cost_ngb_hw_nature_gas + cost_ngb_hw_water_supply + cost_eseh_water_supply
                     profits_total = income_total - cost_total
                     income.append(income_total)
                     cost.append(cost_total)
@@ -406,7 +513,7 @@ def heating_season_function(heat_load, hot_water_load, electricity_load, gc):
                     # 如果内燃机1负荷率已经等于0，则跳出循环
                     if ice1_load_ratio == 0:
                         break
-                    elif heat_load_natural_gas_boiler <= 0 and ngbh_calculate == False:
+                    elif heat_load_chph <= 0 and tshp_calculate == False:
                         break
                     # 修改内燃机1、2负荷率
                     else:
@@ -457,7 +564,7 @@ def heating_season_function(heat_load, hot_water_load, electricity_load, gc):
     esehsrw(hour_state, eseh1, eseh2, eseh3, eseh1_load_ratio, eseh2_load_ratio, eseh3_load_ratio, eseh1_heat_stock, eseh2_heat_stock, eseh3_heat_stock)
 
     # 返回计算结果
-    return profits, income, cost, station_heat_out_all, station_electricity_out_all, ice1_load_ratio_result, ice2_load_ratio_result, ngbh1_load_ratio_result, ngbh2_load_ratio_result, lb_heat_load_result, lb_hot_water_result, ngb_hw_hot_water_result, eseh1_load_ratio, eseh2_load_ratio, eseh3_load_ratio, eseh_heat_load_out
+    return profits, income, cost, station_heat_out_all, station_electricity_out_all, ice1_load_ratio_result, ice2_load_ratio_result, lb_heat_load_result, lb_hot_water_result, ngb_hw_hot_water_result, chph1_load_ratio_result, chph2_load_ratio_result, chph3_load_ratio_result, chph4_load_ratio_result, ashph1_load_ratio_result, ashph2_load_ratio_result, ashph3_load_ratio_result, ashph4_load_ratio_result, eseh1_load_ratio, eseh2_load_ratio, eseh3_load_ratio, eseh_heat_load_out
 
 
 def print_heating_season(ans):
@@ -481,20 +588,38 @@ def print_heating_season(ans):
     station_electricity_out_all = ans[4][heating_season_index]
     ice1_load_ratio = ans[5][heating_season_index]
     ice2_load_ratio = ans[6][heating_season_index]
-    ngbh1_load_ratio = ans[7][heating_season_index]
-    ngbh2_load_ratio = ans[8][heating_season_index]
+    # ngbh1_load_ratio = ans[7][heating_season_index]
+    # ngbh2_load_ratio = ans[8][heating_season_index]
     # 溴化锂制热量，制生活热水量
-    lb_heat_load = ans[9][heating_season_index]
-    lb_hot_water = ans[10][heating_season_index]
+    lb_heat_load = ans[7][heating_season_index]
+    lb_hot_water = ans[8][heating_season_index]
     # 天然气锅炉制生活热水量
-    ngb_hw_hot_water = ans[11][heating_season_index]
+    ngb_hw_hot_water = ans[9][heating_season_index]
+    # 离心式热泵和风冷螺杆式热泵计算结果
+    chph1_load_ratio = ans[10][heating_season_index]
+    chph2_load_ratio = ans[11][heating_season_index]
+    chph3_load_ratio = ans[12][heating_season_index]
+    chph4_load_ratio = ans[13][heating_season_index]
+    ashph1_load_ratio = ans[14][heating_season_index]
+    ashph2_load_ratio = ans[15][heating_season_index]
+    ashph3_load_ratio = ans[16][heating_season_index]
+    ashph4_load_ratio = ans[17][heating_season_index]
     # 蓄能水罐水泵负荷率
-    eseh1_load_ratio = ans[12]
-    eseh2_load_ratio = ans[13]
-    eseh3_load_ratio = ans[14]
+    eseh1_load_ratio = ans[18]
+    eseh2_load_ratio = ans[19]
+    eseh3_load_ratio = ans[20]
     # 蓄能水罐制热量
-    eseh_heat_load_out = ans[15]
-
+    eseh_heat_load_out = ans[21]
 
     # 打印出结果
-    print("能源站利润最大值为： " + str(station_profitis_max) + "\n" + "能源站成本最小值为： " + str(station_cost_min) + "\n"  + "能源站供热功率为： " + str(station_heat_out_all) + "\n" + "蓄能装置热负荷功率为： " + str(eseh_heat_load_out) + "\n" + "能源站供电功率为： " + str(station_electricity_out_all) + "\n" + "内燃机1负荷率为： " + str(ice1_load_ratio) + "\n" + "内燃机2负荷率为： " + str(ice2_load_ratio) + "\n" + "天然气采暖锅炉1负荷率为： " + str(ngbh1_load_ratio) + "\n" + "天然气采暖锅炉2负荷率为： " + str(ngbh2_load_ratio) + "\n" + "溴化锂设备供热功率为： " + str(lb_heat_load) + "\n" + "溴化锂供生活热水功率为： " + str(lb_hot_water) + "\n" + "天然气锅炉供生活热水功率为： " + str(ngb_hw_hot_water) + "\n" + "蓄能水罐水泵1负荷率： " + str(eseh1_load_ratio) + "\n" + "蓄能水罐水泵2负荷率： " + str(eseh2_load_ratio) + "\n" + "蓄能水罐水泵3负荷率： " + str(eseh3_load_ratio) + "\n")
+    print("能源站利润最大值为： " + str(station_profitis_max) + "\n" + "能源站成本最小值为： " + str(
+        station_cost_min) + "\n" + "能源站供热功率为： " + str(station_heat_out_all) + "\n" + "蓄能装置热负荷功率为： " + str(
+        eseh_heat_load_out) + "\n" + "能源站供电功率为： " + str(station_electricity_out_all) + "\n" + "内燃机1负荷率为： " + str(
+        ice1_load_ratio) + "\n" + "内燃机2负荷率为： " + str(ice2_load_ratio) + "\n" + "\n" + "溴化锂设备供热功率为： " + str(
+        lb_heat_load) + "\n" + "溴化锂供生活热水功率为： " + str(lb_hot_water) + "\n" + "天然气锅炉供生活热水功率为： " + str(
+        ngb_hw_hot_water) + "\n" + "离心式热泵1负荷率为： " + str(chph1_load_ratio) + "\n" + "离心式热泵2负荷率为： " + str(
+        chph2_load_ratio) + "\n" + "离心式热泵3负荷率为： " + str(chph3_load_ratio) + "\n" + "离心式热泵4负荷率为： " + str(
+        chph4_load_ratio) + "\n" + "风冷螺杆热泵1负荷率为： " + str(ashph1_load_ratio) + "\n" + "风冷螺杆热泵2负荷率为： " + str(
+        ashph2_load_ratio) + "\n" + "风冷螺杆热泵3负荷率为： " + str(ashph3_load_ratio) + "\n" + "风冷螺杆热泵4负荷率为： " + str(
+        ashph4_load_ratio) + "\n"  + "蓄能水罐水泵1负荷率： " + str(eseh1_load_ratio) + "\n" + "蓄能水罐水泵2负荷率： " + str(
+        eseh2_load_ratio) + "\n" + "蓄能水罐水泵3负荷率： " + str(eseh3_load_ratio) + "\n")

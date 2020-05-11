@@ -51,9 +51,23 @@ def centrifugal_chiller_function(cold_load, cc1, cc2, cc3, cc4, gc):
         cc_num_max_1 = cc_num_max_2
     # 最大数量不可以超过4
     if cc_num_max_1 > 4:
-        cc_num_max = 4
+        cc_num_max_a = 4
     else:
-        cc_num_max = cc_num_max_1
+        cc_num_max_a = cc_num_max_1
+
+    # 如果某个设备的额定功率为0，则不参与计算，从而控制参与计算的设备的最大数量
+    cc_power_0_num = 0  # 初始化额定功率为0的设备数量
+    if cc1.cooling_power_rated == 0:
+        cc_power_0_num += 1
+    if cc2.cooling_power_rated == 0:
+        cc_power_0_num += 1
+    if cc3.cooling_power_rated == 0:
+        cc_power_0_num += 1
+    if cc4.cooling_power_rated == 0:
+        cc_power_0_num += 1
+    cc_num_max_b = 4 - cc_power_0_num
+    # 重新修正设备最大数量
+    cc_num_max = min(cc_num_max_a, cc_num_max_b)
 
     # 离心式冷水机启动数量初始值
     cc_num = 1

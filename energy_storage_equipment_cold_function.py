@@ -98,8 +98,21 @@ def energy_storage_equipment_cold_function(cold_load_a, esec1, esec2, esec3, gc)
         esec_num_max_b -= 1
     else:
         esec_num_max_b -= 0
-    # 确定最终的数量最大值
-    esec_num_max = min(esec_num_max_a, esec_num_max_b)
+    # 确定数量最大值
+    esec_num_max_c = min(esec_num_max_a, esec_num_max_b)
+
+    # 如果某个设备的额定功率为0，则不参与计算，从而控制参与计算的设备的最大数量
+    esec_power_0_num = 0  # 初始化额定功率为0的设备数量
+    if esec1.cooling_power_rated == 0:
+        esec_power_0_num += 1
+    if esec2.cooling_power_rated == 0:
+        esec_power_0_num += 1
+    if esec3.cooling_power_rated == 0:
+        esec_power_0_num += 1
+    esec_num_max_d = 3 - esec_power_0_num
+    # 重新修正设备最大数量
+    esec_num_max = min(esec_num_max_c, esec_num_max_d)
+
     # 修正冷负荷(cold_load)
     # 如果此时是供冷工况（冷负荷功率值大于0）
     if cold_load_a > 0:

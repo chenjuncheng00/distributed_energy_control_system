@@ -53,9 +53,23 @@ def air_source_heat_pump_function_cold(cold_load, ashpc1, ashpc2, ashpc3, ashpc4
         ashpc_num_max_1 = ashpc_num_max_2
     # 最大数量不可以超过4
     if ashpc_num_max_1 > 4:
-        ashpc_num_max = 4
+        ashpc_num_max_a = 4
     else:
-        ashpc_num_max = ashpc_num_max_1
+        ashpc_num_max_a = ashpc_num_max_1
+
+    # 如果某个设备的额定功率为0，则不参与计算，从而控制参与计算的设备的最大数量
+    ashpc_power_0_num = 0  # 初始化额定功率为0的设备数量
+    if ashpc1.cooling_power_rated == 0:
+        ashpc_power_0_num += 1
+    if ashpc2.cooling_power_rated == 0:
+        ashpc_power_0_num += 1
+    if ashpc3.cooling_power_rated == 0:
+        ashpc_power_0_num += 1
+    if ashpc4.cooling_power_rated == 0:
+        ashpc_power_0_num += 1
+    ashpc_num_max_b = 4 - ashpc_power_0_num
+    # 重新修正设备最大数量
+    ashpc_num_max = min(ashpc_num_max_a, ashpc_num_max_b)
 
     # 风冷螺杆热泵启动数量初始值
     ashpc_num = 1
