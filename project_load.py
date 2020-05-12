@@ -19,8 +19,8 @@ def electricity_load():
     return 3000
 
 
-def load_data_cold_load_model(file_name):
-    """神经网络负荷预测模型数据读取，冷负荷"""
+def load_data_load_forecast_model(file_name):
+    """神经网络负荷预测模型数据读取，冷热负荷"""
     # 获取训练用的输入(训练样本的输入x，有两个输入)；和训练用的输出（训练样本的输出y，有两个输出）
     # 读取txt文件
     f = open(file_name)  # 打开文件
@@ -45,7 +45,7 @@ def train_load_forecast_model():
     """负荷预测的神经网络模型"""
     # 导入训练数据
     # 冷负荷模型训练数据
-    (x_train, y_train) = load_data_cold_load_model("./load_forecast_model/cold_load_forecast_model_data_train.txt")
+    (x_train, y_train) = load_data_load_forecast_model("./load_forecast_model/cold_load_forecast_model_data_train.txt")
 
     # 构建模型
     model = tf.keras.Sequential([
@@ -60,7 +60,7 @@ def train_load_forecast_model():
     model.summary()
     # 训练
     model.fit(x_train, y_train, batch_size=5, epochs=50)
-    # 预测
+    # 冷负荷模型预测
     x_test = np.mat([0.548201499, 0.447000455, 0.093969255, 0.1, 0.380416971, 0.310639827])
     y_test = np.mat([0.289704519])
     err = model.evaluate(x_test, y_test)# 预测值和实际值的差值
@@ -68,14 +68,14 @@ def train_load_forecast_model():
     print(err)
     print(result)
 
-    # 保存训练好的模型
+    # 保存训练好的冷负荷模型
     # model.save('./load_forecast_model/cold_load_forecast_model.h5')
 
-    #加载模型
+    #加载冷负荷模型
     # model = tf.keras.models.load_model('path_to_my_model.h5')
 
 
-def model_pre():
+def cold_load_forecast_model_predict():
     """批量测试"""
     # 加载模型
     model = tf.keras.models.load_model('./load_forecast_model/cold_load_forecast_model.h5')
@@ -107,8 +107,4 @@ def model_pre():
     # print(ans)
 
 
-
-
-
 # train_load_forecast_model()
-model_pre()

@@ -268,7 +268,8 @@ def energy_storage_equipment_heat_storage_residual_read():
     eseh1_heat_stock = float(eseh_heat_stock[0])
     eseh2_heat_stock = float(eseh_heat_stock[1])
     eseh3_heat_stock = float(eseh_heat_stock[2])
-
+    f.close()  # 关闭文件
+    # 返回结果
     return eseh1_heat_stock, eseh2_heat_stock, eseh3_heat_stock
 
 
@@ -297,6 +298,8 @@ def energy_storage_equipment_heat_storage_residual_write(hour_state, eseh1, eseh
         f.writelines(line2)
         line3 = str(eseh3_heat_stock_new)
         f.writelines(line3)
+    # 关闭文件
+    f.close()
 
 
 def energy_storage_equipment_heat_load_ratio(eseh_num, eseh1_load_ratio_a, eseh2_load_ratio_a, eseh3_load_ratio_a, eseh_load_ratio):

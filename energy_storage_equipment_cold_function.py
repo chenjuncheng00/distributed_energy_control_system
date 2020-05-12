@@ -267,7 +267,8 @@ def energy_storage_equipment_cold_storage_residual_read():
     esec1_cold_stock = float(esec_cold_stock[0])
     esec2_cold_stock = float(esec_cold_stock[1])
     esec3_cold_stock = float(esec_cold_stock[2])
-
+    f.close()  # 关闭文件
+    # 返回结果
     return esec1_cold_stock, esec2_cold_stock, esec3_cold_stock
 
 
@@ -296,6 +297,8 @@ def energy_storage_equipment_cold_storage_residual_write(hour_state, esec1, esec
         f.writelines(line2)
         line3 = str(esec3_cold_stock_new)
         f.writelines(line3)
+    # 关闭文件
+    f.close()
 
 
 def energy_storage_equipment_cold_load_ratio(esec_num, esec1_load_ratio_a, esec2_load_ratio_a, esec3_load_ratio_a, esec_load_ratio):
