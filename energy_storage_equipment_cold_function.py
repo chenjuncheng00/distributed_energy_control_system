@@ -259,7 +259,7 @@ def energy_storage_equipment_cold_storage_residual_read():
     # 列表，储存从txt文件读取的3个水罐的剩余蓄冷量（单位kWh）
     esec_cold_stock = []
     # 读取txt文件，获取当前蓄冷水罐剩余的蓄冷量（单位kWh）
-    f = open("./energy_storage_equipment_cold_stock.txt", 'r')  # 打开文件
+    f = open("./energy_storage_equipment_stock/energy_storage_equipment_cold_stock.txt", 'r')  # 打开文件
     for line in f.readlines():
         lines = line.strip().split("\t")
         esec_cold_stock.append(lines[0])
@@ -273,7 +273,7 @@ def energy_storage_equipment_cold_storage_residual_read():
 
 def energy_storage_equipment_cold_storage_residual_write(hour_state, esec1, esec2, esec3, esec1_load_ratio, esec2_load_ratio, esec3_load_ratio, esec1_cold_stock, esec2_cold_stock, esec3_cold_stock):
     """向txt文件中写入计算结果，改变水罐蓄冷量（kWh）"""
-    f = open("./energy_storage_equipment_cold_stock.txt", 'w')  # 打开文件
+    f = open("./energy_storage_equipment_stock/energy_storage_equipment_cold_stock.txt", 'w')  # 打开文件
     if hour_state == 1:
         # 供冷状态，蓄冷量减少
         esec1_cold_stock_new = esec1_cold_stock - esec1_load_ratio * esec1.cooling_power_rated
