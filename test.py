@@ -72,6 +72,7 @@ def train_model_test():
     plt.plot(Y)
     plt.show()
 
-train_model_test()
+#train_model_test()
+
 
 

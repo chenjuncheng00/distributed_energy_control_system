@@ -260,7 +260,7 @@ def energy_storage_equipment_heat_storage_residual_read():
     # 列表，储存从txt文件读取的3个水罐的剩余蓄热量（单位kWh）
     eseh_heat_stock = []
     # 读取txt文件，获取当前蓄热水罐剩余的蓄热量（单位kWh）
-    f = open("./energy_storage_equipment_heat_stock.txt", 'r')  # 打开文件
+    f = open("./energy_storage_equipment_stock/energy_storage_equipment_heat_stock.txt", 'r')  # 打开文件
     for line in f.readlines():
         lines = line.strip().split("\t")
         eseh_heat_stock.append(lines[0])
@@ -274,7 +274,7 @@ def energy_storage_equipment_heat_storage_residual_read():
 
 def energy_storage_equipment_heat_storage_residual_write(hour_state, eseh1, eseh2, eseh3, eseh1_load_ratio, eseh2_load_ratio, eseh3_load_ratio, eseh1_heat_stock, eseh2_heat_stock, eseh3_heat_stock):
     """向txt文件中写入计算结果，改变水罐蓄热量（kWh）"""
-    f = open("./energy_storage_equipment_heat_stock.txt", 'w')  # 打开文件
+    f = open("./energy_storage_equipment_stock/energy_storage_equipment_heat_stock.txt", 'w')  # 打开文件
     if hour_state == 1:
         # 供热状态，蓄热量减少
         eseh1_heat_stock_new = eseh1_heat_stock - eseh1_load_ratio * eseh1.heating_power_rated
