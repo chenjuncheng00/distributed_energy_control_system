@@ -2,6 +2,8 @@ import tensorflow as tf
 
 class Global_Constant():
     def __init__(self):
+        # 整个项目的建筑面积
+        self.area = 189000
         # 允许的最大冷负荷
         self.cold_load_max = 28000
         # 允许的最大热负荷
@@ -73,6 +75,9 @@ class Global_Constant():
         self.lb2_hot_water_step = 50
         # 非谷电时间段列表(用与蓄冷蓄热策略计算)
         self.hour_ese_out = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
+        # 神经网络负荷预测模型
+        self.cold_load_model = tf.keras.models.load_model('./load_forecast_model/cold_load_forecast_model.h5')
+        self.heat_load_model = tf.keras.models.load_model('./load_forecast_model/heat_load_forecast_model.h5')
         # 离心式冷水机COP神经网络模型
         self.model_centrifugal_chiller_cop_1 = tf.keras.models.load_model('./centrifugal_chiller_cop_model/centrifugal_chiller_cop_model_0.5_to_1.h5')
         self.model_centrifugal_chiller_cop_2 = tf.keras.models.load_model('./centrifugal_chiller_cop_model/centrifugal_chiller_cop_model_0.1_to_0.5.h5')

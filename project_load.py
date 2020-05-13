@@ -2,13 +2,60 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 
-def cold_load():
-    # 项目冷负荷
-    return 8000
 
-def heat_load():
+def cold_load(gc):
+    # 项目冷负荷
+    # 载入神经网络模型
+    cold_load_model = gc.cold_load_model
+    # 神经网络模型输入参数，归一化处理
+    # 室外干球温度
+    environment_temperature = (35-10.8)/(38.6-10.8)
+    # 室外环境湿度
+    environment_humidity = (25-7.43)/(29.6-7.43)
+    # 太阳辐射强度
+    sun_radiation = (600-0)/(1261.37-0)
+    # 人员密度
+    personnel_density = 0.35
+    # 上一个时刻的冷负荷(w/㎡)
+    cold_load_1 = (63-0)/(148-0)
+    # 24个时刻之前的冷负荷
+    cold_load_24 = (33-0)/(148-0)
+    # 神经网络输入矩阵
+    X_cold_load_model = np.mat([environment_temperature, environment_humidity, sun_radiation, personnel_density, cold_load_1, cold_load_24])
+    # 预测输入结果
+    Y_cold_load_model = (cold_load_model.predict(X_cold_load_model))*(148-0) + 0
+    # 最终结果（单位kW）
+    cold_load_result = gc.area * Y_cold_load_model/1000
+    # 返回结果
+    return cold_load_result
+
+
+def heat_load(gc):
     # 项目热负荷
-    return 5000
+    # 载入神经网络模型
+    heat_load_model = gc.heat_load_model
+    # 神经网络模型输入参数，归一化处理
+    # 室外干球温度
+    environment_temperature = (10 - (-4.3)) / (29.4 - (-4.3))
+    # 室外环境湿度
+    environment_humidity = (10 - 1.55) / (15.57 - 1.55)
+    # 太阳辐射强度
+    sun_radiation = (600 - 0) / (1007.33 - 0)
+    # 人员密度
+    personnel_density = 0.55
+    # 上一个时刻的热负荷(w/㎡)
+    heat_load_1 = (22.81 - 0) / (61.345 - 0)
+    # 24个时刻之前的热负荷
+    heat_load_24 = (8.89 - 0) / (61.345 - 0)
+    # 神经网络输入矩阵
+    X_heat_load_model = np.mat([environment_temperature, environment_humidity, sun_radiation, personnel_density, heat_load_1, heat_load_24])
+    # 预测输入结果
+    Y_heat_load_model = (heat_load_model.predict(X_heat_load_model)) * (61.345 - 0) + 0
+    # 最终结果（单位kW）
+    heat_load_result = gc.area * Y_heat_load_model / 1000
+    # 返回结果
+    return heat_load_result
+
 
 def hot_water_load():
     # 项目生活热水负荷
@@ -45,12 +92,14 @@ def train_load_forecast_model():
     """负荷预测的神经网络模型"""
     # 导入训练数据
     # 冷负荷模型训练数据
-    (x_train, y_train) = load_data_load_forecast_model("./load_forecast_model/cold_load_forecast_model_data_train.txt")
+    #(x_train, y_train) = load_data_load_forecast_model("./load_forecast_model/cold_load_forecast_model_data_train.txt")
+    # 热负荷模型训练数据
+    (x_train, y_train) = load_data_load_forecast_model("./load_forecast_model/heat_load_forecast_model_data_train.txt")
 
     # 构建模型
     model = tf.keras.Sequential([
-        tf.keras.layers.Dense(50, input_shape=(6,)), # Dense:建立全连接神经网络，第一层是输入层，6个输入，50个输出
-        tf.keras.layers.Dense(50, activation='sigmoid'), # 第二层采用径向基函数，50个神经元
+        tf.keras.layers.Dense(80, input_shape=(6,)), # Dense:建立全连接神经网络，第一层是输入层，6个输入，50个输出
+        tf.keras.layers.Dense(80, activation='sigmoid'), # 第二层采用径向基函数，50个神经元
         tf.keras.layers.Dense(1) # 第三层输出层，1个输出
     ])
     # 配置模型
@@ -61,27 +110,35 @@ def train_load_forecast_model():
     # 训练
     model.fit(x_train, y_train, batch_size=5, epochs=50)
     # 冷负荷模型预测
-    x_test = np.mat([0.548201499, 0.447000455, 0.093969255, 0.1, 0.380416971, 0.310639827])
-    y_test = np.mat([0.289704519])
-    err = model.evaluate(x_test, y_test)# 预测值和实际值的差值
-    result = model.predict(x_test)#预测值
-    print(err)
-    print(result)
+    # x_test = np.mat([0.548201499, 0.447000455, 0.093969255, 0.1, 0.380416971, 0.310639827])
+    # y_test = np.mat([0.289704519])
+    # 热负荷模型预测
+    #x_test = np.mat([0.53115729, 0.15763196, 0.393277275, 1, 0.091419595, 0.050981397])
+    #y_test = np.mat([0.056336826])
+
+    #err = model.evaluate(x_test, y_test)# 预测值和实际值的差值
+    #result = model.predict(x_test)#预测值
+    #print(err)
+    #print(result)
 
     # 保存训练好的冷负荷模型
     # model.save('./load_forecast_model/cold_load_forecast_model.h5')
+    # 保存训练好的热负荷模型
+    # model.save('./load_forecast_model/heat_load_forecast_model.h5')
 
-    #加载冷负荷模型
-    # model = tf.keras.models.load_model('path_to_my_model.h5')
 
-
-def cold_load_forecast_model_predict():
+def load_forecast_model_predict():
     """批量测试"""
-    # 加载模型
-    model = tf.keras.models.load_model('./load_forecast_model/cold_load_forecast_model.h5')
+    # 加载冷负荷预测模型
+    # model = tf.keras.models.load_model('./load_forecast_model/cold_load_forecast_model.h5')
+    # 冷负荷预测模型输入
+    # file_name = "./load_forecast_model/cold_load_forecast_model_data_test.txt"
 
-    # 输入
-    file_name = "./load_forecast_model/cold_load_forecast_model_data_test.txt"
+    # 加载热负荷预测模型
+    model = tf.keras.models.load_model('./load_forecast_model/heat_load_forecast_model.h5')
+    # 热负荷预测模型输入
+    file_name = "./load_forecast_model/heat_load_forecast_model_data_test.txt"
+
     f = open(file_name)  # 打开文件
     testx_data = []  # 测试用的输入矩阵
     testy_data = []  # 测试用的输出矩阵
@@ -107,4 +164,10 @@ def cold_load_forecast_model_predict():
     # print(ans)
 
 
-# train_load_forecast_model()
+def load_forecast_main():
+    """训练和预测合为一体"""
+    train_load_forecast_model()
+    load_forecast_model_predict()
+
+
+# load_forecast_main()
