@@ -51,6 +51,9 @@ def energy_storage_equipment_heat_function(heat_load_a, eseh1, eseh2, eseh3, gc)
     # 3个水罐的额定蓄热量总和
     eseh_heating_storage_rated_sum = eseh1.heating_storage_rated + eseh2.heating_storage_rated + eseh3.heating_storage_rated
 
+    # 3个水罐的蓄热功率之和(单位kW)
+    eseh_heating_power_rated_sum = eseh1.heating_power_rated + eseh2.heating_power_rated + eseh3.heating_power_rated
+
     if heat_load_a > 0:
         # 如果此时是供热工况（热负荷功率值大于0），但是水罐内的可以供热总量等于0，则水罐关闭（实际上是水泵关闭），得到的负荷率结果用来判断这个水泵是否可以开启的标签
         if eseh1_heat_stock <= 0 + gc.project_load_error:
@@ -167,9 +170,9 @@ def energy_storage_equipment_heat_function(heat_load_a, eseh1, eseh2, eseh3, gc)
         eseh2_load_ratio_b = energy_storage_equipment_heat_load_ratio(eseh_num, eseh1_load_ratio_a, eseh2_load_ratio_a, eseh3_load_ratio_a, eseh_load_ratio)[1]
         eseh3_load_ratio_b = energy_storage_equipment_heat_load_ratio(eseh_num, eseh1_load_ratio_a, eseh2_load_ratio_a, eseh3_load_ratio_a, eseh_load_ratio)[2]
         # 对计算出的负荷率进行修正
-        eseh1_load_ratio = energy_storage_equipment_heat_load_ratio_correction(eseh1, heat_load_a, eseh1_load_ratio_b, eseh1_heat_stock)
-        eseh2_load_ratio = energy_storage_equipment_heat_load_ratio_correction(eseh2, heat_load_a, eseh2_load_ratio_b, eseh2_heat_stock)
-        eseh3_load_ratio = energy_storage_equipment_heat_load_ratio_correction(eseh3, heat_load_a, eseh3_load_ratio_b, eseh3_heat_stock)
+        eseh1_load_ratio = energy_storage_equipment_heat_load_ratio_correction(eseh1, heat_load_a, eseh1_load_ratio_b, eseh1_heat_stock, gc)
+        eseh2_load_ratio = energy_storage_equipment_heat_load_ratio_correction(eseh2, heat_load_a, eseh2_load_ratio_b, eseh2_heat_stock, gc)
+        eseh3_load_ratio = energy_storage_equipment_heat_load_ratio_correction(eseh3, heat_load_a, eseh3_load_ratio_b, eseh3_heat_stock, gc)
         # 计算蓄热水罐设备
         while eseh_load_ratio <= 1 + gc.load_ratio_error_coefficient:
             # 计算3个设备的制热出力
@@ -205,11 +208,11 @@ def energy_storage_equipment_heat_function(heat_load_a, eseh1, eseh2, eseh3, gc)
                 else:
                     eseh3_heat_out_now = 0
                 eseh_heat_out_now_sum = - (eseh1_heat_out_now + eseh2_heat_out_now + eseh3_heat_out_now)
-            # print(eseh_heat_out_now_sum, heat_load - gc.project_load_error, eseh1_heat_stock + eseh2_heat_stock + eseh3_heat_stock - gc.project_load_error)
             # 根据目前是供热状态还是蓄热状态分别判断
             # heat_load_a>0是供热状态 , heat_load_a<0是蓄热状态
-            if (heat_load_a > 0 and abs(eseh_heat_out_now_sum) < abs(heat_load) - gc.project_load_error and abs(eseh_heat_out_now_sum) < eseh_heat_stock_sum - gc.project_load_error) \
-               or (heat_load_a < 0 and abs(eseh_heat_out_now_sum) < abs(heat_load) - gc.project_load_error and abs(eseh_heat_out_now_sum) < eseh_heating_storage_rated_sum - eseh_heat_stock_sum - gc.project_load_error):
+            if (heat_load_a > 0 and abs(eseh_heat_out_now_sum) < abs(heat_load) - gc.project_load_error and abs(eseh_heat_out_now_sum) < min((eseh_heat_stock_sum - gc.project_load_error) * gc.hour_num_of_calculations, eseh_heating_power_rated_sum)) \
+                or (heat_load_a < 0 and abs(eseh_heat_out_now_sum) < abs(heat_load) - gc.project_load_error and
+                abs(eseh_heat_out_now_sum) < min((eseh_heating_storage_rated_sum - eseh_heat_stock_sum) * gc.hour_num_of_calculations, eseh_heating_power_rated_sum) - gc.project_load_error):
                 # 负荷都取绝对值
                 # 增加公用负荷率
                 eseh_load_ratio += eseh_step / 100
@@ -219,9 +222,9 @@ def energy_storage_equipment_heat_function(heat_load_a, eseh1, eseh2, eseh3, gc)
                 eseh2_load_ratio_b = energy_storage_equipment_heat_load_ratio(eseh_num, eseh1_load_ratio_a, eseh2_load_ratio_a, eseh3_load_ratio_a, eseh_load_ratio)[1]
                 eseh3_load_ratio_b = energy_storage_equipment_heat_load_ratio(eseh_num, eseh1_load_ratio_a, eseh2_load_ratio_a, eseh3_load_ratio_a, eseh_load_ratio)[2]
                 # 对计算出的负荷率进行修正
-                eseh1_load_ratio = energy_storage_equipment_heat_load_ratio_correction(eseh1, heat_load_a, eseh1_load_ratio_b, eseh1_heat_stock)
-                eseh2_load_ratio = energy_storage_equipment_heat_load_ratio_correction(eseh2, heat_load_a, eseh2_load_ratio_b, eseh2_heat_stock)
-                eseh3_load_ratio = energy_storage_equipment_heat_load_ratio_correction(eseh3, heat_load_a, eseh3_load_ratio_b, eseh3_heat_stock)
+                eseh1_load_ratio = energy_storage_equipment_heat_load_ratio_correction(eseh1, heat_load_a, eseh1_load_ratio_b, eseh1_heat_stock, gc)
+                eseh2_load_ratio = energy_storage_equipment_heat_load_ratio_correction(eseh2, heat_load_a, eseh2_load_ratio_b, eseh2_heat_stock, gc)
+                eseh3_load_ratio = energy_storage_equipment_heat_load_ratio_correction(eseh3, heat_load_a, eseh3_load_ratio_b, eseh3_heat_stock, gc)
             else:
                 # 保存3个设备的负荷率
                 eseh_load_ratio_result_all[0] = eseh1_load_ratio
@@ -273,14 +276,14 @@ def energy_storage_equipment_heat_storage_residual_read():
     return eseh1_heat_stock, eseh2_heat_stock, eseh3_heat_stock
 
 
-def energy_storage_equipment_heat_storage_residual_write(hour_state, eseh1, eseh2, eseh3, eseh1_load_ratio, eseh2_load_ratio, eseh3_load_ratio, eseh1_heat_stock, eseh2_heat_stock, eseh3_heat_stock):
+def energy_storage_equipment_heat_storage_residual_write(hour_state, eseh1, eseh2, eseh3, eseh1_load_ratio, eseh2_load_ratio, eseh3_load_ratio, eseh1_heat_stock, eseh2_heat_stock, eseh3_heat_stock, gc):
     """向txt文件中写入计算结果，改变水罐蓄热量（kWh）"""
     f = open("./energy_storage_equipment_stock/energy_storage_equipment_heat_stock.txt", 'w')  # 打开文件
     if hour_state == 1:
         # 供热状态，蓄热量减少
-        eseh1_heat_stock_new = eseh1_heat_stock - eseh1_load_ratio * eseh1.heating_power_rated
-        eseh2_heat_stock_new = eseh2_heat_stock - eseh2_load_ratio * eseh2.heating_power_rated
-        eseh3_heat_stock_new = eseh3_heat_stock - eseh3_load_ratio * eseh3.heating_power_rated
+        eseh1_heat_stock_new = eseh1_heat_stock - eseh1_load_ratio * eseh1.heating_power_rated / gc.hour_num_of_calculations
+        eseh2_heat_stock_new = eseh2_heat_stock - eseh2_load_ratio * eseh2.heating_power_rated / gc.hour_num_of_calculations
+        eseh3_heat_stock_new = eseh3_heat_stock - eseh3_load_ratio * eseh3.heating_power_rated / gc.hour_num_of_calculations
         line1 = str(eseh1_heat_stock_new) + "\n"
         f.writelines(line1)
         line2 = str(eseh2_heat_stock_new) + "\n"
@@ -289,9 +292,9 @@ def energy_storage_equipment_heat_storage_residual_write(hour_state, eseh1, eseh
         f.writelines(line3)
     else:
         # 蓄热状态，蓄热量增加
-        eseh1_heat_stock_new = eseh1_heat_stock + eseh1_load_ratio * eseh1.heating_power_rated
-        eseh2_heat_stock_new = eseh2_heat_stock + eseh2_load_ratio * eseh2.heating_power_rated
-        eseh3_heat_stock_new = eseh3_heat_stock + eseh3_load_ratio * eseh3.heating_power_rated
+        eseh1_heat_stock_new = eseh1_heat_stock + eseh1_load_ratio * eseh1.heating_power_rated / gc.hour_num_of_calculations
+        eseh2_heat_stock_new = eseh2_heat_stock + eseh2_load_ratio * eseh2.heating_power_rated / gc.hour_num_of_calculations
+        eseh3_heat_stock_new = eseh3_heat_stock + eseh3_load_ratio * eseh3.heating_power_rated / gc.hour_num_of_calculations
         line1 = str(eseh1_heat_stock_new) + "\n"
         f.writelines(line1)
         line2 = str(eseh2_heat_stock_new) + "\n"
@@ -355,11 +358,11 @@ def energy_storage_equipment_heat_load_ratio(eseh_num, eseh1_load_ratio_a, eseh2
     return eseh1_load_ratio, eseh2_load_ratio, eseh3_load_ratio
 
 
-def energy_storage_equipment_heat_load_ratio_correction(eseh, heat_load_a, load_ratio, eseh_heat_stock):
+def energy_storage_equipment_heat_load_ratio_correction(eseh, heat_load_a, load_ratio, eseh_heat_stock, gc):
     """对计算出的设备负荷率进行修正"""
     # 如果是向外供热的工况
     if heat_load_a > 0:
-        if eseh_heat_stock < eseh.heating_power_rated * load_ratio:
+        if eseh_heat_stock < eseh.heating_power_rated * load_ratio / gc.hour_num_of_calculations:
             load_ratio_correction = eseh_heat_stock / eseh.heating_power_rated
         else:
             load_ratio_correction = load_ratio
@@ -367,7 +370,7 @@ def energy_storage_equipment_heat_load_ratio_correction(eseh, heat_load_a, load_
         load_ratio_correction = 0
     else:
         # 如果是蓄热的工况
-        if eseh.heating_storage_rated - eseh_heat_stock < eseh.heating_power_rated * load_ratio:
+        if eseh.heating_storage_rated - eseh_heat_stock < eseh.heating_power_rated * load_ratio / gc.hour_num_of_calculations:
             load_ratio_correction = (eseh.heating_storage_rated - eseh_heat_stock) / eseh.heating_power_rated
         else:
             load_ratio_correction = load_ratio

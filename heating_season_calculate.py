@@ -211,24 +211,24 @@ def heating_season_function(heat_load, hot_water_load, electricity_load, gc):
     # 因为计算周期是1小时，因此蓄热量(kWh)可以直接用于热负荷(kW)的计算，两者数值相同
     if hour_state == 1:
         # 供热状态(正值)
-        if eseh_heat_stock_sum >= heat_load:
+        if eseh_heat_stock_sum * gc.hour_num_of_calculations >= heat_load:
             # 如果蓄热水罐剩余量大于等于热负荷需求量，则蓄热水罐提供的热负荷等于热负荷需求量
             heat_load_eseh = heat_load
         else:
-            heat_load_eseh = eseh_heat_stock_sum
+            heat_load_eseh = eseh_heat_stock_sum * gc.hour_num_of_calculations
     else:
         # 蓄热状态(负值)
         # 如果制热设备总功率减去热负荷需求量大于0，则表示可以有设备蓄热
         if eq_heating_power_rated_sum - heat_load > 0:
-            if eq_heating_power_rated_sum - heat_load >= eseh_heating_storage_rated_sum:
-                heat_load_eseh = -eseh_heating_storage_rated_sum
+            if eq_heating_power_rated_sum - heat_load >= eseh_heating_storage_rated_sum * gc.hour_num_of_calculations:
+                heat_load_eseh = -eseh_heating_storage_rated_sum * gc.hour_num_of_calculations
             else:
                 heat_load_eseh = -(eq_heating_power_rated_sum - heat_load)
         else:
             heat_load_eseh = 0
 
     # 蓄热装置负荷为0，或处于蓄热状态，但蓄热设备已满，时不进行蓄热装置计算
-    if heat_load_eseh == 0 or (heat_load_eseh < 0 and abs(eseh_heating_storage_rated_sum - eseh_heat_stock_sum) < gc.project_load_error):
+    if heat_load_eseh == 0 or (heat_load_eseh < 0 and abs(eseh_heating_storage_rated_sum - eseh_heat_stock_sum) * gc.hour_num_of_calculations < gc.project_load_error):
         eseh1_load_ratio = 0
         eseh2_load_ratio = 0
         eseh3_load_ratio = 0
@@ -561,7 +561,7 @@ def heating_season_function(heat_load, hot_water_load, electricity_load, gc):
         ice_num += 1
 
     # 在txt文件中修改蓄能水罐剩余的蓄冷量数据
-    esehsrw(hour_state, eseh1, eseh2, eseh3, eseh1_load_ratio, eseh2_load_ratio, eseh3_load_ratio, eseh1_heat_stock, eseh2_heat_stock, eseh3_heat_stock)
+    esehsrw(hour_state, eseh1, eseh2, eseh3, eseh1_load_ratio, eseh2_load_ratio, eseh3_load_ratio, eseh1_heat_stock, eseh2_heat_stock, eseh3_heat_stock, gc)
 
     # 返回计算结果
     return profits, income, cost, station_heat_out_all, station_electricity_out_all, ice1_load_ratio_result, ice2_load_ratio_result, lb_heat_load_result, lb_hot_water_result, ngb_hw_hot_water_result, chph1_load_ratio_result, chph2_load_ratio_result, chph3_load_ratio_result, chph4_load_ratio_result, ashph1_load_ratio_result, ashph2_load_ratio_result, ashph3_load_ratio_result, ashph4_load_ratio_result, eseh1_load_ratio, eseh2_load_ratio, eseh3_load_ratio, eseh_heat_load_out

@@ -11,7 +11,7 @@ def run_program():
     # 实例化一个全局常量类
     gc = Global_Constant()
     # 负荷情况
-    cold_load = 26000
+    cold_load = 12000
     heat_load = 0
     hot_water_load = 1000
     electricity_load = 4000

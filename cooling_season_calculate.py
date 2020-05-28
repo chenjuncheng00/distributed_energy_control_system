@@ -197,34 +197,36 @@ def cooling_season_function(cold_load, hot_water_load, electricity_load, gc):
         ice_num = 0
 
     # 根据当前所处的用电时间段，判断蓄冷装置是进行蓄冷还是供冷
-    # 读取目前水罐剩余的蓄冷量
+    # 读取目前水罐剩余的蓄冷量（单位为kWh）
     esec1_cold_stock = esecsrr()[0]
     esec2_cold_stock = esecsrr()[1]
     esec3_cold_stock = esecsrr()[2]
     esec_cold_stock_sum = esec1_cold_stock + esec2_cold_stock + esec3_cold_stock
-    # 3个水罐的额定蓄冷量总和
+    # 3个水罐的额定蓄冷量总和（单位为kWh）
     esec_cooling_storage_rated_sum = esec1.cooling_storage_rated + esec2.cooling_storage_rated + esec3.cooling_storage_rated
-    # 因为计算周期是1小时，因此蓄冷量(kWh)可以直接用于冷负荷(kW)的计算，两者数值相同
+    # 需要根据每小时计算几次的不同，蓄冷量(kWh)和冷负荷(kW)的计算需要进行换算
+    # 在供冷状态判断水罐内剩余的量是否够供冷时，需要考虑每小时计算几次；在蓄冷状态判断水罐内剩余的量是否够蓄冷时，需要考虑每小时计算几次
+    # 但传入蓄冷水罐计算函数的功率值(kW)，不考虑每小时计算几次，全部按照默认1小时计算1次考虑，最后在写入水罐消耗或者增加了多少能量(kWh)时，再考虑每小时计算机次
     if hour_state == 1:
         # 供冷状态(正值)
-        if esec_cold_stock_sum >= cold_load:
+        if esec_cold_stock_sum * gc.hour_num_of_calculations >= cold_load : # 两边都转换成kW值（考虑每小时计算几次）
             # 如果蓄冷水罐剩余量大于等于冷负荷需求量，则蓄冷水罐提供的冷负荷等于冷负荷需求量
             cold_load_esec = cold_load
         else:
-            cold_load_esec = esec_cold_stock_sum
+            cold_load_esec = esec_cold_stock_sum * gc.hour_num_of_calculations # 两边都转换成kW值
     else:
         # 蓄冷状态(负值)
         # 如果制冷设备总功率减去冷负荷需求量大于0，则表示可以有设备蓄冷
-        if eq_cooling_power_rated_sum - cold_load > 0:
-            if eq_cooling_power_rated_sum - cold_load >= esec_cooling_storage_rated_sum:
-                cold_load_esec = -esec_cooling_storage_rated_sum
+        if eq_cooling_power_rated_sum - cold_load > 0: # 此处单位均为功率值kW，不需要考虑每小时计算几次的问题
+            if (eq_cooling_power_rated_sum - cold_load) >= esec_cooling_storage_rated_sum * gc.hour_num_of_calculations: # 两边都转换成kW值（考虑每小时计算几次）
+                cold_load_esec = -esec_cooling_storage_rated_sum * gc.hour_num_of_calculations # 两边都转换成kW值
             else:
                 cold_load_esec = -(eq_cooling_power_rated_sum - cold_load)
         else:
             cold_load_esec = 0
 
-    # 蓄冷装置负荷为0时，或处于蓄冷状态，但蓄冷设备已满，不进行蓄冷装置计算
-    if cold_load_esec == 0 or (cold_load_esec < 0 and abs(esec_cooling_storage_rated_sum - esec_cold_stock_sum) < gc.project_load_error):
+    # 蓄冷装置负荷为0时，或处于蓄冷状态，但蓄冷设备已满，不进行蓄冷装置计算（两边都转换成kW值）
+    if cold_load_esec == 0 or (cold_load_esec < 0 and abs(esec_cooling_storage_rated_sum - esec_cold_stock_sum) * gc.hour_num_of_calculations < gc.project_load_error):
         esec1_load_ratio = 0
         esec2_load_ratio = 0
         esec3_load_ratio = 0
@@ -545,7 +547,7 @@ def cooling_season_function(cold_load, hot_water_load, electricity_load, gc):
         ice_num += 1
 
     # 在txt文件中修改蓄能水罐剩余的蓄冷量数据
-    esecsrw(hour_state, esec1, esec2, esec3, esec1_load_ratio, esec2_load_ratio, esec3_load_ratio, esec1_cold_stock,esec2_cold_stock, esec3_cold_stock)
+    esecsrw(hour_state, esec1, esec2, esec3, esec1_load_ratio, esec2_load_ratio, esec3_load_ratio, esec1_cold_stock,esec2_cold_stock, esec3_cold_stock, gc)
 
     #返回计算结果
     return profits, income, cost, station_cold_out_all, station_electricity_out_all, ice1_load_ratio_result, ice2_load_ratio_result, cc1_load_ratio_result, cc2_load_ratio_result, cc3_load_ratio_result, cc4_load_ratio_result, lb_cold_load_result, lb_hot_water_result, ngb_hw_hot_water_result, esec1_load_ratio, esec2_load_ratio, esec3_load_ratio, esec_cold_load_out, ashpc1_load_ratio_result, ashpc2_load_ratio_result, ashpc3_load_ratio_result, ashpc4_load_ratio_result

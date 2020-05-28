@@ -51,6 +51,9 @@ def energy_storage_equipment_cold_function(cold_load_a, esec1, esec2, esec3, gc)
     # 3个水罐的额定蓄冷量总和
     esec_cooling_storage_rated_sum = esec1.cooling_storage_rated + esec2.cooling_storage_rated + esec3.cooling_storage_rated
 
+    # 3个水罐的蓄冷功率之和(单位kW)
+    esec_cooling_power_rated_sum = esec1.cooling_power_rated + esec2.cooling_power_rated + esec3.cooling_power_rated
+
     if cold_load_a > 0:
         # 如果此时是供冷工况（冷负荷功率值大于0），但是水罐内的可以供冷总量等于0，则水罐关闭（实际上是水泵关闭），得到的负荷率结果用来判断这个水泵是否可以开启的标签
         if esec1_cold_stock <= 0 + gc.project_load_error:
@@ -155,6 +158,7 @@ def energy_storage_equipment_cold_function(cold_load_a, esec1, esec2, esec3, gc)
         cold_load = 0
     else:
         cold_load = max(cold_load_a, cold_load_b)
+
     # 水泵启动数量初始值
     esec_num = 1
     while esec_num <= esec_num_max:
@@ -166,9 +170,10 @@ def energy_storage_equipment_cold_function(cold_load_a, esec1, esec2, esec3, gc)
         esec2_load_ratio_b = energy_storage_equipment_cold_load_ratio(esec_num, esec1_load_ratio_a, esec2_load_ratio_a, esec3_load_ratio_a, esec_load_ratio)[1]
         esec3_load_ratio_b = energy_storage_equipment_cold_load_ratio(esec_num, esec1_load_ratio_a, esec2_load_ratio_a, esec3_load_ratio_a, esec_load_ratio)[2]
         # 对计算出的负荷率进行修正
-        esec1_load_ratio = energy_storage_equipment_cold_load_ratio_correction(esec1, cold_load_a, esec1_load_ratio_b, esec1_cold_stock)
-        esec2_load_ratio = energy_storage_equipment_cold_load_ratio_correction(esec2, cold_load_a, esec2_load_ratio_b, esec2_cold_stock)
-        esec3_load_ratio = energy_storage_equipment_cold_load_ratio_correction(esec3, cold_load_a, esec3_load_ratio_b, esec3_cold_stock)
+        esec1_load_ratio = energy_storage_equipment_cold_load_ratio_correction(esec1, cold_load_a, esec1_load_ratio_b, esec1_cold_stock, gc)
+        esec2_load_ratio = energy_storage_equipment_cold_load_ratio_correction(esec2, cold_load_a, esec2_load_ratio_b, esec2_cold_stock, gc)
+        esec3_load_ratio = energy_storage_equipment_cold_load_ratio_correction(esec3, cold_load_a, esec3_load_ratio_b, esec3_cold_stock, gc)
+
         # 计算蓄冷水罐设备
         while esec_load_ratio <= 1 + gc.load_ratio_error_coefficient:
             # 计算3个设备的制冷出力
@@ -203,12 +208,12 @@ def energy_storage_equipment_cold_function(cold_load_a, esec1, esec2, esec3, gc)
                     esec3_cold_out_now = - esec3_load_ratio * esec3.cooling_power_rated
                 else:
                     esec3_cold_out_now = 0
-                esec_cold_out_now_sum = - (esec1_cold_out_now + esec2_cold_out_now + esec3_cold_out_now)
-            # print(esec_cold_out_now_sum, abs(cold_load) - gc.project_load_error, esec1_cold_stock + esec2_cold_stock + esec3_cold_stock - gc.project_load_error)
+                esec_cold_out_now_sum = - (esec1_cold_out_now + esec2_cold_out_now + esec3_cold_out_now) # 单位kW
             # 根据目前是供冷状态还是蓄冷状态分别判断
             # cold_load_a>0是供冷状态 , cold_load_a<0是蓄冷状态
-            if (cold_load_a > 0 and abs(esec_cold_out_now_sum) < abs(cold_load) - gc.project_load_error and abs(esec_cold_out_now_sum) < esec_cold_stock_sum - gc.project_load_error) \
-                or (cold_load_a < 0 and abs(esec_cold_out_now_sum) < abs(cold_load) - gc.project_load_error and abs(esec_cold_out_now_sum) < esec_cooling_storage_rated_sum - esec_cold_stock_sum - gc.project_load_error):
+            if (cold_load_a > 0 and abs(esec_cold_out_now_sum) < abs(cold_load) - gc.project_load_error and abs(esec_cold_out_now_sum) < min((esec_cold_stock_sum - gc.project_load_error) * gc.hour_num_of_calculations, esec_cooling_power_rated_sum)) \
+                or (cold_load_a < 0 and abs(esec_cold_out_now_sum) < abs(cold_load) - gc.project_load_error and
+                abs(esec_cold_out_now_sum) < min((esec_cooling_storage_rated_sum - esec_cold_stock_sum) * gc.hour_num_of_calculations, esec_cooling_power_rated_sum) - gc.project_load_error):
                 # 负荷都取绝对值
                 # 增加公用负荷率
                 esec_load_ratio += esec_step / 100
@@ -218,9 +223,9 @@ def energy_storage_equipment_cold_function(cold_load_a, esec1, esec2, esec3, gc)
                 esec2_load_ratio_b = energy_storage_equipment_cold_load_ratio(esec_num, esec1_load_ratio_a, esec2_load_ratio_a, esec3_load_ratio_a, esec_load_ratio)[1]
                 esec3_load_ratio_b = energy_storage_equipment_cold_load_ratio(esec_num, esec1_load_ratio_a, esec2_load_ratio_a, esec3_load_ratio_a, esec_load_ratio)[2]
                 # 对计算出的负荷率进行修正
-                esec1_load_ratio = energy_storage_equipment_cold_load_ratio_correction(esec1, cold_load_a, esec1_load_ratio_b, esec1_cold_stock)
-                esec2_load_ratio = energy_storage_equipment_cold_load_ratio_correction(esec2, cold_load_a, esec2_load_ratio_b, esec2_cold_stock)
-                esec3_load_ratio = energy_storage_equipment_cold_load_ratio_correction(esec3, cold_load_a, esec3_load_ratio_b, esec3_cold_stock)
+                esec1_load_ratio = energy_storage_equipment_cold_load_ratio_correction(esec1, cold_load_a, esec1_load_ratio_b, esec1_cold_stock, gc)
+                esec2_load_ratio = energy_storage_equipment_cold_load_ratio_correction(esec2, cold_load_a, esec2_load_ratio_b, esec2_cold_stock, gc)
+                esec3_load_ratio = energy_storage_equipment_cold_load_ratio_correction(esec3, cold_load_a, esec3_load_ratio_b, esec3_cold_stock, gc)
             else:
                 # 保存3个设备的负荷率
                 esec_load_ratio_result_all[0] = esec1_load_ratio
@@ -272,14 +277,14 @@ def energy_storage_equipment_cold_storage_residual_read():
     return esec1_cold_stock, esec2_cold_stock, esec3_cold_stock
 
 
-def energy_storage_equipment_cold_storage_residual_write(hour_state, esec1, esec2, esec3, esec1_load_ratio, esec2_load_ratio, esec3_load_ratio, esec1_cold_stock, esec2_cold_stock, esec3_cold_stock):
+def energy_storage_equipment_cold_storage_residual_write(hour_state, esec1, esec2, esec3, esec1_load_ratio, esec2_load_ratio, esec3_load_ratio, esec1_cold_stock, esec2_cold_stock, esec3_cold_stock, gc):
     """向txt文件中写入计算结果，改变水罐蓄冷量（kWh）"""
     f = open("./energy_storage_equipment_stock/energy_storage_equipment_cold_stock.txt", 'w')  # 打开文件
     if hour_state == 1:
-        # 供冷状态，蓄冷量减少
-        esec1_cold_stock_new = esec1_cold_stock - esec1_load_ratio * esec1.cooling_power_rated
-        esec2_cold_stock_new = esec2_cold_stock - esec2_load_ratio * esec2.cooling_power_rated
-        esec3_cold_stock_new = esec3_cold_stock - esec3_load_ratio * esec3.cooling_power_rated
+        # 供冷状态，蓄冷量减少（单位为kWh，需要考虑每小时计算几次）
+        esec1_cold_stock_new = esec1_cold_stock - esec1_load_ratio * esec1.cooling_power_rated / gc.hour_num_of_calculations
+        esec2_cold_stock_new = esec2_cold_stock - esec2_load_ratio * esec2.cooling_power_rated / gc.hour_num_of_calculations
+        esec3_cold_stock_new = esec3_cold_stock - esec3_load_ratio * esec3.cooling_power_rated / gc.hour_num_of_calculations
         line1 = str(esec1_cold_stock_new) + "\n"
         f.writelines(line1)
         line2 = str(esec2_cold_stock_new) + "\n"
@@ -287,10 +292,10 @@ def energy_storage_equipment_cold_storage_residual_write(hour_state, esec1, esec
         line3 = str(esec3_cold_stock_new)
         f.writelines(line3)
     else:
-        # 蓄冷状态，蓄冷量增加
-        esec1_cold_stock_new = esec1_cold_stock + esec1_load_ratio * esec1.cooling_power_rated
-        esec2_cold_stock_new = esec2_cold_stock + esec2_load_ratio * esec2.cooling_power_rated
-        esec3_cold_stock_new = esec3_cold_stock + esec3_load_ratio * esec3.cooling_power_rated
+        # 蓄冷状态，蓄冷量增加（单位为kWh，需要考虑每小时计算几次）
+        esec1_cold_stock_new = esec1_cold_stock + esec1_load_ratio * esec1.cooling_power_rated / gc.hour_num_of_calculations
+        esec2_cold_stock_new = esec2_cold_stock + esec2_load_ratio * esec2.cooling_power_rated / gc.hour_num_of_calculations
+        esec3_cold_stock_new = esec3_cold_stock + esec3_load_ratio * esec3.cooling_power_rated / gc.hour_num_of_calculations
         line1 = str(esec1_cold_stock_new) + "\n"
         f.writelines(line1)
         line2 = str(esec2_cold_stock_new) + "\n"
@@ -354,19 +359,19 @@ def energy_storage_equipment_cold_load_ratio(esec_num, esec1_load_ratio_a, esec2
     return esec1_load_ratio, esec2_load_ratio, esec3_load_ratio
 
 
-def energy_storage_equipment_cold_load_ratio_correction(esec, cold_load_a, load_ratio, esec_cold_stock):
+def energy_storage_equipment_cold_load_ratio_correction(esec, cold_load_a, load_ratio, esec_cold_stock, gc):
     """对计算出的设备负荷率进行修正"""
     # 如果是向外供冷的工况
     if cold_load_a > 0:
-        if esec_cold_stock < esec.cooling_power_rated * load_ratio:
+        if esec_cold_stock < esec.cooling_power_rated * load_ratio / gc.hour_num_of_calculations:
             load_ratio_correction = esec_cold_stock / esec.cooling_power_rated
         else:
             load_ratio_correction = load_ratio
-    elif cold_load_a ==0:
+    elif cold_load_a == 0:
         load_ratio_correction = 0
     else:
         # 如果是蓄冷的工况
-        if esec.cooling_storage_rated - esec_cold_stock < esec.cooling_power_rated * load_ratio:
+        if (esec.cooling_storage_rated - esec_cold_stock) < (esec.cooling_power_rated * load_ratio) / gc.hour_num_of_calculations:
             load_ratio_correction = (esec.cooling_storage_rated - esec_cold_stock) / esec.cooling_power_rated
         else:
             load_ratio_correction = load_ratio
@@ -385,6 +390,7 @@ def energy_storage_equipment_cold_result(ans_esec, esec1, esec2, esec3):
     esec1_ratio = ans_esec[1][cost_min_index]
     esec2_ratio = ans_esec[2][cost_min_index]
     esec3_ratio = ans_esec[3][cost_min_index]
+    # 单位为kW，不用考虑每小时计算几次的问题
     cold_load_out = esec1_ratio * esec1.cooling_power_rated + esec2_ratio * esec2.cooling_power_rated + esec3_ratio * esec3.cooling_power_rated
     power_consumption_total = ans_esec[4][cost_min_index]
     water_supply_total = ans_esec[5][cost_min_index]
@@ -403,6 +409,7 @@ def print_energy_storage_equipment_cold(ans_esec, esec1, esec2, esec3):
     esec1_ratio = ans_esec[1][cost_min_index]
     esec2_ratio = ans_esec[2][cost_min_index]
     esec3_ratio = ans_esec[3][cost_min_index]
+    # 单位为kW，不用考虑每小时计算几次的问题
     cold_load_out = esec1_ratio * esec1.cooling_power_rated + esec2_ratio * esec2.cooling_power_rated + esec3_ratio * esec3.cooling_power_rated
 
     print("蓄能水罐最低总运行成本为： " + str(cost_min) + "\n" + "蓄能水罐水泵1负荷率为： " + str(esec1_ratio) + "\n" + "蓄能水罐水泵2负荷率为： " + str(esec2_ratio) + "\n" + "蓄能水罐水泵3负荷率为： " + str(esec3_ratio) + "\n" + "蓄能水罐总制冷出力为： " + str(cold_load_out))
