@@ -1393,6 +1393,18 @@ def read_from_database_ese_utility():
     syncbase.open()
 
     # 蓄冷蓄热装置公用
+    # 蓄能水罐本体运行状态反馈
+    state4, record4 = syncbase.get_reatime_data_by_name('ese_state')
+    if state4:
+        ese_state = record4.value
+    else:
+        ese_state = 0
+    # 蓄能水罐本体故障信号反馈
+    state5, record5 = syncbase.get_reatime_data_by_name('ese_fault')
+    if state5:
+        ese_fault = record5.value
+    else:
+        ese_fault = 0
     # 蓄冷蓄热装置冷热水供水母管温度
     state1, record1 = syncbase.get_reatime_data_by_name('ese_water_supply_temperature')
     if state1:
@@ -1422,7 +1434,7 @@ def read_from_database_ese_utility():
     syncbase.close()
     del syncbase
 
-    return ese_water_supply_temperature, ese_water_supply_flow, ese_water_return_temperature, ese_water_energy
+    return ese_state, ese_fault, ese_water_supply_temperature, ese_water_supply_flow, ese_water_return_temperature, ese_water_energy
 
 
 def read_from_database_ngb1():
@@ -1661,7 +1673,7 @@ def read_from_database_ngb_utility():
     return ngb_heat_water_supply_temperature, ngb_heat_water_supply_flow, ngb_heat_water_return_temperature, ngb_exhaust_temperature, ngb_exhaust_flow, ngb_heat_water_energy
 
 
-def system_utility():
+def read_from_database_system_utility():
     """利用SyncBASE，从数据库中读取数据"""
     # 读取系统公用数据
     syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
@@ -1680,25 +1692,25 @@ def system_utility():
     else:
         water_collector_temperature = 0
     # 生活热水供水母管温度
-    state3, record3 = syncbase.get_reatime_data_by_name('hot_water_supply_pipe_temperature')
+    state3, record3 = syncbase.get_reatime_data_by_name('hot_water_supply_temperature')
     if state3:
         hot_water_supply_pipe_temperature = record3.value
     else:
         hot_water_supply_pipe_temperature = 0
     # 生活热水回水母管温度
-    state4, record4 = syncbase.get_reatime_data_by_name('hot_water_return_pipe_temperature')
+    state4, record4 = syncbase.get_reatime_data_by_name('hot_water_return_temperature')
     if state4:
         hot_water_return_pipe_temperature = record4.value
     else:
         hot_water_return_pipe_temperature = 0
     # 天然气母管流量1
-    state5, record5 = syncbase.get_reatime_data_by_name('natural_gas_pipe_flow_1')
+    state5, record5 = syncbase.get_reatime_data_by_name('natural_gas_flow_1')
     if state5:
         natural_gas_pipe_flow_1 = record5.value
     else:
         natural_gas_pipe_flow_1 = 0
     # 天然气母管流量2
-    state6, record6 = syncbase.get_reatime_data_by_name('natural_gas_pipe_flow_2')
+    state6, record6 = syncbase.get_reatime_data_by_name('natural_gas_flow_2')
     if state6:
         natural_gas_pipe_flow_2 = record6.value
     else:
@@ -1717,7 +1729,7 @@ def system_utility():
     return manifold_temperature, water_collector_temperature, hot_water_supply_pipe_temperature, hot_water_return_pipe_temperature, natural_gas_pipe_flow_1, natural_gas_pipe_flow_2, hot_water_energy
 
 
-def environment():
+def read_from_database_load_forecast():
     """利用SyncBASE，从数据库中读取数据"""
     # 读取系环境数据
     syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
@@ -1754,8 +1766,21 @@ def environment():
     else:
         wind_direction = 0
 
+    # 人员密度
+    state6, record6 = syncbase.get_reatime_data_by_name('personnel_density')
+    if state6:
+        personnel_density = record6.value
+    else:
+        personnel_density = 0
+    # 设备发热程度
+    state7, record7 = syncbase.get_reatime_data_by_name('equipment_fever')
+    if state7:
+        equipment_fever = record7.value
+    else:
+        equipment_fever = 0
+
     # 关闭syncbase
     syncbase.close()
     del syncbase
 
-    return environment_temperature, environment_humidity, sun_radiation, wind_speed, wind_direction
+    return environment_temperature, environment_humidity, sun_radiation, wind_speed, wind_direction, personnel_density, equipment_fever
