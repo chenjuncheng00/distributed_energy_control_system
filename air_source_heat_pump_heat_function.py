@@ -136,7 +136,8 @@ def air_source_heat_pump_function_heat(heat_load, ashph1, ashph2, ashph3, ashph4
                 ashph4_air_source_heat_pump_power_consumption = air_source_heat_pump_cost_heat(ashph4, gc, ashph4_load_ratio)[3]
                 # 计算4个设备的采暖水流量、低温热源水流量
                 # 采暖水总流量
-                heating_water_flow_total = air_source_heat_pump_cost_heat(ashph1, gc, ashph1_load_ratio)[4] + air_source_heat_pump_cost_heat(ashph2, gc, ashph2_load_ratio)[4] + air_source_heat_pump_cost_heat(ashph3, gc, ashph3_load_ratio)[4] + air_source_heat_pump_cost_heat(ashph4, gc, ashph4_load_ratio)[4]
+                heating_water_flow_total = air_source_heat_pump_cost_heat(ashph1, gc, ashph1_load_ratio)[4] + air_source_heat_pump_cost_heat(ashph2, gc, ashph2_load_ratio)[4] \
+                                           + air_source_heat_pump_cost_heat(ashph3, gc, ashph3_load_ratio)[4] + air_source_heat_pump_cost_heat(ashph4, gc, ashph4_load_ratio)[4]
                 # 每个水泵的流量为总流量均分（后期可细化流量分配比例）
                 ashph1_heating_water_flow = heating_water_flow_total / ashph_num
                 ashph2_heating_water_flow = heating_water_flow_total / ashph_num
@@ -148,7 +149,10 @@ def air_source_heat_pump_function_heat(heat_load, ashph1, ashph2, ashph3, ashph4
                 ashph3_auxiliary_equipment_power_consumption = air_source_heat_pump_auxiliary_equipment_cost_heat(ashph3, gc, ashph3_heating_water_flow)[0]
                 ashph4_auxiliary_equipment_power_consumption = air_source_heat_pump_auxiliary_equipment_cost_heat(ashph4, gc, ashph4_heating_water_flow)[0]
                 # 耗电量总计
-                ashph_power_consumption_total = ashph1_air_source_heat_pump_power_consumption + ashph2_air_source_heat_pump_power_consumption + ashph3_air_source_heat_pump_power_consumption + ashph4_air_source_heat_pump_power_consumption + ashph1_auxiliary_equipment_power_consumption + ashph2_auxiliary_equipment_power_consumption + ashph3_auxiliary_equipment_power_consumption + ashph4_auxiliary_equipment_power_consumption
+                ashph_power_consumption_total = ashph1_air_source_heat_pump_power_consumption + ashph2_air_source_heat_pump_power_consumption \
+                                                + ashph3_air_source_heat_pump_power_consumption + ashph4_air_source_heat_pump_power_consumption \
+                                                + ashph1_auxiliary_equipment_power_consumption + ashph2_auxiliary_equipment_power_consumption \
+                                                + ashph3_auxiliary_equipment_power_consumption + ashph4_auxiliary_equipment_power_consumption
                 total_power_consumption.append(ashph_power_consumption_total)
                 # 计算4个设备的总补水量
                 ashph1_water_supply = air_source_heat_pump_cost_heat(ashph1, gc, ashph1_load_ratio)[2]
@@ -182,7 +186,8 @@ def air_source_heat_pump_result_heat(ans_ashph, ashph1, ashph2, ashph3, ashph4):
     ashph4_ratio = ans_ashph[4][cost_min_index]
     power_consumption_total = ans_ashph[5][cost_min_index]
     water_supply_total = ans_ashph[6][cost_min_index]
-    heat_load_out = ashph1_ratio * ashph1.heating_power_rated + ashph2_ratio * ashph2.heating_power_rated + ashph3_ratio * ashph3.heating_power_rated + ashph4_ratio * ashph4.heating_power_rated
+    heat_load_out = ashph1_ratio * ashph1.heating_power_rated + ashph2_ratio * ashph2.heating_power_rated \
+                    + ashph3_ratio * ashph3.heating_power_rated + ashph4_ratio * ashph4.heating_power_rated
 
     return ashph1_ratio, ashph2_ratio, ashph3_ratio, ashph4_ratio, heat_load_out, power_consumption_total, water_supply_total
 
@@ -191,15 +196,19 @@ def air_source_heat_pump_cost_heat(ashph, gc, load_ratio):
     """风冷螺杆热泵组运行成本计算"""
     # 采暖水流量,某一负荷率条件下
     heating_water_flow = ashph.heating_water_flow(load_ratio)
+    # 环境温度
+    environment_temperature = gc.environment_temperature
     # 计算此时的风冷螺杆热泵采暖水出口温度
     heating_water_temperature = gc.heating_water_temperature
     # 风冷螺杆热泵制热COP,某一负荷率条件下
-    air_source_heat_pump_cop = ashph.air_source_heat_pump_heat_cop(load_ratio, heating_water_temperature, 30)
+    air_source_heat_pump_cop = ashph.air_source_heat_pump_heat_cop(load_ratio, heating_water_temperature, environment_temperature)
     # 风冷螺杆热泵本体耗电功率,某一负荷率条件下
     air_source_heat_pump_power_consumption = ashph.air_source_heat_pump_heat_power_consumption(load_ratio, air_source_heat_pump_cop)
     # 以下辅机耗电计算针对的是单元制系统，及泵与设备一对一布置；如果是母管制系统，需要单独重新计算
     # 辅助设备耗电功率,某一负荷率条件下
-    auxiliary_equipment_power_consumption = ashph.auxiliary_equipment_power_consumption(heating_water_flow)
+    auxiliary_equipment_power_consumption = ashph.auxiliary_equipment_power_consumption(heating_water_flow)[0]
+    # 采暖水泵的频率
+    wp_frequency_heating_water = ashph.auxiliary_equipment_power_consumption(heating_water_flow)[1]
     # 风冷螺杆热泵总耗电功率,某一负荷率条件下
     total_power_consumption = air_source_heat_pump_power_consumption + auxiliary_equipment_power_consumption
     # 电成本（元）,某一负荷率条件下
@@ -214,13 +223,13 @@ def air_source_heat_pump_cost_heat(ashph, gc, load_ratio):
     # 成本合计
     cost_total = total_electricity_cost + total_water_cost
     # 返回计算结果
-    return cost_total, total_power_consumption, total_water_supply, air_source_heat_pump_power_consumption, heating_water_flow
+    return cost_total, total_power_consumption, total_water_supply, air_source_heat_pump_power_consumption, heating_water_flow, wp_frequency_heating_water
 
 
 def air_source_heat_pump_auxiliary_equipment_cost_heat(ashph, gc, heating_water_flow):
     """风冷螺杆热泵辅助设备成本计算"""
     # 辅助设备耗电功率,某一负荷率条件下
-    auxiliary_equipment_power_consumption = ashph.auxiliary_equipment_power_consumption(heating_water_flow)
+    auxiliary_equipment_power_consumption = ashph.auxiliary_equipment_power_consumption(heating_water_flow)[0]
     auxiliary_equipment_power_cost = auxiliary_equipment_power_consumption * gc.buy_electricity_price
     # 返回计算结果
     return auxiliary_equipment_power_consumption, auxiliary_equipment_power_cost
@@ -238,25 +247,8 @@ def print_air_source_heat_pump_heat(ans, ashph1, ashph2, ashph3, ashph4):
     ashph2_ratio = ans[2][cost_min_index]
     ashph3_ratio = ans[3][cost_min_index]
     ashph4_ratio = ans[4][cost_min_index]
-    heat_load_out = ashph1_ratio * ashph1.heating_power_rated + ashph2_ratio * ashph2.heating_power_rated + ashph3_ratio * ashph3.heating_power_rated + ashph4_ratio * ashph4.heating_power_rated
-    print("风冷螺杆热泵最低总运行成本为： " + str(cost_min) + "\n" + "风冷螺杆热泵1负荷率为： " + str(ashph1_ratio) + "\n" + "风冷螺杆热泵2负荷率为： " + str(ashph2_ratio) + "\n" + "风冷螺杆热泵3负荷率为： " + str(ashph3_ratio) + "\n" + "风冷螺杆热泵4负荷率为： " + str(ashph4_ratio) + "\n" + "风冷螺杆热泵总制热出力为： " + str(heat_load_out))
-
-
-def test_air_source_heat_pump_function_heat():
-    """测试风冷螺杆热泵制热计算"""
-    gc = Global_Constant()
-    heat_load = 2000
-    ashph_wp = False
-    ashph1_wp_heating_water = Water_Pump(150, ashph_wp, 35, gc)
-    ashph2_wp_heating_water = Water_Pump(150, ashph_wp, 35, gc)
-    ashph3_wp_heating_water = Water_Pump(150, ashph_wp, 35, gc)
-    ashph4_wp_heating_water = Water_Pump(150, ashph_wp, 35, gc)
-    ashph1 = Air_Source_Heat_Pump_Heat(760, 0.2, False, ashph1_wp_heating_water, gc)
-    ashph2 = Air_Source_Heat_Pump_Heat(760, 0.2, False, ashph2_wp_heating_water, gc)
-    ashph3 = Air_Source_Heat_Pump_Heat(760, 0.2, False, ashph3_wp_heating_water, gc)
-    ashph4 = Air_Source_Heat_Pump_Heat(760, 0.2, False, ashph4_wp_heating_water, gc)
-
-    ans = air_source_heat_pump_function_heat(heat_load, ashph1, ashph2, ashph3, ashph4, gc)
-    print_air_source_heat_pump_heat(ans, ashph1, ashph2, ashph3, ashph4)
-
-# test_air_source_heat_pump_function_heat()
+    heat_load_out = ashph1_ratio * ashph1.heating_power_rated + ashph2_ratio * ashph2.heating_power_rated \
+                    + ashph3_ratio * ashph3.heating_power_rated + ashph4_ratio * ashph4.heating_power_rated
+    print("风冷螺杆热泵最低总运行成本为： " + str(cost_min) + "\n" + "风冷螺杆热泵1负荷率为： " + str(ashph1_ratio) + "\n"
+          + "风冷螺杆热泵2负荷率为： " + str(ashph2_ratio) + "\n" + "风冷螺杆热泵3负荷率为： " + str(ashph3_ratio) + "\n"
+          + "风冷螺杆热泵4负荷率为： " + str(ashph4_ratio) + "\n" + "风冷螺杆热泵总制热出力为： " + str(heat_load_out))

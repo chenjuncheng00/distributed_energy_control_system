@@ -211,9 +211,11 @@ def energy_storage_equipment_cold_function(cold_load_a, esec1, esec2, esec3, gc)
                 esec_cold_out_now_sum = - (esec1_cold_out_now + esec2_cold_out_now + esec3_cold_out_now) # 单位kW
             # 根据目前是供冷状态还是蓄冷状态分别判断
             # cold_load_a>0是供冷状态 , cold_load_a<0是蓄冷状态
-            if (cold_load_a > 0 and abs(esec_cold_out_now_sum) < abs(cold_load) - gc.project_load_error and abs(esec_cold_out_now_sum) < min((esec_cold_stock_sum - gc.project_load_error) * gc.hour_num_of_calculations, esec_cooling_power_rated_sum)) \
+            if (cold_load_a > 0 and abs(esec_cold_out_now_sum) < abs(cold_load) - gc.project_load_error and
+                abs(esec_cold_out_now_sum) < min((esec_cold_stock_sum - gc.project_load_error) * gc.hour_num_of_calculations, esec_cooling_power_rated_sum)) \
                 or (cold_load_a < 0 and abs(esec_cold_out_now_sum) < abs(cold_load) - gc.project_load_error and
-                abs(esec_cold_out_now_sum) < min((esec_cooling_storage_rated_sum - esec_cold_stock_sum) * gc.hour_num_of_calculations, esec_cooling_power_rated_sum) - gc.project_load_error):
+                abs(esec_cold_out_now_sum) < min((esec_cooling_storage_rated_sum - esec_cold_stock_sum) * gc.hour_num_of_calculations,
+                                                 esec_cooling_power_rated_sum) - gc.project_load_error):
                 # 负荷都取绝对值
                 # 增加公用负荷率
                 esec_load_ratio += esec_step / 100
@@ -277,7 +279,8 @@ def energy_storage_equipment_cold_storage_residual_read():
     return esec1_cold_stock, esec2_cold_stock, esec3_cold_stock
 
 
-def energy_storage_equipment_cold_storage_residual_write(hour_state, esec1, esec2, esec3, esec1_load_ratio, esec2_load_ratio, esec3_load_ratio, esec1_cold_stock, esec2_cold_stock, esec3_cold_stock, gc):
+def energy_storage_equipment_cold_storage_residual_write(hour_state, esec1, esec2, esec3, esec1_load_ratio, esec2_load_ratio,
+                                                         esec3_load_ratio, esec1_cold_stock, esec2_cold_stock, esec3_cold_stock, gc):
     """向txt文件中写入计算结果，改变水罐蓄冷量（kWh）"""
     f = open("./energy_storage_equipment_stock/energy_storage_equipment_cold_stock.txt", 'w')  # 打开文件
     if hour_state == 1:
@@ -412,7 +415,8 @@ def print_energy_storage_equipment_cold(ans_esec, esec1, esec2, esec3):
     # 单位为kW，不用考虑每小时计算几次的问题
     cold_load_out = esec1_ratio * esec1.cooling_power_rated + esec2_ratio * esec2.cooling_power_rated + esec3_ratio * esec3.cooling_power_rated
 
-    print("蓄能水罐最低总运行成本为： " + str(cost_min) + "\n" + "蓄能水罐水泵1负荷率为： " + str(esec1_ratio) + "\n" + "蓄能水罐水泵2负荷率为： " + str(esec2_ratio) + "\n" + "蓄能水罐水泵3负荷率为： " + str(esec3_ratio) + "\n" + "蓄能水罐总制冷出力为： " + str(cold_load_out))
+    print("蓄能水罐最低总运行成本为： " + str(cost_min) + "\n" + "蓄能水罐水泵1负荷率为： " + str(esec1_ratio) + "\n" + "蓄能水罐水泵2负荷率为： "
+          + str(esec2_ratio) + "\n" + "蓄能水罐水泵3负荷率为： " + str(esec3_ratio) + "\n" + "蓄能水罐总制冷出力为： " + str(cold_load_out))
 
 
 def energy_storage_equipment_cold_cost(esec, gc, load_ratio):
@@ -420,7 +424,9 @@ def energy_storage_equipment_cold_cost(esec, gc, load_ratio):
     # 冷冻水流量,某一负荷率条件下
     chilled_water_flow = esec.chilled_water_flow(load_ratio)
     # 辅助设备耗电功率,某一负荷率条件下
-    auxiliary_equipment_power_consumption = esec.auxiliary_equipment_power_consumption(chilled_water_flow)
+    auxiliary_equipment_power_consumption = esec.auxiliary_equipment_power_consumption(chilled_water_flow)[0]
+    # 冷冻水泵频率
+    wp_frequency_chilled_water = esec.auxiliary_equipment_power_consumption(chilled_water_flow)[1]
     # 总耗电功率,某一负荷率条件下（只有水泵耗电）
     total_power_consumption = auxiliary_equipment_power_consumption
     # 电成本（元）,某一负荷率条件下
@@ -435,30 +441,4 @@ def energy_storage_equipment_cold_cost(esec, gc, load_ratio):
     # 成本合计
     cost_total = total_electricity_cost + total_water_cost
     # 返回计算结果
-    return cost_total, total_power_consumption, total_water_supply, chilled_water_flow
-
-
-def test_energy_storage_equipment_cold_function():
-    """测试蓄能水罐计算"""
-    gc = Global_Constant()
-    # 实例化1组3个蓄冷水罐的循环水泵（水泵3用1备）
-    esec1_wp_chilled_water = Water_Pump(50, False, 35, gc)
-    esec2_wp_chilled_water = Water_Pump(50, False, 35, gc)
-    esec3_wp_chilled_water = Water_Pump(50, False, 35, gc)
-    # 实例化3个蓄冷水罐（实际上只有1个水罐，但是有3个水泵，将水泵假想3等分，作为3个水罐，与水泵一一对应去计算）
-    esec1 = Energy_Storage_Equipment_Cold(1000, 0.1, 8000, esec1_wp_chilled_water, gc)
-    esec2 = Energy_Storage_Equipment_Cold(1000, 0.1, 8000, esec2_wp_chilled_water, gc)
-    esec3 = Energy_Storage_Equipment_Cold(1000, 0.1, 8000, esec3_wp_chilled_water, gc)
-    # 冷负荷
-    cold_load_a = 3000
-    ans_esec = energy_storage_equipment_cold_function(cold_load_a, esec1, esec2, esec3, gc)
-    print_energy_storage_equipment_cold(ans_esec, esec1, esec2, esec3)
-    # 写入txt文件
-    # hour_state = 1
-    # esec1_cold_stock = energy_storage_equipment_cold_storage_residual_read()[0]
-    # esec2_cold_stock = energy_storage_equipment_cold_storage_residual_read()[1]
-    # esec3_cold_stock = energy_storage_equipment_cold_storage_residual_read()[2]
-    # energy_storage_equipment_cold_storage_residual_write(hour_state, esec1, esec2, esec3, 1, 1, 1, esec1_cold_stock, esec2_cold_stock, esec3_cold_stock)
-
-# test_energy_storage_equipment_cold_function()
-
+    return cost_total, total_power_consumption, total_water_supply, chilled_water_flow, wp_frequency_chilled_water

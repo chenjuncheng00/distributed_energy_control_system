@@ -141,12 +141,14 @@ class Centrifugal_Chiller():
         if self.wp_cooling_water.frequency_scaling == False:
             #如果是定频水泵，频率永远保持50Hz（定频水泵的扬程都是满足要求的，不再计算扬程）
             cooling_pump_power = self.wp_cooling_water.pump_performance_data(cooling_water_flow, 50)[1]
+            wp_frequency_cooling_water = 50
         else:
             # 如果是变频水泵，频率变化，寻找满足要求最小需求时的频率
             # 计算冷却水流量额定值
             cooling_water_flow_rated = self.cooling_water_flow_rated()
             if cooling_water_flow_rated == 0:
                 cooling_pump_power = 0
+                wp_frequency_cooling_water = 0
             else:
                 # 从这个点开始寻找频率合适的值
                 wp_frequency_start_cooling_water = (cooling_water_flow/cooling_water_flow_rated) * 50
@@ -179,12 +181,14 @@ class Centrifugal_Chiller():
         if self.wp_chilled_water.frequency_scaling == False:
             # 如果是定频水泵，频率永远50Hz，（定频水泵的扬程都是满足要求的，不再计算扬程）
             chilled_pump_power = self.wp_chilled_water.pump_performance_data(chilled_water_flow, 50)[1]
+            wp_frequency_chilled_water = 50
         else:
             # 如果是变频水泵，频率变化，寻找满足要求最小需求时的频率
             # 计算冷冻水泵额定值
             chilled_water_flow_rated = self.chilled_water_flow_rated()
             if chilled_water_flow_rated == 0:
                 chilled_pump_power = 0
+                wp_frequency_chilled_water = 0
             else:
                 wp_frequency_start_chilled_water = (chilled_water_flow / chilled_water_flow_rated) * 50  # 从这个点开始寻找频率合适的值
                 # 计算当前流量下，变频水泵的扬程
@@ -214,7 +218,7 @@ class Centrifugal_Chiller():
         # 冷却塔风机耗电功率，某一负荷率下，风机为定频，功率保持不变
         cooling_tower_fan_power = 20
         # 返回总辅助设备耗电功率，某一负荷率下
-        return cooling_pump_power + chilled_pump_power + cooling_tower_fan_power
+        return cooling_pump_power + chilled_pump_power + cooling_tower_fan_power, wp_frequency_chilled_water, wp_frequency_cooling_water
 
     def centrifugal_chiller_power_consumption(self, load_ratio, centrifugal_chiller_cop):
         """离心式冷水机本身耗电功率，某一负荷率下"""
@@ -338,12 +342,14 @@ class Centrifugal_Heat_Pump_Heat():
         if self.wp_heat_source_water.frequency_scaling == False:
             #如果是定频水泵，频率永远保持50Hz（定频水泵的扬程都是满足要求的，不再计算扬程）
             heat_source_water_pump_power = self.wp_heat_source_water.pump_performance_data(heat_source_water_flow, 50)[1]
+            wp_frequency_heat_source_water = 50
         else:
             # 如果是变频水泵，频率变化，寻找满足要求最小需求时的频率
             # 计算低温热源水流量额定值
             heat_source_water_flow_rated = self.heat_source_water_flow_rated()
             if heat_source_water_flow_rated == 0:
                 heat_source_water_pump_power = 0
+                wp_frequency_heat_source_water = 0
             else:
                 wp_frequency_start_heat_source_water = (heat_source_water_flow/heat_source_water_flow_rated) * 50 # 从这个点开始寻找频率合适的值
                 # 计算当前流量下，变频水泵的扬程
@@ -374,12 +380,14 @@ class Centrifugal_Heat_Pump_Heat():
         if self.wp_heating_water.frequency_scaling == False:
             # 如果是定频水泵，频率永远50Hz，（定频水泵的扬程都是满足要求的，不再计算扬程）
             heating_water_pump_power = self.wp_heating_water.pump_performance_data(heating_water_flow, 50)[1]
+            wp_frequency_heating_water = 50
         else:
             # 如果是变频水泵，频率变化，寻找满足要求最小需求时的频率
             # 计算采暖水泵额定值
             heating_water_flow_rated = self.heating_water_flow_rated()
             if heating_water_flow_rated == 0:
                 heating_water_pump_power = 0
+                wp_frequency_heating_water = 0
             else:
                 wp_frequency_start_heating_water = (heating_water_flow / heating_water_flow_rated) * 50  # 从这个点开始寻找频率合适的值
                 # 计算当前流量下，变频水泵的扬程
@@ -406,7 +414,7 @@ class Centrifugal_Heat_Pump_Heat():
                             wp_frequency_heating_water += 1
 
         # 返回总辅助设备耗电功率，某一负荷率下
-        return heat_source_water_pump_power + heating_water_pump_power
+        return heat_source_water_pump_power + heating_water_pump_power, wp_frequency_heating_water, wp_frequency_heat_source_water
 
     def centrifugal_heat_pump_power_consumption(self, load_ratio, centrifugal_heat_pump_cop):
         """离心式热泵机组本身耗电功率，某一负荷率下"""
@@ -469,12 +477,14 @@ class Air_Source_Heat_Pump_Cold():
         if self.wp_chilled_water.frequency_scaling == False:
             # 如果是定频水泵，频率永远50Hz，（定频水泵的扬程都是满足要求的，不再计算扬程）
             chilled_water_pump_power = self.wp_chilled_water.pump_performance_data(chilled_water_flow, 50)[1]
+            wp_frequency_chilled_water = 50
         else:
             # 如果是变频水泵，频率变化，寻找满足要求最小需求时的频率
             # 计算冷冻水泵额定值
             chilled_water_flow_rated = self.chilled_water_flow_rated()
             if chilled_water_flow_rated == 0:
                 chilled_water_pump_power = 0
+                wp_frequency_chilled_water = 0
             else:
                 wp_frequency_start_chilled_water = (chilled_water_flow / chilled_water_flow_rated) * 50  # 从这个点开始寻找频率合适的值
                 # 计算当前流量下，变频水泵的扬程
@@ -501,7 +511,7 @@ class Air_Source_Heat_Pump_Cold():
         # 冷却风机耗电功率，某一负荷率下，风机为定频，功率保持不变
         cooling_fan_power = 20
         # 返回总辅助设备耗电功率，某一负荷率下
-        return chilled_water_pump_power + cooling_fan_power
+        return chilled_water_pump_power + cooling_fan_power ,wp_frequency_chilled_water
 
     def air_source_heat_pump_cold_power_consumption(self, load_ratio, air_source_heat_pump_cold_cop):
         """空气源热泵制冷工况本身耗电功率，某一负荷率下"""
@@ -564,12 +574,14 @@ class Air_Source_Heat_Pump_Heat():
         if self.wp_heating_water.frequency_scaling == False:
             # 如果是定频水泵，频率永远50Hz，（定频水泵的扬程都是满足要求的，不再计算扬程）
             heating_water_pump_power = self.wp_heating_water.pump_performance_data(heating_water_flow, 50)[1]
+            wp_frequency_heating_water = 50
         else:
             # 如果是变频水泵，频率变化，寻找满足要求最小需求时的频率
             # 计算采暖水泵额定值
             heating_water_flow_rated = self.heating_water_flow_rated()
             if heating_water_flow_rated == 0:
                 heating_water_pump_power = 0
+                wp_frequency_heating_water = 0
             else:
                 wp_frequency_start_heating_water = (heating_water_flow / heating_water_flow_rated) * 50  # 从这个点开始寻找频率合适的值
                 # 计算当前流量下，变频水泵的扬程
@@ -597,7 +609,7 @@ class Air_Source_Heat_Pump_Heat():
         heating_fan_power = 20
 
         # 返回总辅助设备耗电功率，某一负荷率下
-        return heating_water_pump_power + heating_fan_power
+        return heating_water_pump_power + heating_fan_power, wp_frequency_heating_water
 
     def air_source_heat_pump_heat_power_consumption(self, load_ratio, air_source_heat_pump_heat_cop):
         """空气源热泵机组制热本身耗电功率，某一负荷率下"""
@@ -945,12 +957,14 @@ class Lithium_Bromide_Cold():
         if self.wp_cooling_water.frequency_scaling == False:
             # 如果是定频水泵，频率永远保持50Hz（定频水泵的扬程都是满足要求的，不再计算扬程）
             cooling_pump_power = self.wp_cooling_water.pump_performance_data(cooling_water_flow, 50)[1]
+            wp_frequency_cooling_water = 50
         else:
             # 如果是变频水泵，频率变化，寻找满足要求最小需求时的频率
             # 计算冷却水流量额定值
             cooling_water_flow_rated = self.cooling_water_flow_rated(residual_heat_cooling_ratio)
             if cooling_water_flow_rated == 0:
                 cooling_pump_power = 0
+                wp_frequency_cooling_water = 0
             else:
                 # 从这个点开始寻找频率合适的值
                 wp_frequency_start_cooling_water = (cooling_water_flow / cooling_water_flow_rated) * 50
@@ -983,12 +997,14 @@ class Lithium_Bromide_Cold():
         if self.wp_chilled_water.frequency_scaling == False:
             # 如果是定频水泵，频率永远50Hz，（定频水泵的扬程都是满足要求的，不再计算扬程）
             chilled_pump_power = self.wp_chilled_water.pump_performance_data(chilled_water_flow, 50)[1]
+            wp_frequency_chilled_water = 50
         else:
             # 如果是变频水泵，频率变化，寻找满足要求最小需求时的频率
             # 计算冷冻水泵额定值
             chilled_water_flow_rated = self.chilled_water_flow_rated(residual_heat_cooling_ratio)
             if chilled_water_flow_rated == 0:
                 chilled_pump_power = 0
+                wp_frequency_chilled_water = 0
             else:
                 wp_frequency_start_chilled_water = (chilled_water_flow / chilled_water_flow_rated) * 50  # 从这个点开始寻找频率合适的值
                 # 计算当前流量下，变频水泵的扬程
@@ -1018,7 +1034,7 @@ class Lithium_Bromide_Cold():
         # 冷却塔风机耗电功率，某一负荷率下，风机为定频，功率保持不变
         cooling_tower_fan_power = 20
         # 返回总辅助设备耗电功率，某一负荷率下
-        return cooling_pump_power + chilled_pump_power + cooling_tower_fan_power
+        return cooling_pump_power + chilled_pump_power + cooling_tower_fan_power, wp_frequency_chilled_water, wp_frequency_cooling_water
 
     def auxiliary_equipment_power_consumption_hot_water(self, hot_water_flow):
         """计算生活热水辅机设备耗电量"""
@@ -1116,12 +1132,14 @@ class Lithium_Bromide_Heat():
         if self.wp_heating_water.frequency_scaling == False:
             # 如果是定频水泵，频率永远50Hz，（定频水泵的扬程都是满足要求的，不再计算扬程）
             heating_water_pump_power = self.wp_heating_water.pump_performance_data(heating_water_flow, 50)[1]
+            wp_frequency_heating_water = 50
         else:
             # 如果是变频水泵，频率变化，寻找满足要求最小需求时的频率
             # 计算采暖水泵额定值
             heating_water_flow_rated = self.heating_water_flow_rated(residual_heat_heating_ratio)
             if heating_water_flow_rated == 0:
                 heating_water_pump_power = 0
+                wp_frequency_heating_water = 0
             else:
                 wp_frequency_start_heating_water = (heating_water_flow / heating_water_flow_rated) * 50  # 从这个点开始寻找频率合适的值
                 # 计算当前流量下，变频水泵的扬程
@@ -1147,7 +1165,7 @@ class Lithium_Bromide_Heat():
                             wp_frequency_heating_water += 1
 
         # 返回总辅助设备耗电功率，某一负荷率下
-        return heating_water_pump_power
+        return heating_water_pump_power, wp_frequency_heating_water
 
     def auxiliary_equipment_power_consumption_hot_water(self, hot_water_flow):
         """计算生活热水辅机设备耗电量"""
@@ -1259,12 +1277,14 @@ class Energy_Storage_Equipment_Cold():
         if self.wp_chilled_water.frequency_scaling == False:
             # 如果是定频水泵，频率永远50Hz，（定频水泵的扬程都是满足要求的，不再计算扬程）
             chilled_water_pump_power = self.wp_chilled_water.pump_performance_data(chilled_water_flow, 50)[1]
+            wp_frequency_chilled_water = 50
         else:
             # 如果是变频水泵，频率变化，寻找满足要求最小需求时的频率
             # 计算冷冻水泵额定值
             chilled_water_flow_rated = self.chilled_water_flow_rated()
             if chilled_water_flow_rated == 0:
                 chilled_water_pump_power = 0
+                wp_frequency_chilled_water = 0
             else:
                 wp_frequency_start_chilled_water = (chilled_water_flow / chilled_water_flow_rated) * 50  # 从这个点开始寻找频率合适的值
                 # 计算当前流量下，变频水泵的扬程
@@ -1290,7 +1310,7 @@ class Energy_Storage_Equipment_Cold():
                             wp_frequency_chilled_water += 1
 
         # 返回总辅助设备耗电功率，某一负荷率下
-        return chilled_water_pump_power
+        return chilled_water_pump_power, wp_frequency_chilled_water
 
 
 class Energy_Storage_Equipment_Heat():
@@ -1344,12 +1364,14 @@ class Energy_Storage_Equipment_Heat():
         if self.wp_heating_water.frequency_scaling == False:
             # 如果是定频水泵，频率永远50Hz，（定频水泵的扬程都是满足要求的，不再计算扬程）
             heating_water_pump_power = self.wp_heating_water.pump_performance_data(heating_water_flow, 50)[1]
+            wp_frequency_heating_water = 50
         else:
             # 如果是变频水泵，频率变化，寻找满足要求最小需求时的频率
             # 计算采暖水泵额定值
             heating_water_flow_rated = self.heating_water_flow_rated()
             if heating_water_flow_rated == 0:
                 heating_water_pump_power = 0
+                wp_frequency_heating_water = 0
             else:
                 wp_frequency_start_heating_water = (heating_water_flow / heating_water_flow_rated) * 50  # 从这个点开始寻找频率合适的值
                 # 计算当前流量下，变频水泵的扬程
@@ -1375,7 +1397,7 @@ class Energy_Storage_Equipment_Heat():
                             wp_frequency_heating_water += 1
 
         # 返回总辅助设备耗电功率，某一负荷率下
-        return heating_water_pump_power
+        return heating_water_pump_power, wp_frequency_heating_water
 
 
 class Water_Pump():

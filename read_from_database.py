@@ -66,7 +66,9 @@ def read_from_database_ice1():
     syncbase.close()
     del syncbase
 
-    return ice1_state, ice1_fault, ice1_actual_value_of_active_power, ice1_natural_gas_inlet_flow, ice1_cylinder_jacket_water_secondary_side_supply_temperature, ice1_cylinder_jacket_water_secondary_side_return_temperature, ice1_outlet_flue_gas_temperature, ice1_exhaust_temperature, ice1_exhaust_flow
+    return ice1_state, ice1_fault, ice1_actual_value_of_active_power, ice1_natural_gas_inlet_flow, \
+           ice1_cylinder_jacket_water_secondary_side_supply_temperature, ice1_cylinder_jacket_water_secondary_side_return_temperature, \
+           ice1_outlet_flue_gas_temperature, ice1_exhaust_temperature, ice1_exhaust_flow
 
 
 def read_from_database_ice2():
@@ -135,7 +137,9 @@ def read_from_database_ice2():
     syncbase.close()
     del syncbase
 
-    return ice2_state, ice2_fault, ice2_actual_value_of_active_power, ice2_natural_gas_inlet_flow, ice2_cylinder_jacket_water_secondary_side_supply_temperature, ice2_cylinder_jacket_water_secondary_side_return_temperature, ice2_outlet_flue_gas_temperature, ice2_exhaust_temperature, ice2_exhaust_flow
+    return ice2_state, ice2_fault, ice2_actual_value_of_active_power, ice2_natural_gas_inlet_flow, \
+           ice2_cylinder_jacket_water_secondary_side_supply_temperature, ice2_cylinder_jacket_water_secondary_side_return_temperature, \
+           ice2_outlet_flue_gas_temperature, ice2_exhaust_temperature, ice2_exhaust_flow
 
 
 def read_from_database_lb1():
@@ -222,7 +226,10 @@ def read_from_database_lb1():
     syncbase.close()
     del syncbase
 
-    return lb1_state, lb1_fault, lb1_heat_chilled_water_supply_temperature, lb1_heat_chilled_water_supply_flow, lb1_heat_chilled_water_return_temperature, lb1_hot_water_supply_temperature, lb1_hot_water_supply_flow, lb1_hot_water_return_temperature, lb1_cooling_water_supply_temperature, lb1_cooling_water_supply_flow, lb1_cooling_water_return_temperature, lb1_outlet_flue_gas_temperature
+    return lb1_state, lb1_fault, lb1_heat_chilled_water_supply_temperature, lb1_heat_chilled_water_supply_flow, \
+           lb1_heat_chilled_water_return_temperature, lb1_hot_water_supply_temperature, lb1_hot_water_supply_flow, \
+           lb1_hot_water_return_temperature, lb1_cooling_water_supply_temperature, lb1_cooling_water_supply_flow, \
+           lb1_cooling_water_return_temperature, lb1_outlet_flue_gas_temperature
 
 
 def read_from_database_lb2():
@@ -309,7 +316,10 @@ def read_from_database_lb2():
     syncbase.close()
     del syncbase
 
-    return lb2_state, lb2_fault, lb2_heat_chilled_water_supply_temperature, lb2_heat_chilled_water_supply_flow, lb2_heat_chilled_water_return_temperature, lb2_hot_water_supply_temperature, lb2_hot_water_supply_flow, lb2_hot_water_return_temperature, lb2_cooling_water_supply_temperature, lb2_cooling_water_supply_flow, lb2_cooling_water_return_temperature, lb2_outlet_flue_gas_temperature
+    return lb2_state, lb2_fault, lb2_heat_chilled_water_supply_temperature, lb2_heat_chilled_water_supply_flow, \
+           lb2_heat_chilled_water_return_temperature, lb2_hot_water_supply_temperature, lb2_hot_water_supply_flow, \
+           lb2_hot_water_return_temperature, lb2_cooling_water_supply_temperature, lb2_cooling_water_supply_flow, \
+           lb2_cooling_water_return_temperature, lb2_outlet_flue_gas_temperature
 
 
 def read_from_database_lb_utility():
@@ -366,7 +376,8 @@ def read_from_database_lb_utility():
     syncbase.close()
     del syncbase
 
-    return lb_heat_chilled_water_supply_temperature, lb_heat_chilled_water_supply_flow, lb_heat_chilled_water_return_temperature, lb_cooling_water_supply_temperature, lb_cooling_water_supply_flow, lb_cooling_water_return_temperature, lb_chilled_heat_water_energy
+    return lb_heat_chilled_water_supply_temperature, lb_heat_chilled_water_supply_flow, lb_heat_chilled_water_return_temperature, \
+           lb_cooling_water_supply_temperature, lb_cooling_water_supply_flow, lb_cooling_water_return_temperature, lb_chilled_heat_water_energy
 
 
 def read_from_database_cc1():
@@ -429,7 +440,8 @@ def read_from_database_cc1():
     syncbase.close()
     del syncbase
 
-    return cc1_state, cc1_fault, cc1_chilled_water_supply_temperature,cc1_chilled_water_supply_flow, cc1_chilled_water_return_temperature, cc1_cooling_water_supply_temperature,cc1_cooling_water_supply_flow, cc1_cooling_water_return_temperature
+    return cc1_state, cc1_fault, cc1_chilled_water_supply_temperature,cc1_chilled_water_supply_flow, cc1_chilled_water_return_temperature, \
+           cc1_cooling_water_supply_temperature,cc1_cooling_water_supply_flow, cc1_cooling_water_return_temperature
 
 
 def read_from_database_cc2():
@@ -492,7 +504,8 @@ def read_from_database_cc2():
     syncbase.close()
     del syncbase
 
-    return cc2_state, cc2_fault, cc2_chilled_water_supply_temperature, cc2_chilled_water_supply_flow, cc2_chilled_water_return_temperature, cc2_cooling_water_supply_temperature, cc2_cooling_water_supply_flow, cc2_cooling_water_return_temperature
+    return cc2_state, cc2_fault, cc2_chilled_water_supply_temperature, cc2_chilled_water_supply_flow, cc2_chilled_water_return_temperature, \
+           cc2_cooling_water_supply_temperature, cc2_cooling_water_supply_flow, cc2_cooling_water_return_temperature
 
 
 def read_from_database_cc3():
@@ -555,7 +568,8 @@ def read_from_database_cc3():
     syncbase.close()
     del syncbase
 
-    return cc3_state, cc3_fault, cc3_chilled_water_supply_temperature,cc3_chilled_water_supply_flow, cc3_chilled_water_return_temperature, cc3_cooling_water_supply_temperature,cc3_cooling_water_supply_flow, cc3_cooling_water_return_temperature
+    return cc3_state, cc3_fault, cc3_chilled_water_supply_temperature,cc3_chilled_water_supply_flow, cc3_chilled_water_return_temperature, \
+           cc3_cooling_water_supply_temperature,cc3_cooling_water_supply_flow, cc3_cooling_water_return_temperature
 
 
 def read_from_database_cc4():
@@ -618,7 +632,8 @@ def read_from_database_cc4():
     syncbase.close()
     del syncbase
 
-    return cc4_state, cc4_fault, cc4_chilled_water_supply_temperature,cc4_chilled_water_supply_flow, cc4_chilled_water_return_temperature, cc4_cooling_water_supply_temperature,cc4_cooling_water_supply_flow, cc4_cooling_water_return_temperature
+    return cc4_state, cc4_fault, cc4_chilled_water_supply_temperature,cc4_chilled_water_supply_flow, cc4_chilled_water_return_temperature, \
+           cc4_cooling_water_supply_temperature,cc4_cooling_water_supply_flow, cc4_cooling_water_return_temperature
 
 
 def read_from_database_cc_utility():
@@ -675,7 +690,8 @@ def read_from_database_cc_utility():
     syncbase.close()
     del syncbase
 
-    return cc_chilled_water_supply_temperature, cc_chilled_water_supply_flow, cc_chilled_water_return_temperature, cc_cooling_water_supply_temperature, cc_cooling_water_supply_flow, cc_cooling_water_return_temperature, cc_chilled_water_energy
+    return cc_chilled_water_supply_temperature, cc_chilled_water_supply_flow, cc_chilled_water_return_temperature, \
+           cc_cooling_water_supply_temperature, cc_cooling_water_supply_flow, cc_cooling_water_return_temperature, cc_chilled_water_energy
 
 
 def read_from_database_chp1():
@@ -738,7 +754,8 @@ def read_from_database_chp1():
     syncbase.close()
     del syncbase
 
-    return chp1_state, chp1_fault, chp1_heat_water_supply_temperature,chp1_heat_water_supply_flow, chp1_heat_water_return_temperature, chp1_source_water_supply_temperature,chp1_source_water_supply_flow, chp1_source_water_return_temperature
+    return chp1_state, chp1_fault, chp1_heat_water_supply_temperature,chp1_heat_water_supply_flow, chp1_heat_water_return_temperature, \
+           chp1_source_water_supply_temperature,chp1_source_water_supply_flow, chp1_source_water_return_temperature
 
 
 def read_from_database_chp2():
@@ -801,7 +818,8 @@ def read_from_database_chp2():
     syncbase.close()
     del syncbase
 
-    return chp2_state, chp2_fault, chp2_heat_water_supply_temperature,chp2_heat_water_supply_flow, chp2_heat_water_return_temperature, chp2_source_water_supply_temperature,chp2_source_water_supply_flow, chp2_source_water_return_temperature
+    return chp2_state, chp2_fault, chp2_heat_water_supply_temperature,chp2_heat_water_supply_flow, chp2_heat_water_return_temperature, \
+           chp2_source_water_supply_temperature,chp2_source_water_supply_flow, chp2_source_water_return_temperature
 
 
 def read_from_database_chp3():
@@ -864,7 +882,8 @@ def read_from_database_chp3():
     syncbase.close()
     del syncbase
 
-    return chp3_state, chp3_fault, chp3_heat_water_supply_temperature,chp3_heat_water_supply_flow, chp3_heat_water_return_temperature, chp3_source_water_supply_temperature,chp3_source_water_supply_flow, chp3_source_water_return_temperature
+    return chp3_state, chp3_fault, chp3_heat_water_supply_temperature,chp3_heat_water_supply_flow, chp3_heat_water_return_temperature, \
+           chp3_source_water_supply_temperature,chp3_source_water_supply_flow, chp3_source_water_return_temperature
 
 
 def read_from_database_chp4():
@@ -927,7 +946,8 @@ def read_from_database_chp4():
     syncbase.close()
     del syncbase
 
-    return chp4_state, chp4_fault, chp4_heat_water_supply_temperature,chp4_heat_water_supply_flow, chp4_heat_water_return_temperature, chp4_source_water_supply_temperature,chp4_source_water_supply_flow, chp4_source_water_return_temperature
+    return chp4_state, chp4_fault, chp4_heat_water_supply_temperature,chp4_heat_water_supply_flow, chp4_heat_water_return_temperature, \
+           chp4_source_water_supply_temperature,chp4_source_water_supply_flow, chp4_source_water_return_temperature
 
 
 def read_from_database_chp_utility():
@@ -984,7 +1004,8 @@ def read_from_database_chp_utility():
     syncbase.close()
     del syncbase
 
-    return chp_heat_water_supply_temperature, chp_heat_water_supply_flow, chp_heat_water_return_temperature, chp_source_water_supply_temperature, chp_source_water_supply_flow, chp_source_water_return_temperature, chp_heat_water_energy
+    return chp_heat_water_supply_temperature, chp_heat_water_supply_flow, chp_heat_water_return_temperature, \
+           chp_source_water_supply_temperature, chp_source_water_supply_flow, chp_source_water_return_temperature, chp_heat_water_energy
 
 
 def read_from_database_ashp1():
@@ -1497,7 +1518,8 @@ def read_from_database_ngb1():
     syncbase.close()
     del syncbase
 
-    return ngb1_state, ngb1_fault, ngb1_heat_water_supply_temperature, ngb1_heat_water_supply_flow, ngb1_heat_water_return_temperature, ngb1_outlet_flue_gas_temperature, ngb1_outlet_flue_gas_flow, ngb1_natural_gas_inlet_flow
+    return ngb1_state, ngb1_fault, ngb1_heat_water_supply_temperature, ngb1_heat_water_supply_flow, ngb1_heat_water_return_temperature, \
+           ngb1_outlet_flue_gas_temperature, ngb1_outlet_flue_gas_flow, ngb1_natural_gas_inlet_flow
 
 
 def read_from_database_ngb2():
@@ -1560,7 +1582,8 @@ def read_from_database_ngb2():
     syncbase.close()
     del syncbase
 
-    return ngb2_state, ngb2_fault, ngb2_heat_water_supply_temperature, ngb2_heat_water_supply_flow, ngb2_heat_water_return_temperature, ngb2_outlet_flue_gas_temperature, ngb2_outlet_flue_gas_flow, ngb2_natural_gas_inlet_flow
+    return ngb2_state, ngb2_fault, ngb2_heat_water_supply_temperature, ngb2_heat_water_supply_flow, ngb2_heat_water_return_temperature, \
+           ngb2_outlet_flue_gas_temperature, ngb2_outlet_flue_gas_flow, ngb2_natural_gas_inlet_flow
 
 
 def read_from_database_ngb3():
@@ -1623,7 +1646,8 @@ def read_from_database_ngb3():
     syncbase.close()
     del syncbase
 
-    return ngb3_state, ngb3_fault, ngb3_hot_water_supply_temperature, ngb3_hot_water_supply_flow, ngb3_hot_water_return_temperature, ngb3_outlet_flue_gas_temperature, ngb3_outlet_flue_gas_flow, ngb3_natural_gas_inlet_flow
+    return ngb3_state, ngb3_fault, ngb3_hot_water_supply_temperature, ngb3_hot_water_supply_flow, ngb3_hot_water_return_temperature, \
+           ngb3_outlet_flue_gas_temperature, ngb3_outlet_flue_gas_flow, ngb3_natural_gas_inlet_flow
 
 
 def read_from_database_ngb_utility():
@@ -1670,7 +1694,8 @@ def read_from_database_ngb_utility():
     else:
         ngb_heat_water_energy = 0
 
-    return ngb_heat_water_supply_temperature, ngb_heat_water_supply_flow, ngb_heat_water_return_temperature, ngb_exhaust_temperature, ngb_exhaust_flow, ngb_heat_water_energy
+    return ngb_heat_water_supply_temperature, ngb_heat_water_supply_flow, ngb_heat_water_return_temperature, \
+           ngb_exhaust_temperature, ngb_exhaust_flow, ngb_heat_water_energy
 
 
 def read_from_database_system_utility():
@@ -1726,7 +1751,8 @@ def read_from_database_system_utility():
     syncbase.close()
     del syncbase
 
-    return manifold_temperature, water_collector_temperature, hot_water_supply_pipe_temperature, hot_water_return_pipe_temperature, natural_gas_pipe_flow_1, natural_gas_pipe_flow_2, hot_water_energy
+    return manifold_temperature, water_collector_temperature, hot_water_supply_pipe_temperature, hot_water_return_pipe_temperature, \
+           natural_gas_pipe_flow_1, natural_gas_pipe_flow_2, hot_water_energy
 
 
 def read_from_database_load_forecast():

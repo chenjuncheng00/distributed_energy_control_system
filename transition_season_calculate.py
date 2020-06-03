@@ -1,26 +1,14 @@
 import math
-from equipment import Internal_Combustion_Engine, Water_Pump, Natural_Gas_Boiler_hot_water
-from triple_supply_function import triple_supply_transition_function as tstf, triple_supply_in_out_transition as tsiot
-from natural_gas_boiler_funtion import natural_gas_boiler_in_out_hot_water as ngbiohw
+from equipment import Lithium_Bromide_Transition
+from triple_supply_function import triple_supply_transition_function as tstf, triple_supply_in_out_transition as tsiot, lithium_bromide_transition_function as lbtf
+from natural_gas_boiler_funtion import natural_gas_boiler_in_out_hot_water as ngbiohw, natural_gas_boiler_heat_cost as ngbhc
+import write_to_database as wtd
 
-def transition_season_function(hot_water_load, electricity_load, gc):
+def transition_season_function(hot_water_load, electricity_load, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water, ngb_hot_water, gc):
     """过渡季计算"""
 
     print("正在进行过渡季计算.........")
 
-    # 实例化两个内燃机对象
-    ice1 = Internal_Combustion_Engine(792, gc, 0.5)
-    ice2 = Internal_Combustion_Engine(792, gc, 0.5)
-    # 实例化2台溴化锂设备用到的各种水泵，2个生活热水水泵
-    lb1_wp_hot_water = Water_Pump(44, False, 34, gc)
-    lb2_wp_hot_water = Water_Pump(44, False, 34, gc)
-    # 实例化天然气生活热水锅炉用到的水泵
-    ngb_wp_hot_water = Water_Pump(44, False, 34, gc)
-
-    # 实例化生活热水锅炉
-    ngb_hot_water = Natural_Gas_Boiler_hot_water(2800, 0.2, ngb_wp_hot_water, gc)
-
-    # 如果是母管制系统
     # 母管制系统，过渡季计算
     # 生活热水总流量
     hot_water_flow_total = hot_water_load * 3600 / gc.hot_water_temperature_difference_rated / 4.2 / 1000
@@ -242,7 +230,7 @@ def transition_season_function(hot_water_load, electricity_load, gc):
     return profits, income, cost, station_electricity_out_all, ice1_load_ratio_result, ice2_load_ratio_result, lb_hot_water_result, ngb_hw_hot_water_result
 
 
-def print_transition_season(ans):
+def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water, ngb_hot_water, gc):
     """将过渡季计算结果打印出来"""
     # 能源站总利润最大值
     profitis_max = max(ans[0])
@@ -267,7 +255,118 @@ def print_transition_season(ans):
     # 天然气锅炉制生活热水量
     ngb_hw_hot_water = ans[7][transition_season_index]
 
+    # 向数据库写入计算结果
+    # 内燃机1和溴化锂1
+    if ice1_load_ratio > 0:
+        # 内燃机1
+        ice1_electrical_efficiency = ice1.electricity_power_efficiency(ice1_load_ratio)
+        ice1_residual_heat_efficiency = ice1.residual_heat_efficiency(ice1_load_ratio)
+        ice1_electrical_power = ice1.electricity_power_rated * ice1_load_ratio
+        ice1_total_heat_input = ice1.total_heat_input(ice1_load_ratio, ice1_electrical_efficiency)
+        ice1_residual_heat_power = ice1.residual_heat_power(ice1_total_heat_input, ice1_residual_heat_efficiency)
+        ice1_natural_gas_consumption = ice1.natural_gas_consumption(ice1_total_heat_input)
+        ice1_power_consumption = ice1.auxiliary_equipment_power_consumption(ice1_load_ratio)
+        ice1_electrical_cost = ice1_natural_gas_consumption * gc.natural_gas_price + ice1_power_consumption * gc.buy_electricity_price
+        wtd.write_to_database_ice1(True, False, False, 0, 0, 0, ice1_electrical_efficiency,
+                                   ice1_residual_heat_efficiency, ice1_electrical_power, ice1_residual_heat_power,
+                                   ice1_natural_gas_consumption, ice1_power_consumption, ice1_electrical_cost)
+        # 溴化锂1
+        lb1_cold_heat_out = 0
+        lb1_hot_water_out = lb_hot_water
+        lb1_wp_heat_chilled_water_frequency = 0
+        lb1_wp_cooling_water_frequency = 0
+        lb1_transition = Lithium_Bromide_Transition(ice1_residual_heat_power, lb1_wp_hot_water, gc)
+        lb1_power_consumption = lbtf(lb1_hot_water_out, ice1_load_ratio, lb1_transition, gc)[0]
+        lb1_chilled_heat_water_flow = 0
+        lb1_cooling_water_flow = 0
+        lb1_wp_chilled_heat_water_power_consumption = 0
+        lb1_wp_cooling_water_power_consumption = 0
+        lb1_fan_power_consumption = 0
+        lb1_chilled_heat_cop = lb1_transition.heating_cop(ice1_load_ratio)
+        lb1_chilled_heat_cost = 0
+        lb1_wp_hot_water_frequency = 50
+        lb1_hot_water_cost = lb1_power_consumption*gc.buy_electricity_price + lbtf(lb1_hot_water_out, ice1_load_ratio, lb1_transition, gc)[1]*gc.water_price
+        lb1_hot_water_flow = lb1_hot_water_out * 3600 / gc.hot_water_temperature_difference_rated / 4.2 / 1000
+        lb1_wp_hot_water_power_consumption = lb1_transition.wp_hot_water.pump_performance_data(lb1_hot_water_flow, lb1_wp_hot_water_frequency)[1]
+        # 写入数据库
+        wtd.write_to_database_lb1(True, False, lb1_wp_heat_chilled_water_frequency, lb1_wp_cooling_water_frequency,
+                                  lb1_cold_heat_out, lb1_power_consumption, lb1_chilled_heat_water_flow,
+                                  lb1_cooling_water_flow,
+                                  lb1_wp_chilled_heat_water_power_consumption, lb1_wp_cooling_water_power_consumption,
+                                  lb1_fan_power_consumption, lb1_chilled_heat_cop, lb1_chilled_heat_cost,
+                                  lb1_hot_water_out,
+                                  lb1_hot_water_cost, lb1_wp_hot_water_power_consumption, lb1_hot_water_flow)
+    else:
+        wtd.write_to_database_ice1(False, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        wtd.write_to_database_lb1(False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+    # 内燃机2和溴化锂2
+    if ice2_load_ratio > 0:
+        # 内燃机2
+        ice2_electrical_efficiency = ice2.electricity_power_efficiency(ice2_load_ratio)
+        ice2_residual_heat_efficiency = ice2.residual_heat_efficiency(ice2_load_ratio)
+        ice2_electrical_power = ice2.electricity_power_rated * ice2_load_ratio
+        ice2_total_heat_input = ice2.total_heat_input(ice2_load_ratio, ice2_electrical_efficiency)
+        ice2_residual_heat_power = ice2.residual_heat_power(ice2_total_heat_input, ice2_residual_heat_efficiency)
+        ice2_natural_gas_consumption = ice2.natural_gas_consumption(ice2_total_heat_input)
+        ice2_power_consumption = ice2.auxiliary_equipment_power_consumption(ice2_load_ratio)
+        ice2_electrical_cost = ice2_natural_gas_consumption * gc.natural_gas_price + ice2_power_consumption * gc.buy_electricity_price
+        wtd.write_to_database_ice2(True, False, False, 0, 0, 0, ice2_electrical_efficiency,
+                                   ice2_residual_heat_efficiency, ice2_electrical_power, ice2_residual_heat_power,
+                                   ice2_natural_gas_consumption, ice2_power_consumption, ice2_electrical_cost)
+        # 溴化锂2
+        lb2_cold_heat_out = 0
+        lb2_hot_water_out = lb_hot_water
+        lb2_wp_heat_chilled_water_frequency = 0
+        lb2_wp_cooling_water_frequency = 0
+        lb2_transition = Lithium_Bromide_Transition(ice2_residual_heat_power, lb2_wp_hot_water, gc)
+        lb2_power_consumption = lbtf(lb2_hot_water_out, ice2_load_ratio, lb2_transition, gc)[0]
+        lb2_chilled_heat_water_flow = 0
+        lb2_cooling_water_flow = 0
+        lb2_wp_chilled_heat_water_power_consumption = 0
+        lb2_wp_cooling_water_power_consumption = 0
+        lb2_fan_power_consumption = 0
+        lb2_chilled_heat_cop = lb2_transition.heating_cop(ice2_load_ratio)
+        lb2_chilled_heat_cost = 0
+        lb2_wp_hot_water_frequency = 50
+        lb2_hot_water_cost = lb2_power_consumption * gc.buy_electricity_price + lbtf(lb2_hot_water_out, ice2_load_ratio, lb2_transition, gc)[1] * gc.water_price
+        lb2_hot_water_flow = lb2_hot_water_out * 3600 / gc.hot_water_temperature_difference_rated / 4.2 / 1000
+        lb2_wp_hot_water_power_consumption = lb2_transition.wp_hot_water.pump_performance_data(lb2_hot_water_flow, lb2_wp_hot_water_frequency)[1]
+        # 写入数据库
+        wtd.write_to_database_lb2(True, False, lb2_wp_heat_chilled_water_frequency, lb2_wp_cooling_water_frequency,
+                                  lb2_cold_heat_out, lb2_power_consumption, lb2_chilled_heat_water_flow,
+                                  lb2_cooling_water_flow,
+                                  lb2_wp_chilled_heat_water_power_consumption,
+                                  lb2_wp_cooling_water_power_consumption,
+                                  lb2_fan_power_consumption, lb2_chilled_heat_cop, lb2_chilled_heat_cost,
+                                  lb2_hot_water_out,
+                                  lb2_hot_water_cost, lb2_wp_hot_water_power_consumption, lb2_hot_water_flow)
+    else:
+        wtd.write_to_database_ice2(False, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        wtd.write_to_database_lb2(False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+    # 天然气生活热水锅炉
+    if ngb_hw_hot_water > 0:
+        ngb3_wp_hot_water_frequency = 50
+        ngb3_hot_water_out = ngb_hw_hot_water
+        ngb3_load_ratio = ngb3_hot_water_out / ngb_hot_water.heating_power_rated
+        ngb3_power_consumption = ngbiohw(ngb3_hot_water_out, ngb_hot_water, gc)[0]
+        ngb3_hot_water_flow = ngb_hw_hot_water * 3600 / gc.hot_water_temperature_difference_rated / 4.2 / 1000
+        ngb3_wp_hot_water_power_consumption = ngb_hot_water.wp_hot_water.pump_performance_data(ngb3_hot_water_flow, ngb3_wp_hot_water_frequency)[1]
+        ngb3_efficiency = ngb_hot_water.boiler_efficiency(ngb3_load_ratio)
+        ngb3_natural_gas_consumption = ngbiohw(ngb3_hot_water_out, ngb_hot_water, gc)[1]
+        ngb3_cost = ngbhc(ngb_hot_water, gc, ngb3_load_ratio)[0]
+        # 写入数据库
+        wtd.write_to_database_ngb3(True, False, ngb3_wp_hot_water_frequency,
+                                   ngb3_hot_water_out, ngb3_power_consumption, ngb3_hot_water_flow,
+                                   ngb3_wp_hot_water_power_consumption,
+                                   ngb3_efficiency, ngb3_cost, ngb3_natural_gas_consumption)
+    else:
+        wtd.write_to_database_ngb3(False, True, 0, 0, 0, 0, 0, 0, 0, 0)
+
     # 打印出结果
-    print("能源站利润最大值为： " + str(station_profitis_max) + "\n" + "能源站成本最小值为： " + str(station_cost_min) + "\n" + "能源站供电功率为： " + str(station_electricity_out_all) + "\n" + "内燃机1负荷率为： " + str(ice1_load_ratio) + "\n" + "内燃机2负荷率为： " + str(ice2_load_ratio) + "\n" + "溴化锂供生活热水功率为： " + str(lb_hot_water) + "\n" + "天然气锅炉供生活热水功率为： " + str(ngb_hw_hot_water) + "\n")
+    print("能源站利润最大值为： " + str(station_profitis_max) + "\n" + "能源站成本最小值为： " + str(station_cost_min) + "\n"
+          + "能源站供电功率为： " + str(station_electricity_out_all) + "\n" + "内燃机1负荷率为： " + str(ice1_load_ratio) + "\n" +
+          "内燃机2负荷率为： " + str(ice2_load_ratio) + "\n" + "溴化锂供生活热水功率为： " + str(lb_hot_water) + "\n" + "天然气锅炉供生活热水功率为： " + str(ngb_hw_hot_water) + "\n")
 
 

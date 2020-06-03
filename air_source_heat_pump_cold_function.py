@@ -1,6 +1,4 @@
 import math
-from equipment import Air_Source_Heat_Pump_Cold, Water_Pump
-from global_constant import Global_Constant
 
 def air_source_heat_pump_function_cold(cold_load, ashpc1, ashpc2, ashpc3, ashpc4, gc):
     """风冷螺杆热泵制冷负荷计算函数"""
@@ -136,7 +134,8 @@ def air_source_heat_pump_function_cold(cold_load, ashpc1, ashpc2, ashpc3, ashpc4
                 ashpc4_air_source_heat_pump_power_consumption = air_source_heat_pump_cost_cold(ashpc4, gc, ashpc4_load_ratio)[3]
                 # 计算4个设备的冷冻水流量、低温热源水流量
                 # 冷冻水总流量
-                chilled_water_flow_total = air_source_heat_pump_cost_cold(ashpc1, gc, ashpc1_load_ratio)[4] + air_source_heat_pump_cost_cold(ashpc2, gc, ashpc2_load_ratio)[4] + air_source_heat_pump_cost_cold(ashpc3, gc, ashpc3_load_ratio)[4] + air_source_heat_pump_cost_cold(ashpc4, gc, ashpc4_load_ratio)[4]
+                chilled_water_flow_total = air_source_heat_pump_cost_cold(ashpc1, gc, ashpc1_load_ratio)[4] + air_source_heat_pump_cost_cold(ashpc2, gc, ashpc2_load_ratio)[4] \
+                                           + air_source_heat_pump_cost_cold(ashpc3, gc, ashpc3_load_ratio)[4] + air_source_heat_pump_cost_cold(ashpc4, gc, ashpc4_load_ratio)[4]
                 # 每个水泵的流量为总流量均分（后期可细化流量分配比例）
                 ashpc1_chilled_water_flow = chilled_water_flow_total / ashpc_num
                 ashpc2_chilled_water_flow = chilled_water_flow_total / ashpc_num
@@ -148,7 +147,10 @@ def air_source_heat_pump_function_cold(cold_load, ashpc1, ashpc2, ashpc3, ashpc4
                 ashpc3_auxiliary_equipment_power_consumption = air_source_heat_pump_auxiliary_equipment_cost_cold(ashpc3, gc, ashpc3_chilled_water_flow)[0]
                 ashpc4_auxiliary_equipment_power_consumption = air_source_heat_pump_auxiliary_equipment_cost_cold(ashpc4, gc, ashpc4_chilled_water_flow)[0]
                 # 耗电量总计
-                ashpc_power_consumption_total = ashpc1_air_source_heat_pump_power_consumption + ashpc2_air_source_heat_pump_power_consumption + ashpc3_air_source_heat_pump_power_consumption + ashpc4_air_source_heat_pump_power_consumption + ashpc1_auxiliary_equipment_power_consumption + ashpc2_auxiliary_equipment_power_consumption + ashpc3_auxiliary_equipment_power_consumption + ashpc4_auxiliary_equipment_power_consumption
+                ashpc_power_consumption_total = ashpc1_air_source_heat_pump_power_consumption + ashpc2_air_source_heat_pump_power_consumption \
+                                                + ashpc3_air_source_heat_pump_power_consumption + ashpc4_air_source_heat_pump_power_consumption \
+                                                + ashpc1_auxiliary_equipment_power_consumption + ashpc2_auxiliary_equipment_power_consumption \
+                                                + ashpc3_auxiliary_equipment_power_consumption + ashpc4_auxiliary_equipment_power_consumption
                 total_power_consumption.append(ashpc_power_consumption_total)
                 # 计算4个设备的总补水量
                 ashpc1_water_supply = air_source_heat_pump_cost_cold(ashpc1, gc, ashpc1_load_ratio)[2]
@@ -182,24 +184,29 @@ def air_source_heat_pump_result_cold(ans_ashpc, ashpc1, ashpc2, ashpc3, ashpc4):
     ashpc4_ratio = ans_ashpc[4][cost_min_index]
     power_consumption_total = ans_ashpc[5][cost_min_index]
     water_supply_total = ans_ashpc[6][cost_min_index]
-    cold_load_out = ashpc1_ratio * ashpc1.cooling_power_rated + ashpc2_ratio * ashpc2.cooling_power_rated + ashpc3_ratio * ashpc3.cooling_power_rated + ashpc4_ratio * ashpc4.cooling_power_rated
+    cold_load_out = ashpc1_ratio * ashpc1.cooling_power_rated + ashpc2_ratio * ashpc2.cooling_power_rated \
+                    + ashpc3_ratio * ashpc3.cooling_power_rated + ashpc4_ratio * ashpc4.cooling_power_rated
 
     return ashpc1_ratio, ashpc2_ratio, ashpc3_ratio, ashpc4_ratio, cold_load_out, power_consumption_total, water_supply_total
 
 
 def air_source_heat_pump_cost_cold(ashpc, gc, load_ratio):
     """风冷螺杆热泵组运行成本计算"""
+    # 环境温度
+    environment_temperature = gc.environment_temperature
     # 冷冻水流量,某一负荷率条件下
     chilled_water_flow = ashpc.chilled_water_flow(load_ratio)
     # 计算此时的风冷螺杆热泵冷冻水出口温度
     chilled_water_temperature = gc.chilled_water_temperature
     # 风冷螺杆热泵制冷COP,某一负荷率条件下
-    air_source_heat_pump_cop = ashpc.air_source_heat_pump_cold_cop(load_ratio, chilled_water_temperature, 30)
+    air_source_heat_pump_cop = ashpc.air_source_heat_pump_cold_cop(load_ratio, chilled_water_temperature, environment_temperature)
     # 风冷螺杆热泵本体耗电功率,某一负荷率条件下
     air_source_heat_pump_power_consumption = ashpc.air_source_heat_pump_cold_power_consumption(load_ratio, air_source_heat_pump_cop)
     # 以下辅机耗电计算针对的是单元制系统，及泵与设备一对一布置；如果是母管制系统，需要单独重新计算
     # 辅助设备耗电功率,某一负荷率条件下
-    auxiliary_equipment_power_consumption = ashpc.auxiliary_equipment_power_consumption(chilled_water_flow)
+    auxiliary_equipment_power_consumption = ashpc.auxiliary_equipment_power_consumption(chilled_water_flow)[0]
+    # 冷冻水泵频率
+    wp_frequency_chilled_water = ashpc.auxiliary_equipment_power_consumption(chilled_water_flow)[1]
     # 风冷螺杆热泵总耗电功率,某一负荷率条件下
     total_power_consumption = air_source_heat_pump_power_consumption + auxiliary_equipment_power_consumption
     # 电成本（元）,某一负荷率条件下
@@ -214,13 +221,13 @@ def air_source_heat_pump_cost_cold(ashpc, gc, load_ratio):
     # 成本合计
     cost_total = total_electricity_cost + total_water_cost
     # 返回计算结果
-    return cost_total, total_power_consumption, total_water_supply, air_source_heat_pump_power_consumption, chilled_water_flow
+    return cost_total, total_power_consumption, total_water_supply, air_source_heat_pump_power_consumption, chilled_water_flow, wp_frequency_chilled_water
 
 
 def air_source_heat_pump_auxiliary_equipment_cost_cold(ashpc, gc, chilled_water_flow):
     """风冷螺杆热泵辅助设备成本计算"""
     # 辅助设备耗电功率,某一负荷率条件下
-    auxiliary_equipment_power_consumption = ashpc.auxiliary_equipment_power_consumption(chilled_water_flow)
+    auxiliary_equipment_power_consumption = ashpc.auxiliary_equipment_power_consumption(chilled_water_flow)[0]
     auxiliary_equipment_power_cost = auxiliary_equipment_power_consumption * gc.buy_electricity_price
     # 返回计算结果
     return auxiliary_equipment_power_consumption, auxiliary_equipment_power_cost
@@ -238,25 +245,8 @@ def print_air_source_heat_pump_cold(ans, ashpc1, ashpc2, ashpc3, ashpc4):
     ashpc2_ratio = ans[2][cost_min_index]
     ashpc3_ratio = ans[3][cost_min_index]
     ashpc4_ratio = ans[4][cost_min_index]
-    cold_load_out = ashpc1_ratio * ashpc1.cooling_power_rated + ashpc2_ratio * ashpc2.cooling_power_rated + ashpc3_ratio * ashpc3.cooling_power_rated + ashpc4_ratio * ashpc4.cooling_power_rated
-    print("风冷螺杆热泵最低总运行成本为： " + str(cost_min) + "\n" + "风冷螺杆热泵1负荷率为： " + str(ashpc1_ratio) + "\n" + "风冷螺杆热泵2负荷率为： " + str(ashpc2_ratio) + "\n" + "风冷螺杆热泵3负荷率为： " + str(ashpc3_ratio) + "\n" + "风冷螺杆热泵4负荷率为： " + str(ashpc4_ratio) + "\n" + "风冷螺杆热泵总制冷出力为： " + str(cold_load_out))
-
-
-def test_air_source_heat_pump_function_cold():
-    """测试风冷螺杆热泵制冷计算"""
-    gc = Global_Constant()
-    cold_load = 2800
-    ashpc_wp = False
-    ashpc1_wp_chilled_water = Water_Pump(150, ashpc_wp, 35, gc)
-    ashpc2_wp_chilled_water = Water_Pump(150, ashpc_wp, 35, gc)
-    ashpc3_wp_chilled_water = Water_Pump(150, ashpc_wp, 35, gc)
-    ashpc4_wp_chilled_water = Water_Pump(150, ashpc_wp, 35, gc)
-    ashpc1 = Air_Source_Heat_Pump_Cold(767, 0.2, False, ashpc1_wp_chilled_water, gc)
-    ashpc2 = Air_Source_Heat_Pump_Cold(767, 0.2, False, ashpc2_wp_chilled_water, gc)
-    ashpc3 = Air_Source_Heat_Pump_Cold(767, 0.2, False, ashpc3_wp_chilled_water, gc)
-    ashpc4 = Air_Source_Heat_Pump_Cold(767, 0.2, False, ashpc4_wp_chilled_water, gc)
-
-    ans = air_source_heat_pump_function_cold(cold_load, ashpc1, ashpc2, ashpc3, ashpc4, gc)
-    print_air_source_heat_pump_cold(ans, ashpc1, ashpc2, ashpc3, ashpc4)
-
-# test_air_source_heat_pump_function_cold()
+    cold_load_out = ashpc1_ratio * ashpc1.cooling_power_rated + ashpc2_ratio * ashpc2.cooling_power_rated \
+                    + ashpc3_ratio * ashpc3.cooling_power_rated + ashpc4_ratio * ashpc4.cooling_power_rated
+    print("风冷螺杆热泵最低总运行成本为： " + str(cost_min) + "\n" + "风冷螺杆热泵1负荷率为： " + str(ashpc1_ratio) + "\n"
+          + "风冷螺杆热泵2负荷率为： " + str(ashpc2_ratio) + "\n" + "风冷螺杆热泵3负荷率为： " + str(ashpc3_ratio) + "\n"
+          + "风冷螺杆热泵4负荷率为： " + str(ashpc4_ratio) + "\n" + "风冷螺杆热泵总制冷出力为： " + str(cold_load_out))

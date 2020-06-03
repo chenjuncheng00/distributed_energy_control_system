@@ -1,69 +1,21 @@
 import math
 import datetime
-from equipment import Natural_Gas_Boiler_heat, Internal_Combustion_Engine, Water_Pump, Natural_Gas_Boiler_hot_water, Energy_Storage_Equipment_Heat, Centrifugal_Heat_Pump_Heat, Air_Source_Heat_Pump_Heat
-from triple_supply_function import triple_supply_heat_function as tshf
-from natural_gas_boiler_funtion import natural_gas_boiler_heat_funtion as ngbhf, natural_gas_boiler_heat_result as ngbhr, natural_gas_boiler_in_out_hot_water as ngbiohw
-from energy_storage_equipment_heat_function import energy_storage_equipment_heat_function as esehf, energy_storage_equipment_heat_result as esehr, energy_storage_equipment_heat_storage_residual_read as esehsrr, energy_storage_equipment_heat_storage_residual_write as esehsrw
+from equipment import Lithium_Bromide_Heat
+from triple_supply_function import triple_supply_heat_function as tshf, lithium_bromide_heat_function as lbhf
+from centrifugal_heat_pump_heat_function import centrifugal_heat_pump_cost_heat as chpch
+from air_source_heat_pump_heat_function import air_source_heat_pump_cost_heat as ashpch
+from natural_gas_boiler_funtion import natural_gas_boiler_in_out_hot_water as ngbiohw, natural_gas_boiler_heat_cost as ngbhc, natural_gas_boiler_heat_funtion as ngbhf, natural_gas_boiler_heat_result as ngbhr
+from energy_storage_equipment_heat_function import energy_storage_equipment_heat_function as esehf, energy_storage_equipment_heat_result as esehr, \
+     energy_storage_equipment_heat_storage_residual_read as esehsrr, energy_storage_equipment_heat_storage_residual_write as esehsrw, energy_storage_equipment_heat_cost as esehc
 from two_stage_heat_pump_function import two_stage_heat_pump_function as tshpf
+import write_to_database as wtd
 
-def heating_season_function(heat_load, hot_water_load, electricity_load, gc):
+def heating_season_function(heat_load, hot_water_load, electricity_load, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_water, lb1_wp_hot_water, lb2_wp_hot_water,
+                            chph1, chph2, chph3, chph4, ashph1, ashph2, ashph3, ashph4, eseh1, eseh2, eseh3, ngb_hot_water, gc):
     """采暖季计算"""
 
     print("正在进行采暖季计算.........")
 
-    # 实例化两个内燃机对象
-    ice1 = Internal_Combustion_Engine(1500, gc, 0.5)
-    ice2 = Internal_Combustion_Engine(1500, gc, 0.5)
-    # # 实例化2个天然气采暖锅炉水泵
-    # ngbh1_wp_heating_water = Water_Pump(330, True, 32, gc)
-    # ngbh2_wp_heating_water = Water_Pump(330, True, 32, gc)
-    # # 实例化2个天然气采暖锅炉对象
-    # ngbh1 = Natural_Gas_Boiler_heat(3500, 0.2, ngbh1_wp_heating_water, gc)
-    # ngbh2 = Natural_Gas_Boiler_heat(3500, 0.2, ngbh2_wp_heating_water, gc)
-    # 实例化2台离心式热泵
-    chph1_wp_heating_water = Water_Pump(330, True, 35, gc)
-    chph2_wp_heating_water = Water_Pump(330, True, 35, gc)
-    chph3_wp_heating_water = Water_Pump(0, True, 0, gc)
-    chph4_wp_heating_water = Water_Pump(0, True, 0, gc)
-    chph1_wp_heat_source_water = Water_Pump(550, True, 35, gc)
-    chph2_wp_heat_source_water = Water_Pump(550, True, 35, gc)
-    chph3_wp_heat_source_water = Water_Pump(0, True, 0, gc)
-    chph4_wp_heat_source_water = Water_Pump(0, True, 0, gc)
-    chph1 = Centrifugal_Heat_Pump_Heat(3500, 0.1, True, chph1_wp_heating_water, chph1_wp_heat_source_water, gc)
-    chph2 = Centrifugal_Heat_Pump_Heat(3500, 0.1, True, chph2_wp_heating_water, chph2_wp_heat_source_water, gc)
-    chph3 = Centrifugal_Heat_Pump_Heat(0, 0.1, True, chph3_wp_heating_water, chph3_wp_heat_source_water, gc)
-    chph4 = Centrifugal_Heat_Pump_Heat(0, 0.1, True, chph4_wp_heating_water, chph4_wp_heat_source_water, gc)
-    # 实例化4台风冷螺杆式热泵
-    ashph1_wp_heating_water = Water_Pump(330, True, 35, gc)
-    ashph2_wp_heating_water = Water_Pump(330, True, 35, gc)
-    ashph3_wp_heating_water = Water_Pump(330, True, 35, gc)
-    ashph4_wp_heating_water = Water_Pump(330, True, 35, gc)
-    ashph1 = Air_Source_Heat_Pump_Heat(1640, 0.1, True, ashph1_wp_heating_water, gc)
-    ashph2 = Air_Source_Heat_Pump_Heat(1640, 0.1, True, ashph2_wp_heating_water, gc)
-    ashph3 = Air_Source_Heat_Pump_Heat(1640, 0.1, True, ashph3_wp_heating_water, gc)
-    ashph4 = Air_Source_Heat_Pump_Heat(1640, 0.1, True, ashph4_wp_heating_water, gc)
-    # 实例化2台溴化锂设备用到的各种水泵，2个采暖水泵
-    lb1_wp_heating_water = Water_Pump(150, True, 38, gc)
-    lb2_wp_heating_water = Water_Pump(150, True, 38, gc)
-    # 实例化1组3个蓄热水罐的循环水泵（水泵2用1备）
-    eseh1_wp_heating_water = Water_Pump(330, True, 35, gc)
-    eseh2_wp_heating_water = Water_Pump(330, True, 35, gc)
-    eseh3_wp_heating_water = Water_Pump(0, True, 0, gc)
-    # 实例化3个蓄热水罐（实际上只有1个水罐，但是有3个水泵，将水泵假想3等分，作为3个水罐，与水泵一一对应去计算）
-    eseh1 = Energy_Storage_Equipment_Heat(1750, 0.1, 14000, eseh1_wp_heating_water, gc)
-    eseh2 = Energy_Storage_Equipment_Heat(1750, 0.1, 14000, eseh2_wp_heating_water, gc)
-    eseh3 = Energy_Storage_Equipment_Heat(0, 0.1, 0, eseh3_wp_heating_water, gc)
-
-    # 实例化2台溴化锂设备用到的各种水泵，2个生活热水水泵
-    lb1_wp_hot_water = Water_Pump(270, False, 35, gc)
-    lb2_wp_hot_water = Water_Pump(270, False, 35, gc)
-    # 实例化天然气生活热水锅炉用到的水泵
-    ngb_wp_hot_water = Water_Pump(270, False, 35, gc)
-
-    # 实例化生活热水锅炉
-    ngb_hot_water = Natural_Gas_Boiler_hot_water(2800, 0.2, ngb_wp_hot_water, gc)
-
-    # 如果是母管制系统
     # 母管制系统，采暖季计算
     # 离心式热泵制热功率之和
     chph_heating_power_rated_sum = chph1.heating_power_rated + chph2.heating_power_rated + chph3.heating_power_rated + chph4.heating_power_rated
@@ -567,7 +519,8 @@ def heating_season_function(heat_load, hot_water_load, electricity_load, gc):
     return profits, income, cost, station_heat_out_all, station_electricity_out_all, ice1_load_ratio_result, ice2_load_ratio_result, lb_heat_load_result, lb_hot_water_result, ngb_hw_hot_water_result, chph1_load_ratio_result, chph2_load_ratio_result, chph3_load_ratio_result, chph4_load_ratio_result, ashph1_load_ratio_result, ashph2_load_ratio_result, ashph3_load_ratio_result, ashph4_load_ratio_result, eseh1_load_ratio, eseh2_load_ratio, eseh3_load_ratio, eseh_heat_load_out
 
 
-def print_heating_season(ans):
+def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_water, lb1_wp_hot_water, lb2_wp_hot_water, chph1, chph2,
+                         ashph1, ashph2, ashph3, ashph4, eseh1, eseh2, eseh3, ngb_hot_water, gc):
     """将制热季计算结果打印出来"""
     # 能源站总利润最大值
     profitis_max = max(ans[0])
@@ -610,6 +563,286 @@ def print_heating_season(ans):
     eseh3_load_ratio = ans[20]
     # 蓄能水罐制热量
     eseh_heat_load_out = ans[21]
+
+    # 向数据库写入计算结果
+    # 内燃机1和溴化锂1
+    if ice1_load_ratio > 0:
+        # 内燃机1
+        ice1_electrical_efficiency = ice1.electricity_power_efficiency(ice1_load_ratio)
+        ice1_residual_heat_efficiency = ice1.residual_heat_efficiency(ice1_load_ratio)
+        ice1_electrical_power = ice1.electricity_power_rated * ice1_load_ratio
+        ice1_total_heat_input = ice1.total_heat_input(ice1_load_ratio, ice1_electrical_efficiency)
+        ice1_residual_heat_power = ice1.residual_heat_power(ice1_total_heat_input, ice1_residual_heat_efficiency)
+        ice1_natural_gas_consumption = ice1.natural_gas_consumption(ice1_total_heat_input)
+        ice1_power_consumption = ice1.auxiliary_equipment_power_consumption(ice1_load_ratio)
+        ice1_electrical_cost = ice1_natural_gas_consumption * gc.natural_gas_price + ice1_power_consumption * gc.buy_electricity_price
+        wtd.write_to_database_ice1(True, False, False, 0, 0, 0, ice1_electrical_efficiency,
+                                   ice1_residual_heat_efficiency, ice1_electrical_power, ice1_residual_heat_power,
+                                   ice1_natural_gas_consumption, ice1_power_consumption, ice1_electrical_cost)
+        # 溴化锂1
+        lb1_cold_heat_out = lb_heat_load * (ice1_load_ratio / (ice1_load_ratio + ice2_load_ratio))
+        lb1_wp_heat_chilled_water_frequency = lbhf(0, ice1_load_ratio, lb1_cold_heat_out, gc)[4]
+        lb1_wp_cooling_water_frequency = 0
+        lb1_power_consumption = lbhf(0, ice1_load_ratio, lb1_cold_heat_out, gc)[1]
+        lb1_chilled_heat_water_flow = lbhf(0, ice1_load_ratio, lb1_cold_heat_out, gc)[3]
+        lb1_cooling_water_flow = 0
+        lb1_wp_chilled_heat_water_power_consumption = lb1_wp_heating_water.pump_performance_data(lb1_chilled_heat_water_flow, lb1_wp_heat_chilled_water_frequency)[1]
+        lb1_wp_cooling_water_power_consumption = 0
+        lb1_fan_power_consumption = 0
+        lb1_heat = Lithium_Bromide_Heat(ice1_residual_heat_power, lb1_wp_heating_water, lb1_wp_hot_water, gc)
+        lb1_chilled_heat_cop = lb1_heat.heating_cop(ice1_load_ratio)
+        lb1_chilled_heat_cost = lb1_power_consumption * gc.buy_electricity_price + lbhf(0, ice1_load_ratio, lb1_cold_heat_out, gc)[2] * gc.water_price
+        lb1_hot_water_out = 0
+        lb1_hot_water_cost = 0
+        lb1_wp_hot_water_power_consumption = 0
+        lb1_hot_water_flow = 0
+        # 写入数据库
+        wtd.write_to_database_lb1(True, False, lb1_wp_heat_chilled_water_frequency, lb1_wp_cooling_water_frequency,
+                                  lb1_cold_heat_out, lb1_power_consumption, lb1_chilled_heat_water_flow,
+                                  lb1_cooling_water_flow,
+                                  lb1_wp_chilled_heat_water_power_consumption, lb1_wp_cooling_water_power_consumption,
+                                  lb1_fan_power_consumption, lb1_chilled_heat_cop, lb1_chilled_heat_cost, lb1_hot_water_out,
+                                  lb1_hot_water_cost, lb1_wp_hot_water_power_consumption, lb1_hot_water_flow)
+    else:
+        wtd.write_to_database_ice1(False, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        wtd.write_to_database_lb1(False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+    # 内燃机2
+    if ice2_load_ratio > 0:
+        ice2_electrical_efficiency = ice2.electricity_power_efficiency(ice2_load_ratio)
+        ice2_residual_heat_efficiency = ice2.residual_heat_efficiency(ice2_load_ratio)
+        ice2_electrical_power = ice2.electricity_power_rated * ice2_load_ratio
+        ice2_total_heat_input = ice2.total_heat_input(ice2_load_ratio, ice2_electrical_efficiency)
+        ice2_residual_heat_power = ice2.residual_heat_power(ice2_total_heat_input, ice2_residual_heat_efficiency)
+        ice2_natural_gas_consumption = ice2.natural_gas_consumption(ice2_total_heat_input)
+        ice2_power_consumption = ice2.auxiliary_equipment_power_consumption(ice2_load_ratio)
+        ice2_electrical_cost = ice2_natural_gas_consumption * gc.natural_gas_price + ice2_power_consumption * gc.buy_electricity_price
+        wtd.write_to_database_ice2(True, False, False, 0, 0, 0, ice2_electrical_efficiency,
+                                   ice2_residual_heat_efficiency, ice2_electrical_power, ice2_residual_heat_power,
+                                   ice2_natural_gas_consumption, ice2_power_consumption, ice2_electrical_cost)
+        # 溴化锂1
+        lb2_cold_heat_out = lb_heat_load * (ice2_load_ratio / (ice1_load_ratio + ice2_load_ratio))
+        lb2_wp_heat_chilled_water_frequency = lbhf(0, ice2_load_ratio, lb2_cold_heat_out, gc)[4]
+        lb2_wp_cooling_water_frequency = 0
+        lb2_power_consumption = lbhf(0, ice2_load_ratio, lb2_cold_heat_out, gc)[1]
+        lb2_chilled_heat_water_flow = lbhf(0, ice2_load_ratio, lb2_cold_heat_out, gc)[3]
+        lb2_cooling_water_flow = 0
+        lb2_wp_chilled_heat_water_power_consumption = lb2_wp_heating_water.pump_performance_data(lb2_chilled_heat_water_flow, lb2_wp_heat_chilled_water_frequency)[1]
+        lb2_wp_cooling_water_power_consumption = 0
+        lb2_fan_power_consumption = 0
+        lb2_cold = Lithium_Bromide_Heat(ice2_residual_heat_power, lb2_wp_heating_water, lb2_wp_hot_water, gc)
+        lb2_chilled_heat_cop = lb2_cold.heating_cop(ice2_load_ratio)
+        lb2_chilled_heat_cost = lb2_power_consumption * gc.buy_electricity_price + lbhf(0, ice2_load_ratio, lb2_cold_heat_out, gc)[2] * gc.water_price
+        lb2_hot_water_out = 0
+        lb2_hot_water_cost = 0
+        lb2_wp_hot_water_power_consumption = 0
+        lb2_hot_water_flow = 0
+        # 写入数据库
+        wtd.write_to_database_lb2(True, False, lb2_wp_heat_chilled_water_frequency, lb2_wp_cooling_water_frequency,
+                                  lb2_cold_heat_out, lb2_power_consumption, lb2_chilled_heat_water_flow,
+                                  lb2_cooling_water_flow,
+                                  lb2_wp_chilled_heat_water_power_consumption,
+                                  lb2_wp_cooling_water_power_consumption,
+                                  lb2_fan_power_consumption, lb2_chilled_heat_cop, lb2_chilled_heat_cost, lb2_hot_water_out,
+                                  lb2_hot_water_cost, lb2_wp_hot_water_power_consumption, lb2_hot_water_flow)
+    else:
+        wtd.write_to_database_ice2(False, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        wtd.write_to_database_lb2(False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+    # 离心式热泵1（制热）
+    if chph1_load_ratio > 0:
+        chph1_heating_water_temperature = gc.heating_water_temperature
+        chph1_heat_source_water_temperature = chph1.heat_source_water_temperature(chph1_load_ratio)
+        chp1_wp_heat_water_frequency = chpch(chph1, gc, chph1_load_ratio)[6]
+        chp1_wp_source_water_frequency = chpch(chph1, gc, chph1_load_ratio)[7]
+        chp1_heat_out = chph1.heating_power_rated * chph1_load_ratio
+        chp1_power_consumption = chpch(chph1, gc, chph1_load_ratio)[3]
+        chp1_heat_water_flow = chpch(chph1, gc, chph1_load_ratio)[4]
+        chp1_source_water_flow = chpch(chph1, gc, chph1_load_ratio)[5]
+        chp1_wp_heat_water_power_consumption = chph1.wp_heating_water.pump_performance_data(chp1_heat_water_flow, chp1_wp_heat_water_frequency)[1]
+        chp1_wp_source_water_power_consumption = chph1.wp_heat_source_water.pump_performance_data(chp1_source_water_flow, chp1_wp_source_water_frequency)[1]
+        chp1_cop = chph1.centrifugal_heat_pump_cop(chph1_load_ratio, chph1_heating_water_temperature, chph1_heat_source_water_temperature)
+        chp1_cost = chpch(chph1, gc, chph1_load_ratio)[0]
+        # 写入数据库
+        wtd.write_to_database_chp1(False, False, True, chp1_wp_heat_water_frequency, chp1_wp_source_water_frequency,
+                           chp1_heat_out, chp1_power_consumption, chp1_heat_water_flow, chp1_source_water_flow,
+                           chp1_wp_heat_water_power_consumption, chp1_wp_source_water_power_consumption, chp1_cop, chp1_cost)
+    else:
+        # 写入数据库
+        wtd.write_to_database_chp1(True, True, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+    # 离心式热泵2（制热）
+    if chph2_load_ratio > 0:
+        chph2_heating_water_temperature = gc.heating_water_temperature
+        chph2_heat_source_water_temperature = chph2.heat_source_water_temperature(chph2_load_ratio)
+        chp2_wp_heat_water_frequency = chpch(chph2, gc, chph2_load_ratio)[6]
+        chp2_wp_source_water_frequency = chpch(chph2, gc, chph2_load_ratio)[7]
+        chp2_heat_out = chph2.heating_power_rated * chph2_load_ratio
+        chp2_power_consumption = chpch(chph2, gc, chph2_load_ratio)[3]
+        chp2_heat_water_flow = chpch(chph2, gc, chph2_load_ratio)[4]
+        chp2_source_water_flow = chpch(chph2, gc, chph2_load_ratio)[5]
+        chp2_wp_heat_water_power_consumption = chph2.wp_heating_water.pump_performance_data(chp2_heat_water_flow, chp2_wp_heat_water_frequency)[1]
+        chp2_wp_source_water_power_consumption = chph2.wp_heat_source_water.pump_performance_data(chp2_source_water_flow, chp2_wp_source_water_frequency)[1]
+        chp2_cop = chph2.centrifugal_heat_pump_cop(chph2_load_ratio, chph2_heating_water_temperature, chph2_heat_source_water_temperature)
+        chp2_cost = chpch(chph2, gc, chph2_load_ratio)[0]
+        # 写入数据库
+        wtd.write_to_database_chp2(False, False, True, chp2_wp_heat_water_frequency, chp2_wp_source_water_frequency,
+                           chp2_heat_out, chp2_power_consumption, chp2_heat_water_flow, chp2_source_water_flow,
+                           chp2_wp_heat_water_power_consumption, chp2_wp_source_water_power_consumption, chp2_cop, chp2_cost)
+    else:
+        # 写入数据库
+        wtd.write_to_database_chp2(True, True, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+    # 空气源热泵1（制热）
+    if ashph1_load_ratio > 0:
+        environment_temperature = gc.environment_temperature
+        ashp1_heat_source_water_temperature = gc.ashp_heat_source_water_temperature
+        ashp1_wp_water_frequency = ashpch(ashph1, gc, ashph1_load_ratio)[5]
+        ashp1_power_consumption = ashpch(ashph1, gc, ashph1_load_ratio)[3]
+        ashp1_chilled_heat_water_flow = ashpch(ashph1, gc, ashph1_load_ratio)[4]
+        ashp1_wp_power_consumption = ashph1.wp_heating_water.pump_performance_data(ashp1_chilled_heat_water_flow, ashp1_wp_water_frequency)[1]
+        ashp1_fan_power_consumption = 20
+        ashp1_cop = ashph1.air_source_heat_pump_heat_cop(chph1_load_ratio, ashp1_heat_source_water_temperature, environment_temperature)
+        ashp1_cost = ashpch(ashph1, gc, ashph1_load_ratio)[0]
+        # 写入数据库
+        wtd.write_to_database_ashp1(False, False, True, ashp1_wp_water_frequency,
+                            ashp1_power_consumption, ashp1_chilled_heat_water_flow, ashp1_wp_power_consumption,
+                            ashp1_fan_power_consumption, ashp1_cop, ashp1_cost)
+    else:
+        # 写入数据库
+        wtd.write_to_database_ashp1(False, False, True, 0, 0, 0, 0, 0, 0, 0)
+
+    # 空气源热泵2（制热）
+    if ashph2_load_ratio > 0:
+        environment_temperature = gc.environment_temperature
+        ashp2_heat_source_water_temperature = gc.ashp_heat_source_water_temperature
+        ashp2_wp_water_frequency = ashpch(ashph2, gc, ashph2_load_ratio)[5]
+        ashp2_power_consumption = ashpch(ashph2, gc, ashph2_load_ratio)[3]
+        ashp2_chilled_heat_water_flow = ashpch(ashph2, gc, ashph2_load_ratio)[4]
+        ashp2_wp_power_consumption = ashph2.wp_heating_water.pump_performance_data(ashp2_chilled_heat_water_flow, ashp2_wp_water_frequency)[1]
+        ashp2_fan_power_consumption = 20
+        ashp2_cop = ashph2.air_source_heat_pump_heat_cop(chph1_load_ratio, ashp2_heat_source_water_temperature,
+                                                         environment_temperature)
+        ashp2_cost = ashpch(ashph2, gc, ashph2_load_ratio)[0]
+        # 写入数据库
+        wtd.write_to_database_ashp2(False, False, True, ashp2_wp_water_frequency,
+                                    ashp2_power_consumption, ashp2_chilled_heat_water_flow,
+                                    ashp2_wp_power_consumption,
+                                    ashp2_fan_power_consumption, ashp2_cop, ashp2_cost)
+    else:
+        # 写入数据库
+        wtd.write_to_database_ashp2(False, False, True, 0, 0, 0, 0, 0, 0, 0)
+
+    # 空气源热泵3（制热）
+    if ashph3_load_ratio > 0:
+        environment_temperature = gc.environment_temperature
+        ashp3_heat_source_water_temperature = gc.ashp_heat_source_water_temperature
+        ashp3_wp_water_frequency = ashpch(ashph3, gc, ashph3_load_ratio)[5]
+        ashp3_power_consumption = ashpch(ashph3, gc, ashph3_load_ratio)[3]
+        ashp3_chilled_heat_water_flow = ashpch(ashph3, gc, ashph3_load_ratio)[4]
+        ashp3_wp_power_consumption = ashph3.wp_heating_water.pump_performance_data(ashp3_chilled_heat_water_flow, ashp3_wp_water_frequency)[1]
+        ashp3_fan_power_consumption = 20
+        ashp3_cop = ashph3.air_source_heat_pump_heat_cop(chph1_load_ratio, ashp3_heat_source_water_temperature,
+                                                         environment_temperature)
+        ashp3_cost = ashpch(ashph3, gc, ashph3_load_ratio)[0]
+        # 写入数据库
+        wtd.write_to_database_ashp3(False, False, True, ashp3_wp_water_frequency,
+                                    ashp3_power_consumption, ashp3_chilled_heat_water_flow,
+                                    ashp3_wp_power_consumption,
+                                    ashp3_fan_power_consumption, ashp3_cop, ashp3_cost)
+    else:
+        # 写入数据库
+        wtd.write_to_database_ashp3(False, False, True, 0, 0, 0, 0, 0, 0, 0)
+
+    # 空气源热泵4（制热）
+    if ashph4_load_ratio > 0:
+        environment_temperature = gc.environment_temperature
+        ashp4_heat_source_water_temperature = gc.ashp_heat_source_water_temperature
+        ashp4_wp_water_frequency = ashpch(ashph4, gc, ashph4_load_ratio)[5]
+        ashp4_power_consumption = ashpch(ashph4, gc, ashph4_load_ratio)[3]
+        ashp4_chilled_heat_water_flow = ashpch(ashph4, gc, ashph4_load_ratio)[4]
+        ashp4_wp_power_consumption = ashph4.wp_heating_water.pump_performance_data(ashp4_chilled_heat_water_flow, ashp4_wp_water_frequency)[1]
+        ashp4_fan_power_consumption = 20
+        ashp4_cop = ashph4.air_source_heat_pump_heat_cop(chph1_load_ratio, ashp4_heat_source_water_temperature,
+                                                         environment_temperature)
+        ashp4_cost = ashpch(ashph4, gc, ashph4_load_ratio)[0]
+        # 写入数据库
+        wtd.write_to_database_ashp4(False, False, True, ashp4_wp_water_frequency,
+                                    ashp4_power_consumption, ashp4_chilled_heat_water_flow,
+                                    ashp4_wp_power_consumption,
+                                    ashp4_fan_power_consumption, ashp4_cop, ashp4_cost)
+    else:
+        # 写入数据库
+        wtd.write_to_database_ashp4(False, False, True, 0, 0, 0, 0, 0, 0, 0)
+
+    # 蓄冷水罐
+    if eseh_heat_load_out != 0:
+        ese_cold_heat_out = eseh_heat_load_out
+        ese_residual_storage_energy = esehsrr()[0] + esehsrr()[1] + esehsrr()[2]
+        ese_cost = esehc(eseh1, gc, eseh1_load_ratio)[0] + esehc(eseh2, gc, eseh2_load_ratio)[0] + \
+                   esehc(eseh3, gc, eseh3_load_ratio)[0]
+        if eseh_heat_load_out > 0:
+            ese_proportion = eseh_heat_load_out / station_heat_out_all
+        else:
+            ese_proportion = abs(eseh_heat_load_out / (station_heat_out_all - eseh_heat_load_out))
+        # 写入数据库
+        wtd.write_to_database_ese(ese_cold_heat_out, ese_residual_storage_energy, ese_cost, ese_proportion)
+    else:
+        ese_residual_storage_energy = esehsrr()[0] + esehsrr()[1] + esehsrr()[2]
+        wtd.write_to_database_ese(0, ese_residual_storage_energy, 0, 0)
+
+    # 蓄能水罐水泵1
+    if eseh1_load_ratio > 0:
+        ese1_wp_water_frequency = esehc(eseh1, gc, eseh1_load_ratio)[4]
+        ese1_chilled_heat_water_flow = esehc(eseh1, gc, eseh1_load_ratio)[3]
+        ese1_wp_power_consumption = eseh1.wp_chilled_water.pump_performance_data(ese1_chilled_heat_water_flow, ese1_wp_water_frequency)[1]
+        # 写入数据库
+        wtd.write_to_database_ese1(False, False, True, ese1_wp_water_frequency,
+                                   ese1_chilled_heat_water_flow, ese1_wp_power_consumption)
+    else:
+        wtd.write_to_database_ese1(True, True, False, 0, 0, 0)
+
+    # 蓄能水罐水泵2
+    if eseh2_load_ratio > 0:
+        ese2_wp_water_frequency = esehc(eseh2, gc, eseh2_load_ratio)[4]
+        ese2_chilled_heat_water_flow = esehc(eseh2, gc, eseh2_load_ratio)[3]
+        ese2_wp_power_consumption = eseh2.wp_chilled_water.pump_performance_data(ese2_chilled_heat_water_flow, ese2_wp_water_frequency)[1]
+        # 写入数据库
+        wtd.write_to_database_ese2(False, False, True, ese2_wp_water_frequency,
+                                   ese2_chilled_heat_water_flow, ese2_wp_power_consumption)
+    else:
+        wtd.write_to_database_ese2(True, True, False, 0, 0, 0)
+
+    # 蓄能水罐水泵3
+    if eseh3_load_ratio > 0:
+        ese3_wp_water_frequency = esehc(eseh3, gc, eseh3_load_ratio)[4]
+        ese3_chilled_heat_water_flow = esehc(eseh3, gc, eseh3_load_ratio)[3]
+        ese3_wp_power_consumption = eseh3.wp_chilled_water.pump_performance_data(ese3_chilled_heat_water_flow, ese3_wp_water_frequency)[1]
+        # 写入数据库
+        wtd.write_to_database_ese3(False, False, True, ese3_wp_water_frequency,
+                                   ese3_chilled_heat_water_flow, ese3_wp_power_consumption)
+    else:
+        wtd.write_to_database_ese3(True, True, False, 0, 0, 0)
+
+    # 天然气生活热水锅炉
+    if ngb_hw_hot_water > 0:
+        ngb3_wp_hot_water_frequency = 50
+        ngb3_hot_water_out = ngb_hw_hot_water
+        ngb3_load_ratio = ngb3_hot_water_out / ngb_hot_water.heating_power_rated
+        ngb3_power_consumption = ngbiohw(ngb3_hot_water_out, ngb_hot_water, gc)[0]
+        ngb3_hot_water_flow = ngb_hw_hot_water * 3600 / gc.hot_water_temperature_difference_rated / 4.2 / 1000
+        ngb3_wp_hot_water_power_consumption = \
+        ngb_hot_water.wp_hot_water.pump_performance_data(ngb3_hot_water_flow, ngb3_wp_hot_water_frequency)[1]
+        ngb3_efficiency = ngb_hot_water.boiler_efficiency(ngb3_load_ratio)
+        ngb3_natural_gas_consumption = ngbiohw(ngb3_hot_water_out, ngb_hot_water, gc)[1]
+        ngb3_cost = ngbhc(ngb_hot_water, gc, ngb3_load_ratio)[0]
+        # 写入数据库
+        wtd.write_to_database_ngb3(True, False, ngb3_wp_hot_water_frequency,
+                                   ngb3_hot_water_out, ngb3_power_consumption, ngb3_hot_water_flow,
+                                   ngb3_wp_hot_water_power_consumption,
+                                   ngb3_efficiency, ngb3_cost, ngb3_natural_gas_consumption)
+    else:
+        wtd.write_to_database_ngb3(False, True, 0, 0, 0, 0, 0, 0, 0, 0)
 
     # 打印出结果
     print("能源站利润最大值为： " + str(station_profitis_max) + "\n" + "能源站成本最小值为： " + str(

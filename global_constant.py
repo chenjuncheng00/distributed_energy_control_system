@@ -2,6 +2,8 @@ import tensorflow as tf
 
 class Global_Constant():
     def __init__(self):
+        # 环境温度
+        self.environment_temperature = 30
         # 整个项目的建筑面积
         self.area = 189000
         # 允许的最大冷负荷
@@ -18,6 +20,8 @@ class Global_Constant():
         self.chilled_water_temperature = 7
         # 供热时出水温度
         self.heating_water_temperature = 55
+        # 空气源热泵在作为一级低温热源制热时的出水温度
+        self.ashp_heat_source_water_temperature = 20
         # 冷冻水额定供回水温差
         self.chilled_water_temperature_difference_rated = 5
         # 冷却水额定供回水温差

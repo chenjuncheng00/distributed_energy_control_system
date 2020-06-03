@@ -153,7 +153,8 @@ def print_natural_gas_boiler_heat(ans, ngbh1, ngbh2):
     ngbh2_ratio = ans[2][cost_min_index]
     heat_load_out = ngbh1_ratio * ngbh1.heating_power_rated + ngbh2_ratio * ngbh2.heating_power_rated
     # 打印计算结果
-    print("天然气采暖锅炉最低总运行成本为： " + str(cost_min) + "\n" + "天然气采暖锅炉1负荷率为： " + str(ngbh1_ratio) + "\n" + "天然气采暖锅炉2负荷率为： " + str(ngbh2_ratio) + "\n" + "天然气采暖锅炉总制热出力为： " + str(heat_load_out))
+    print("天然气采暖锅炉最低总运行成本为： " + str(cost_min) + "\n" + "天然气采暖锅炉1负荷率为： " + str(ngbh1_ratio) + "\n"
+          + "天然气采暖锅炉2负荷率为： " + str(ngbh2_ratio) + "\n" + "天然气采暖锅炉总制热出力为： " + str(heat_load_out))
 
 
 def natural_gas_boiler_in_out_hot_water(hot_water_load_ngb, ngb_hot_water, gc):
@@ -173,18 +174,3 @@ def natural_gas_boiler_in_out_hot_water(hot_water_load_ngb, ngb_hot_water, gc):
 
     # 返回计算结果
     return auxiliary_equipment_power_consumption_now, natural_gas_consumption_now, water_supply
-
-def test_ngbf():
-    # 实例化一个全局常量类
-    gc = Global_Constant()
-    # 实例化2个天然气采暖锅炉水泵
-    ngbh1_wp_heating_water = Water_Pump(330, False, 32, gc)
-    ngbh2_wp_heating_water = Water_Pump(330, False, 32, gc)
-    # 实例化2个天然气采暖锅炉对象
-    ngbh1 = Natural_Gas_Boiler_heat(3500, 0.2, ngbh1_wp_heating_water, gc)
-    ngbh2 = Natural_Gas_Boiler_heat(3500, 0.2, ngbh2_wp_heating_water, gc)
-    ans = natural_gas_boiler_heat_funtion(7000, ngbh1, ngbh2, gc)
-    print_natural_gas_boiler_heat(ans, ngbh1, ngbh2)
-    #print(ans)
-
-# test_ngbf()

@@ -417,7 +417,9 @@ def energy_storage_equipment_heat_cost(eseh, gc, load_ratio):
     # 热冻水流量,某一负荷率条件下
     heating_water_flow = eseh.heating_water_flow(load_ratio)
     # 辅助设备耗电功率,某一负荷率条件下
-    auxiliary_equipment_power_consumption = eseh.auxiliary_equipment_power_consumption(heating_water_flow)
+    auxiliary_equipment_power_consumption = eseh.auxiliary_equipment_power_consumption(heating_water_flow)[0]
+    # 水泵频率
+    wp_frequency_heating_water = eseh.auxiliary_equipment_power_consumption(heating_water_flow)[1]
     # 总耗电功率,某一负荷率条件下（只有水泵耗电）
     total_power_consumption = auxiliary_equipment_power_consumption
     # 电成本（元）,某一负荷率条件下
@@ -432,30 +434,6 @@ def energy_storage_equipment_heat_cost(eseh, gc, load_ratio):
     # 成本合计
     cost_total = total_electricity_cost + total_water_cost
     # 返回计算结果
-    return cost_total, total_power_consumption, total_water_supply, heating_water_flow
+    return cost_total, total_power_consumption, total_water_supply, heating_water_flow, wp_frequency_heating_water
 
-
-def test_energy_storage_equipment_heat_function():
-    """测试蓄能水罐计算"""
-    gc = Global_Constant()
-    # 实例化1组3个蓄热水罐的循环水泵（水泵3用1备）
-    eseh1_wp_heating_water = Water_Pump(50, False, 35, gc)
-    eseh2_wp_heating_water = Water_Pump(50, False, 35, gc)
-    eseh3_wp_heating_water = Water_Pump(50, False, 35, gc)
-    # 实例化3个蓄热水罐（实际上只有1个水罐，但是有3个水泵，将水泵假想3等分，作为3个水罐，与水泵一一对应去计算）
-    eseh1 = Energy_Storage_Equipment_Heat(1000, 0.1, 8000, eseh1_wp_heating_water, gc)
-    eseh2 = Energy_Storage_Equipment_Heat(1000, 0.1, 8000, eseh2_wp_heating_water, gc)
-    eseh3 = Energy_Storage_Equipment_Heat(1000, 0.1, 8000, eseh3_wp_heating_water, gc)
-    # 热负荷
-    heat_load_a = 3000
-    ans_eseh = energy_storage_equipment_heat_function(heat_load_a, eseh1, eseh2, eseh3, gc)
-    print_energy_storage_equipment_heat(ans_eseh, eseh1, eseh2, eseh3)
-    # 写入txt文件
-    # hour_state = 1
-    # eseh1_heat_stock = energy_storage_equipment_heat_storage_residual_read()[0]
-    # eseh2_heat_stock = energy_storage_equipment_heat_storage_residual_read()[1]
-    # eseh3_heat_stock = energy_storage_equipment_heat_storage_residual_read()[2]
-    # energy_storage_equipment_heat_storage_residual_write(hour_state, eseh1, eseh2, eseh3, 1, 1, 1, eseh1_heat_stock, eseh2_heat_stock, eseh3_heat_stock)
-
-# test_energy_storage_equipment_heat_function()
 

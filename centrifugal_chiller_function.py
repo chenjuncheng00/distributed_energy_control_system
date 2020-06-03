@@ -1,6 +1,4 @@
 import math
-from equipment import Centrifugal_Chiller, Water_Pump
-from global_constant import Global_Constant
 
 def centrifugal_chiller_function(cold_load, cc1, cc2, cc3, cc4, gc):
     """离心式冷水机组制冷负荷计算函数"""
@@ -156,7 +154,10 @@ def centrifugal_chiller_function(cold_load, cc1, cc2, cc3, cc4, gc):
                 cc3_auxiliary_equipment_power_consumption = centrifugal_chiller_auxiliary_equipment_cost(cc3, gc, cc3_chilled_water_flow, cc3_cooling_water_flow)[0]
                 cc4_auxiliary_equipment_power_consumption = centrifugal_chiller_auxiliary_equipment_cost(cc4, gc, cc4_chilled_water_flow, cc4_cooling_water_flow)[0]
                 # 耗电量总计
-                cc_power_consumption_total = cc1_centrifugal_chiller_power_consumption + cc2_centrifugal_chiller_power_consumption + cc3_centrifugal_chiller_power_consumption + cc4_centrifugal_chiller_power_consumption + cc1_auxiliary_equipment_power_consumption + cc2_auxiliary_equipment_power_consumption + cc3_auxiliary_equipment_power_consumption + cc4_auxiliary_equipment_power_consumption
+                cc_power_consumption_total = cc1_centrifugal_chiller_power_consumption + cc2_centrifugal_chiller_power_consumption \
+                                             + cc3_centrifugal_chiller_power_consumption + cc4_centrifugal_chiller_power_consumption \
+                                             + cc1_auxiliary_equipment_power_consumption + cc2_auxiliary_equipment_power_consumption \
+                                             + cc3_auxiliary_equipment_power_consumption + cc4_auxiliary_equipment_power_consumption
                 total_power_consumption.append(cc_power_consumption_total)
                 # 计算4个设备的总补水量
                 cc1_water_supply = centrifugal_chiller_cost(cc1, gc, cc1_load_ratio)[2]
@@ -210,7 +211,10 @@ def centrifugal_chiller_cost(cc, gc, load_ratio):
     centrifugal_chiller_power_consumption = cc.centrifugal_chiller_power_consumption(load_ratio, centrifugal_chiller_cop)
     # 以下辅机耗电计算针对的是单元制系统，及泵与设备一对一布置；如果是母管制系统，需要单独重新计算
     # 辅助设备耗电功率,某一负荷率条件下
-    auxiliary_equipment_power_consumption = cc.auxiliary_equipment_power_consumption(cooling_water_flow, chilled_water_flow)
+    auxiliary_equipment_power_consumption = cc.auxiliary_equipment_power_consumption(cooling_water_flow, chilled_water_flow)[0]
+    # 冷冻水泵和冷却水泵频率
+    wp_frequency_chilled_water = cc.auxiliary_equipment_power_consumption(cooling_water_flow, chilled_water_flow)[1]
+    wp_frequency_cooling_water = cc.auxiliary_equipment_power_consumption(cooling_water_flow, chilled_water_flow)[2]
     # 离心式冷水机总耗电功率,某一负荷率条件下
     total_power_consumption = centrifugal_chiller_power_consumption + auxiliary_equipment_power_consumption
     # 电成本（元）,某一负荷率条件下
@@ -227,13 +231,14 @@ def centrifugal_chiller_cost(cc, gc, load_ratio):
     # 成本合计
     cost_total = total_electricity_cost + total_water_cost
     # 返回计算结果
-    return cost_total, total_power_consumption, total_water_supply, centrifugal_chiller_power_consumption, chilled_water_flow, cooling_water_flow
+    return cost_total, total_power_consumption, total_water_supply, centrifugal_chiller_power_consumption, \
+           chilled_water_flow, cooling_water_flow, wp_frequency_chilled_water, wp_frequency_cooling_water
 
 
 def centrifugal_chiller_auxiliary_equipment_cost(cc, gc, chilled_water_flow, cooling_water_flow):
     """离心式冷水机辅助设备成本计算"""
     # 辅助设备耗电功率,某一负荷率条件下
-    auxiliary_equipment_power_consumption = cc.auxiliary_equipment_power_consumption(cooling_water_flow, chilled_water_flow)
+    auxiliary_equipment_power_consumption = cc.auxiliary_equipment_power_consumption(cooling_water_flow, chilled_water_flow)[0]
     auxiliary_equipment_power_cost = auxiliary_equipment_power_consumption * gc.buy_electricity_price
     # 返回计算结果
     return auxiliary_equipment_power_consumption, auxiliary_equipment_power_cost
@@ -252,30 +257,6 @@ def print_centrifugal_chiller(ans, cc1, cc2, cc3, cc4):
     cc3_ratio = ans[3][cost_min_index]
     cc4_ratio = ans[4][cost_min_index]
     cold_load_out = cc1_ratio * cc1.cooling_power_rated + cc2_ratio * cc2.cooling_power_rated + cc3_ratio * cc3.cooling_power_rated + cc4_ratio * cc4.cooling_power_rated
-    print("离心式冷水机最低总运行成本为： " + str(cost_min) + "\n" + "离心式冷水机1负荷率为： " + str(cc1_ratio) + "\n" + "离心式冷水机2负荷率为： " + str(cc2_ratio) + "\n" + "离心式冷水机3负荷率为： " + str(cc3_ratio) + "\n" + "离心式冷水机4负荷率为： " + str(cc4_ratio) + "\n" + "离心式冷水机总制冷出力为： " + str(cold_load_out))
-
-
-def test_centrifugal_chiller_function():
-    """测试离心式冷水机计算"""
-    # 实例化4个离心式冷水机的各种水泵
-    gc = Global_Constant()
-    cc_wp = False
-    cc1_wp_chilled_water = Water_Pump(600, cc_wp, 38, gc)
-    cc2_wp_chilled_water = Water_Pump(600, cc_wp, 38, gc)
-    cc3_wp_chilled_water = Water_Pump(600, cc_wp, 38, gc)
-    cc4_wp_chilled_water = Water_Pump(600, cc_wp, 38, gc)
-    cc1_wp_cooling_water = Water_Pump(710, cc_wp, 32, gc)
-    cc2_wp_cooling_water = Water_Pump(710, cc_wp, 32, gc)
-    cc3_wp_cooling_water = Water_Pump(710, cc_wp, 32, gc)
-    cc4_wp_cooling_water = Water_Pump(710, cc_wp, 32, gc)
-    # 实例化4个离心式冷水机类
-    cc1 = Centrifugal_Chiller(3164, 0.2, False, cc1_wp_chilled_water, cc1_wp_cooling_water, gc)
-    cc2 = Centrifugal_Chiller(3164, 0.2, False, cc2_wp_chilled_water, cc2_wp_cooling_water, gc)
-    cc3 = Centrifugal_Chiller(3164, 0.2, False, cc3_wp_chilled_water, cc3_wp_cooling_water, gc)
-    cc4 = Centrifugal_Chiller(3164, 0.2, False, cc4_wp_chilled_water, cc4_wp_cooling_water, gc)
-    # 冷负荷
-    cold_load = 9000
-    ans = centrifugal_chiller_function(cold_load, cc1, cc2, cc3, cc4, gc)
-    print_centrifugal_chiller(ans, cc1, cc2, cc3, cc4)
-
-#test_centrifugal_chiller_function()
+    print("离心式冷水机最低总运行成本为： " + str(cost_min) + "\n" + "离心式冷水机1负荷率为： " + str(cc1_ratio) + "\n"
+          + "离心式冷水机2负荷率为： " + str(cc2_ratio) + "\n" + "离心式冷水机3负荷率为： " + str(cc3_ratio) + "\n"
+          + "离心式冷水机4负荷率为： " + str(cc4_ratio) + "\n" + "离心式冷水机总制冷出力为： " + str(cold_load_out))

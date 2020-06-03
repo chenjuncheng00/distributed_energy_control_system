@@ -1,8 +1,7 @@
 from equipment import Lithium_Bromide_Cold, Lithium_Bromide_Heat, Lithium_Bromide_Transition
-from equipment import Water_Pump, Internal_Combustion_Engine
-from global_constant import Global_Constant
 
-def triple_supply_cold_function(ice1_load_ratio, ice2_load_ratio, lb1_hot_water, lb2_hot_water, ice1, ice2, lb1_wp_cooling_water,lb2_wp_cooling_water, lb1_wp_chilled_water, lb2_wp_chilled_water,lb1_wp_hot_water, lb2_wp_hot_water, gc):
+def triple_supply_cold_function(ice1_load_ratio, ice2_load_ratio, lb1_hot_water, lb2_hot_water, ice1, ice2, lb1_wp_cooling_water,
+                                lb2_wp_cooling_water, lb1_wp_chilled_water, lb2_wp_chilled_water,lb1_wp_hot_water, lb2_wp_hot_water, gc):
     """三联供系统计算方程，计算在指定的冷负荷、电负荷情况下，系统（收入-成本）的最大值情况"""
     # 计算2个溴化锂的制冷出力
     lb1_cold_out_now = triple_supply_in_out_cold(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_cooling_water, lb1_wp_chilled_water,lb1_wp_hot_water)[0]
@@ -35,7 +34,8 @@ def triple_supply_cold_function(ice1_load_ratio, ice2_load_ratio, lb1_hot_water,
     lb_chilled_water_flow = lb_chilled_water_flow_total/lb_num
     lb_cooling_water_flow = lb_cooling_water_flow_total/lb_num
     # 溴化锂辅机耗电功率
-    lb_auxiliary_equipment_power_consumption_cold_total = lb_num*(lb1_wp_cooling_water.pump_performance_data(lb_cooling_water_flow, 50)[1] + lb1_wp_chilled_water.pump_performance_data(lb_chilled_water_flow, 50)[1])
+    lb_auxiliary_equipment_power_consumption_cold_total = lb_num*(lb1_wp_cooling_water.pump_performance_data(lb_cooling_water_flow, 50)[1]
+                                                                  + lb1_wp_chilled_water.pump_performance_data(lb_chilled_water_flow, 50)[1])
     ts_electricity_cold_out_now_sum = ice_electricity_power_out_total_cold - ice_power_consumption_total_cold - lb_auxiliary_equipment_power_consumption_cold_total
 
     # 计算2个三联供系统的成本
@@ -77,7 +77,8 @@ def triple_supply_in_out_cold(load_ratio_ice, hot_water_load, ice, gc, wp_coolin
     # 仅内燃机设备辅助设备耗电功率
     internal_combustion_engine_power_consumption_cold = internal_combustion_engine_cost(total_heat_input, load_ratio_ice, ice)[1]
     # 三联供系统（内燃机+溴化锂）辅助设备耗电功率
-    triple_supply_power_consumption_cold = internal_combustion_engine_cost(total_heat_input, load_ratio_ice, ice)[1] + lithium_bromide_cold_function(hot_water_load, load_ratio_ice, lb_cold, gc)[1]
+    triple_supply_power_consumption_cold = internal_combustion_engine_cost(total_heat_input, load_ratio_ice, ice)[1] + \
+                                           lithium_bromide_cold_function(hot_water_load, load_ratio_ice, lb_cold, gc)[1]
     # 三联供系统天然气消耗量
     natural_gas_consumption = internal_combustion_engine_cost(total_heat_input, load_ratio_ice, ice)[0]
     # 三联供系统外供电功率，供冷时间段
@@ -86,10 +87,12 @@ def triple_supply_in_out_cold(load_ratio_ice, hot_water_load, ice, gc, wp_coolin
     total_water_supply = lithium_bromide_cold_function(hot_water_load, load_ratio_ice, lb_cold, gc)[2]
 
     # 返回计算结果
-    return triple_supply_cold_load_now, triple_supply_power_now_cold, natural_gas_consumption, total_water_supply, electricity_power_now, internal_combustion_engine_power_consumption_cold, lb_chilled_water_flow, lb_cooling_water_flow
+    return triple_supply_cold_load_now, triple_supply_power_now_cold, natural_gas_consumption, total_water_supply, electricity_power_now, \
+           internal_combustion_engine_power_consumption_cold, lb_chilled_water_flow, lb_cooling_water_flow
 
 
-def triple_supply_heat_function(ice1_load_ratio, ice2_load_ratio, lb1_hot_water, lb2_hot_water, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_water, lb1_wp_hot_water, lb2_wp_hot_water, gc):
+def triple_supply_heat_function(ice1_load_ratio, ice2_load_ratio, lb1_hot_water, lb2_hot_water, ice1, ice2, lb1_wp_heating_water,
+                                lb2_wp_heating_water, lb1_wp_hot_water, lb2_wp_hot_water, gc):
     """三联供系统计算方程，计算在指定的热负荷、电负荷情况下，系统（收入-成本）的最大值情况"""
     # 计算2个溴化锂的制热出力
     lb1_heat_out_now = triple_supply_in_out_heat(ice1_load_ratio, lb1_hot_water, ice1, gc, lb1_wp_heating_water, lb1_wp_hot_water)[0]
@@ -156,7 +159,8 @@ def triple_supply_in_out_heat(load_ratio_ice, hot_water_load, ice, gc, wp_heatin
     lb_heating_water_flow = lithium_bromide_heat_function(hot_water_load, load_ratio_ice, lb_heat, gc)[3]
     # 如果是单元制系统
     # 三联供系统自耗电功率，供热时间段
-    triple_supply_power_consumption_heat = internal_combustion_engine_cost(total_heat_input, load_ratio_ice, ice)[1] + lithium_bromide_heat_function(hot_water_load, load_ratio_ice, lb_heat, gc)[1]
+    triple_supply_power_consumption_heat = internal_combustion_engine_cost(total_heat_input, load_ratio_ice, ice)[1] \
+                                           + lithium_bromide_heat_function(hot_water_load, load_ratio_ice, lb_heat, gc)[1]
     # 仅内燃机设备辅助设备耗电功率
     internal_combustion_engine_power_consumption_heat = internal_combustion_engine_cost(total_heat_input, load_ratio_ice, ice)[1]
     # 三联供系统天然气消耗量
@@ -166,7 +170,8 @@ def triple_supply_in_out_heat(load_ratio_ice, hot_water_load, ice, gc, wp_heatin
     #三联供系统补水量计算，溴化锂设备补水量
     total_water_supply = lithium_bromide_heat_function(hot_water_load, load_ratio_ice, lb_heat, gc)[2]
     # 返回计算结果
-    return triple_supply_heat_load_now, triple_supply_power_now_heat, natural_gas_consumption, total_water_supply, electricity_power_now, internal_combustion_engine_power_consumption_heat, lb_heating_water_flow
+    return triple_supply_heat_load_now, triple_supply_power_now_heat, natural_gas_consumption, total_water_supply, electricity_power_now, \
+           internal_combustion_engine_power_consumption_heat, lb_heating_water_flow
 
 
 def triple_supply_transition_function(ice1_load_ratio, ice2_load_ratio, lb1_hot_water, lb2_hot_water, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water, gc):
@@ -215,7 +220,8 @@ def triple_supply_in_out_transition(load_ratio_ice, hot_water_load, ice, gc, wp_
     lb_transition = Lithium_Bromide_Transition(residual_heat_power, wp_hot_water, gc)
     # 如果是单元制系统
     # 三联供系统自耗电功率，过渡季
-    triple_supply_power_consumption_transition =internal_combustion_engine_cost(total_heat_input, load_ratio_ice, ice)[1] + lithium_bromide_transition_function(hot_water_load, load_ratio_ice, lb_transition, gc)[0]
+    triple_supply_power_consumption_transition =internal_combustion_engine_cost(total_heat_input, load_ratio_ice, ice)[1] \
+                                                + lithium_bromide_transition_function(hot_water_load, load_ratio_ice, lb_transition, gc)[0]
     # 仅内燃机设备辅助设备耗电功率
     internal_combustion_engine_power_consumption_heat = internal_combustion_engine_cost(total_heat_input, load_ratio_ice, ice)[1]
     # 此时内燃机余热没有被用掉的量
@@ -227,7 +233,8 @@ def triple_supply_in_out_transition(load_ratio_ice, hot_water_load, ice, gc, wp_
     #三联供系统补水量计算，溴化锂设备补水量
     total_water_supply = lithium_bromide_transition_function(hot_water_load, load_ratio_ice, lb_transition, gc)[1]
     # 返回计算结果
-    return triple_supply_power_now_transition, natural_gas_consumption, total_water_supply, electricity_power_now, internal_combustion_engine_power_consumption_heat, triple_supply_residual_heat_remaining
+    return triple_supply_power_now_transition, natural_gas_consumption, total_water_supply, electricity_power_now, \
+           internal_combustion_engine_power_consumption_heat, triple_supply_residual_heat_remaining
 
 
 def internal_combustion_engine_function(load_ratio_ice, ice):
@@ -283,7 +290,10 @@ def lithium_bromide_cold_function(hot_water_load, load_ratio, lb_cold, gc):
 
     # 以下辅机耗电计算针对的是单元制系统，及泵与设备一对一布置；如果是母管制系统，要重新计算
     # 制冷辅机耗电
-    auxiliary_equipment_power_consumption_cooling = lb_cold.auxiliary_equipment_power_consumption_cooling(cooling_water_flow, chilled_water_flow, residual_heat_cooling_ratio)
+    auxiliary_equipment_power_consumption_cooling = lb_cold.auxiliary_equipment_power_consumption_cooling(cooling_water_flow, chilled_water_flow, residual_heat_cooling_ratio)[0]
+    # 溴化锂制冷，冷冻水泵和冷却水泵频率
+    wp_frequency_chilled_water = lb_cold.auxiliary_equipment_power_consumption_cooling(cooling_water_flow, chilled_water_flow, residual_heat_cooling_ratio)[1]
+    wp_frequency_cooling_water = lb_cold.auxiliary_equipment_power_consumption_cooling(cooling_water_flow, chilled_water_flow, residual_heat_cooling_ratio)[2]
     # 生活热水辅机耗电
     auxiliary_equipment_power_consumption_hot_water = lb_cold.auxiliary_equipment_power_consumption_hot_water(hot_water_flow)
     # 制冷季总辅机耗电
@@ -292,7 +302,7 @@ def lithium_bromide_cold_function(hot_water_load, load_ratio, lb_cold, gc):
     total_water_supply=(chilled_water_flow + hot_water_flow) * gc.closed_loop_supply_rate + cooling_water_flow * gc.cooling_water_supply_rate
 
     # 返回计算结果
-    return cool_load_now, total_power_consumption_cooling, total_water_supply, chilled_water_flow, cooling_water_flow
+    return cool_load_now, total_power_consumption_cooling, total_water_supply, chilled_water_flow, cooling_water_flow, wp_frequency_chilled_water, wp_frequency_cooling_water
 
 
 def lithium_bromide_heat_function(hot_water_load, load_ratio, lb_heat, gc):
@@ -319,7 +329,9 @@ def lithium_bromide_heat_function(hot_water_load, load_ratio, lb_heat, gc):
 
     # 以下辅机耗电计算针对的是单元制系统，及泵与设备一对一布置；如果是母管制系统，需要单独重新计算
     # 制热辅机耗电
-    auxiliary_equipment_power_consumption_heating = lb_heat.auxiliary_equipment_power_consumption_heating(heating_water_flow, residual_heat_heating_ratio)
+    auxiliary_equipment_power_consumption_heating = lb_heat.auxiliary_equipment_power_consumption_heating(heating_water_flow, residual_heat_heating_ratio)[0]
+    # 采暖水泵频率
+    wp_frequency_heating_water = lb_heat.auxiliary_equipment_power_consumption_heating(heating_water_flow, residual_heat_heating_ratio)[1]
     # 生活热水辅机耗电
     auxiliary_equipment_power_consumption_hot_water = lb_heat.auxiliary_equipment_power_consumption_hot_water(hot_water_flow)
     # 采暖季总辅机耗电
@@ -327,7 +339,7 @@ def lithium_bromide_heat_function(hot_water_load, load_ratio, lb_heat, gc):
     #溴化锂系统补水量计算
     total_water_supply=(heating_water_flow + hot_water_flow) * gc.closed_loop_supply_rate
     # 返回计算结果
-    return heat_load_now, total_power_consumption_heating, total_water_supply, heating_water_flow
+    return heat_load_now, total_power_consumption_heating, total_water_supply, heating_water_flow, wp_frequency_heating_water
 
 
 def lithium_bromide_transition_function(hot_water_load, load_ratio, lb_transition, gc):
@@ -355,15 +367,3 @@ def lithium_bromide_transition_function(hot_water_load, load_ratio, lb_transitio
     # 返回计算结果
     return total_power_consumption_transition, total_water_supply, residual_heat_remaining
 
-def test_triple_supply_in_out_transition():
-    load_ratio_ice = 1
-    hot_water_load = 850
-    # 实例化一个全局常量类
-    gc = Global_Constant()
-    # 实例化对象
-    ice = Internal_Combustion_Engine(792, gc, 0.5)
-    wp_hot_water = Water_Pump(44, False, 35, gc)
-    ans = triple_supply_in_out_transition(load_ratio_ice, hot_water_load, ice, gc, wp_hot_water)
-    print(ans)
-
-# test_triple_supply_in_out_transition()

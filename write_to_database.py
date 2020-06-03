@@ -22,10 +22,10 @@ def write_to_database_ice1(ice1_remote_start, ice1_remote_stop, ice1_black_start
          ice1_power_factor_set])
 
     # 程序计算出的数据
-    # #1燃气内燃发电机发电功率
-    # #1燃气内燃发电机余热功率
     # #1燃气内燃发电机发电效率
     # #1燃气内燃发电机余热效率
+    # #1燃气内燃发电机发电功率
+    # #1燃气内燃发电机余热功率
     # #1燃气内燃发电机天然气耗量
     # #1燃气内燃发电机辅助设备耗电量
     # #1燃气内燃发电机发电成本
@@ -91,8 +91,8 @@ def write_to_database_ice2(ice2_remote_start, ice2_remote_stop, ice2_black_start
 
 def write_to_database_lb1(lb1_remote_start, lb1_remote_stop, lb1_wp_heat_chilled_water_frequency, lb1_wp_cooling_water_frequency,
                           lb1_cold_heat_out, lb1_power_consumption, lb1_chilled_heat_water_flow, lb1_cooling_water_flow,
-                          lb1_wp_chilled_heat_water_power_consumption,lb1_wp_cooling_water_power_consumption, lb1_fan_power_consumption,
-                          lb1_chilled_heat_cop,lb1_chilled_heat_cost):
+                          lb1_wp_chilled_heat_water_power_consumption, lb1_wp_cooling_water_power_consumption, lb1_fan_power_consumption,
+                          lb1_chilled_heat_cop, lb1_chilled_heat_cost, lb1_hot_water_out, lb1_hot_water_cost, lb1_wp_hot_water_power_consumption, lb1_hot_water_flow):
     """利用SyncBASE，向数据库中写入数据"""
     # 写入溴化锂1的数据
     syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
@@ -117,12 +117,16 @@ def write_to_database_lb1(lb1_remote_start, lb1_remote_stop, lb1_wp_heat_chilled
     # #1溴化锂冷却塔电功率
     # #1溴化锂制冷/制热COP
     # #1溴化锂制冷/制热成本
+    # #1溴化锂制生活热水功率
+    # #1溴化锂制生活热水成本
     state2 = syncbase.write_batch_realtime_data_by_name(
         ['lb1_cold_heat_out', 'lb1_power_consumption', 'lb1_chilled_heat_water_flow', 'lb1_cooling_water_flow',
          'lb1_wp_chilled_heat_water_power_consumption', 'lb1_wp_cooling_water_power_consumption', 'lb1_fan_power_consumption',
-         'lb1_chilled_heat_cop', 'lb1_chilled_heat_cost'],
+         'lb1_chilled_heat_cop', 'lb1_chilled_heat_cost', 'lb1_hot_water_out', 'lb1_hot_water_cost',
+         'lb1_wp_hot_water_power_consumption', 'lb1_hot_water_flow'],
         [lb1_cold_heat_out, lb1_power_consumption, lb1_chilled_heat_water_flow, lb1_cooling_water_flow, lb1_wp_chilled_heat_water_power_consumption,
-         lb1_wp_cooling_water_power_consumption, lb1_fan_power_consumption, lb1_chilled_heat_cop, lb1_chilled_heat_cost])
+         lb1_wp_cooling_water_power_consumption, lb1_fan_power_consumption, lb1_chilled_heat_cop, lb1_chilled_heat_cost, lb1_hot_water_out,
+         lb1_hot_water_cost, lb1_wp_hot_water_power_consumption, lb1_hot_water_flow])
 
     # 报错
     if (state1 == False or state2 == False):
@@ -136,7 +140,8 @@ def write_to_database_lb1(lb1_remote_start, lb1_remote_stop, lb1_wp_heat_chilled
 def write_to_database_lb2(lb2_remote_start, lb2_remote_stop, lb2_wp_heat_chilled_water_frequency, lb2_wp_cooling_water_frequency,
                           lb2_cold_heat_out, lb2_power_consumption, lb2_chilled_heat_water_flow, lb2_cooling_water_flow,
                           lb2_wp_chilled_heat_water_power_consumption, lb2_wp_cooling_water_power_consumption,
-                          lb2_fan_power_consumption, lb2_chilled_heat_cop, lb2_chilled_heat_cost):
+                          lb2_fan_power_consumption, lb2_chilled_heat_cop, lb2_chilled_heat_cost, lb2_hot_water_out, lb2_hot_water_cost,
+                          lb2_wp_hot_water_power_consumption, lb2_hot_water_flow):
     """利用SyncBASE，向数据库中写入数据"""
     # 写入溴化锂2的数据
     syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
@@ -162,15 +167,19 @@ def write_to_database_lb2(lb2_remote_start, lb2_remote_stop, lb2_wp_heat_chilled
     # #2溴化锂冷却塔电功率
     # #2溴化锂制冷/制热COP
     # #2溴化锂制冷/制热成本
+    # #2溴化锂制生活热水功率
+    # #2溴化锂制生活热水成本
+    # #2溴化锂生活热水泵电功率
+    # #2溴化锂生活热水流量
     state2 = syncbase.write_batch_realtime_data_by_name(
         ['lb2_cold_heat_out', 'lb2_power_consumption', 'lb2_chilled_heat_water_flow', 'lb2_cooling_water_flow',
          'lb2_wp_chilled_heat_water_power_consumption', 'lb2_wp_cooling_water_power_consumption',
-         'lb2_fan_power_consumption',
-         'lb2_chilled_heat_cop', 'lb2_chilled_heat_cost'],
+         'lb2_fan_power_consumption', 'lb2_chilled_heat_cop', 'lb2_chilled_heat_cost', 'lb2_hot_water_out',
+         'lb2_hot_water_cost', 'lb2_wp_hot_water_power_consumption', 'lb2_hot_water_flow'],
         [lb2_cold_heat_out, lb2_power_consumption, lb2_chilled_heat_water_flow, lb2_cooling_water_flow,
-         lb2_wp_chilled_heat_water_power_consumption,
-         lb2_wp_cooling_water_power_consumption, lb2_fan_power_consumption, lb2_chilled_heat_cop,
-         lb2_chilled_heat_cost])
+         lb2_wp_chilled_heat_water_power_consumption, lb2_wp_cooling_water_power_consumption, lb2_fan_power_consumption,
+         lb2_chilled_heat_cop, lb2_chilled_heat_cost, lb2_hot_water_out, lb2_hot_water_cost,
+         lb2_wp_hot_water_power_consumption, lb2_hot_water_flow])
 
     # 报错
     if (state1 == False or state2 == False):
@@ -680,7 +689,7 @@ def write_to_database_ashp4(ashp4_interlock_stop, ashp4_remote_stop, ashp4_remot
     del syncbase
 
 
-def write_to_database_ese(ese_cold_heat_out, ese_residual_storage_energy, ese_cost):
+def write_to_database_ese(ese_cold_heat_out, ese_residual_storage_energy, ese_cost, ese_proportion):
     """利用SyncBASE，向数据库中写入数据"""
     # 写入蓄冷蓄热水罐的数据
     syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
@@ -690,10 +699,11 @@ def write_to_database_ese(ese_cold_heat_out, ese_residual_storage_energy, ese_co
     # 蓄能水罐供冷供热功率
     # 蓄能水罐剩余蓄冷蓄热能量
     # 蓄能水罐制冷制热成本
+    # 蓄能功率占比（蓄能装置供能占总出力的比例，蓄能装置蓄冷占总出力的比例）
 
     state1 = syncbase.write_batch_realtime_data_by_name(
-        ['ese_cold_heat_out', 'ese_residual_storage_energy', 'ese_cost'],
-        [ese_cold_heat_out, ese_residual_storage_energy, ese_cost])
+        ['ese_cold_heat_out', 'ese_residual_storage_energy', 'ese_cost', 'ese_proportion'],
+        [ese_cold_heat_out, ese_residual_storage_energy, ese_cost, ese_proportion])
 
     # 报错
     if state1 == False:
@@ -833,7 +843,8 @@ def write_to_database_ese4(ese4_interlock_stop, ese4_remote_stop, ese4_remote_st
 
 
 def write_to_database_ngb1(ngb1_remote_start, ngb1_remote_stop, ngb1_wp_heat_water_frequency,
-                           ngb1_heat_out, ngb1_power_consumption, ngb1_heat_water_flow, ngb1_wp_heat_water_power_consumption, ngb1_efficiency, ngb1_cost):
+                           ngb1_heat_out, ngb1_power_consumption, ngb1_heat_water_flow, ngb1_wp_heat_water_power_consumption,
+                           ngb1_efficiency, ngb1_cost, ngb1_natural_gas_consumption):
     """利用SyncBASE，向数据库中写入数据"""
     # 写入燃气真空热水炉1的数据
     syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
@@ -854,11 +865,12 @@ def write_to_database_ngb1(ngb1_remote_start, ngb1_remote_stop, ngb1_wp_heat_wat
     # #1燃气真空热水炉采暖水泵电功率
     # #1燃气真空热水炉制热效率
     # #1燃气真空热水炉制热成本
+    # #1燃气真空热水炉天然气耗量
     state2 = syncbase.write_batch_realtime_data_by_name(
         ['ngb1_heat_out', 'ngb1_power_consumption', 'ngb1_heat_water_flow', 'ngb1_wp_heat_water_power_consumption',
-         'ngb1_efficiency', 'ngb1_cost'],
+         'ngb1_efficiency', 'ngb1_cost', 'ngb1_natural_gas_consumption'],
         [ngb1_heat_out, ngb1_power_consumption, ngb1_heat_water_flow, ngb1_wp_heat_water_power_consumption,
-         ngb1_efficiency, ngb1_cost])
+         ngb1_efficiency, ngb1_cost, ngb1_natural_gas_consumption])
 
     # 报错
     if (state1 == False or state2 == False):
@@ -872,7 +884,7 @@ def write_to_database_ngb1(ngb1_remote_start, ngb1_remote_stop, ngb1_wp_heat_wat
 def write_to_database_ngb2(ngb2_remote_start, ngb2_remote_stop, ngb2_wp_heat_water_frequency,
                            ngb2_heat_out, ngb2_power_consumption, ngb2_heat_water_flow,
                            ngb2_wp_heat_water_power_consumption,
-                           ngb2_efficiency, ngb2_cost):
+                           ngb2_efficiency, ngb2_cost, ngb2_natural_gas_consumption):
     """利用SyncBASE，向数据库中写入数据"""
     # 写入燃气真空热水炉2的数据
     syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
@@ -893,11 +905,12 @@ def write_to_database_ngb2(ngb2_remote_start, ngb2_remote_stop, ngb2_wp_heat_wat
     # #2燃气真空热水炉采暖水泵电功率
     # #2燃气真空热水炉制热效率
     # #2燃气真空热水炉制热成本
+    # #2燃气真空热水炉天然气耗量
     state2 = syncbase.write_batch_realtime_data_by_name(
         ['ngb2_heat_out', 'ngb2_power_consumption', 'ngb2_heat_water_flow', 'ngb2_wp_heat_water_power_consumption',
-         'ngb2_efficiency', 'ngb2_cost'],
+         'ngb2_efficiency', 'ngb2_cost', 'ngb2_natural_gas_consumption'],
         [ngb2_heat_out, ngb2_power_consumption, ngb2_heat_water_flow, ngb2_wp_heat_water_power_consumption,
-         ngb2_efficiency, ngb2_cost])
+         ngb2_efficiency, ngb2_cost, ngb2_natural_gas_consumption])
 
     # 报错
     if (state1 == False or state2 == False):
@@ -911,7 +924,7 @@ def write_to_database_ngb2(ngb2_remote_start, ngb2_remote_stop, ngb2_wp_heat_wat
 def write_to_database_ngb3(ngb3_remote_start, ngb3_remote_stop, ngb3_wp_hot_water_frequency,
                            ngb3_hot_water_out, ngb3_power_consumption, ngb3_hot_water_flow,
                            ngb3_wp_hot_water_power_consumption,
-                           ngb3_efficiency, ngb3_cost):
+                           ngb3_efficiency, ngb3_cost, ngb3_natural_gas_consumption):
     """利用SyncBASE，向数据库中写入数据"""
     # 写入燃气真空热水炉3的数据
     syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
@@ -932,11 +945,12 @@ def write_to_database_ngb3(ngb3_remote_start, ngb3_remote_stop, ngb3_wp_hot_wate
     # #3燃气真空热水炉采暖水泵电功率
     # #3燃气真空热水炉制热效率
     # #3燃气真空热水炉制热成本
+    # #3燃气真空热水炉天然气耗量
     state3 = syncbase.write_batch_realtime_data_by_name(
         ['ngb3_hot_water_out', 'ngb3_power_consumption', 'ngb3_hot_water_flow', 'ngb3_wp_hot_water_power_consumption',
-         'ngb3_efficiency', 'ngb3_cost'],
+         'ngb3_efficiency', 'ngb3_cost', 'ngb3_natural_gas_consumption'],
         [ngb3_hot_water_out, ngb3_power_consumption, ngb3_hot_water_flow, ngb3_wp_hot_water_power_consumption,
-         ngb3_efficiency, ngb3_cost])
+         ngb3_efficiency, ngb3_cost, ngb3_natural_gas_consumption])
 
     # 报错
     if (state1 == False or state3 == False):
