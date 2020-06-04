@@ -960,19 +960,33 @@ def write_to_database_ngb3(ngb3_remote_start, ngb3_remote_stop, ngb3_wp_hot_wate
     syncbase.close()
     del syncbase
 
-
-def write_to_database_system_utility(cold_heat_prediction, hot_water_prediction, electricity_prediction, cost_total, profit_total, electricity_out_total,
-         cold_heat_out_total, hot_water_out_total, natural_gas_consume_total, electricity_consume_total, water_consume_total,
-         comprehensive_energy_utilization, reduction_in_carbon_emissions, reduction_in_sulfide_emissions, reduction_in_nitride_emissions,
-         reduction_in_dust_emissions):
+def write_to_database_prediction(cold_heat_prediction, hot_water_prediction, electricity_prediction):
     """利用SyncBASE，向数据库中写入数据"""
-    # 读取系统公用数据
+    # 写入负荷预测数据结果
     syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
     syncbase.open()
 
     # 冷热负荷预测值
     # 热水负荷预测值
     # 电负荷预测值
+    state1 = syncbase.write_batch_realtime_data_by_name(['cold_heat_prediction', 'hot_water_prediction', 'electricity_prediction'],
+                                                        [cold_heat_prediction, hot_water_prediction, electricity_prediction])
+    # 报错
+    if state1 == False:
+        print("负荷预测数据写入数据库错误！")
+
+    # 关闭syncbase
+    syncbase.close()
+    del syncbase
+
+def write_to_database_system_utility(cost_total, profit_total, electricity_out_total, cold_heat_out_total, hot_water_out_total, natural_gas_consume_total,
+                                     electricity_consume_total, comprehensive_energy_utilization, cop_real_time, reduction_in_carbon_emissions,
+                                     reduction_in_sulfide_emissions, reduction_in_nitride_emissions, reduction_in_dust_emissions):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入系统公用数据
+    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
+    syncbase.open()
+
     # 总成本
     # 总利润
     # 供电总功率
@@ -980,21 +994,17 @@ def write_to_database_system_utility(cold_heat_prediction, hot_water_prediction,
     # 供热水总功率
     # 天然气总耗量
     # 购电总功率
-    # 补水总量
     # 能源系统综合效率
+    # 空调系统实时能效比
     # 碳排放减少量
     # 硫化物排放减少量
     # 氮化物排放减少量
     # 粉尘排放减少量
     state1 = syncbase.write_batch_realtime_data_by_name(
-        ['cold_heat_prediction', 'hot_water_prediction', 'electricity_prediction', 'cost_total', 'profit_total', 'electricity_out_total',
-         'cold_heat_out_total', 'hot_water_out_total', 'natural_gas_consume_total', 'electricity_consume_total', 'water_consume_total',
-         'comprehensive_energy_utilization', 'reduction_in_carbon_emissions', 'reduction_in_sulfide_emissions', 'reduction_in_nitride_emissions',
-         'reduction_in_dust_emissions'],
-        [cold_heat_prediction, hot_water_prediction, electricity_prediction, cost_total, profit_total, electricity_out_total,
-         cold_heat_out_total, hot_water_out_total, natural_gas_consume_total, electricity_consume_total, water_consume_total,
-         comprehensive_energy_utilization, reduction_in_carbon_emissions, reduction_in_sulfide_emissions, reduction_in_nitride_emissions,
-         reduction_in_dust_emissions])
+        ['cost_total', 'profit_total', 'electricity_out_total', 'cold_heat_out_total', 'hot_water_out_total', 'natural_gas_consume_total', 'electricity_consume_total',
+        'comprehensive_energy_utilization', 'cop_real_time', 'reduction_in_carbon_emissions', 'reduction_in_sulfide_emissions', 'reduction_in_nitride_emissions', 'reduction_in_dust_emissions'],
+        [cost_total, profit_total, electricity_out_total, cold_heat_out_total, hot_water_out_total, natural_gas_consume_total, electricity_consume_total,
+         comprehensive_energy_utilization, cop_real_time, reduction_in_carbon_emissions, reduction_in_sulfide_emissions, reduction_in_nitride_emissions, reduction_in_dust_emissions])
 
     # 报错
     if state1 == False:

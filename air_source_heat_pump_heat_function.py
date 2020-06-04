@@ -1,6 +1,4 @@
 import math
-from equipment import Air_Source_Heat_Pump_Heat, Water_Pump
-from global_constant import Global_Constant
 
 def air_source_heat_pump_function_heat(heat_load, ashph1, ashph2, ashph3, ashph4, gc):
     """风冷螺杆热泵制热负荷计算函数"""

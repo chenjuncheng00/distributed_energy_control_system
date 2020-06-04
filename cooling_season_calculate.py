@@ -598,6 +598,10 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
                                   lb1_wp_hot_water_power_consumption, lb1_hot_water_flow)
 
     else:
+        ice1_natural_gas_consumption = 0
+        ice1_power_consumption = 0
+        lb1_power_consumption = 0
+        # 写入数据库
         wtd.write_to_database_ice1(False, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
         wtd.write_to_database_lb1(False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
@@ -640,17 +644,22 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
                                   lb2_hot_water_cost, lb2_wp_hot_water_power_consumption, lb2_hot_water_flow)
 
     else:
+        ice2_natural_gas_consumption = 0
+        ice2_power_consumption = 0
+        lb2_power_consumption = 0
+        # 写入数据库
         wtd.write_to_database_ice2(False, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
         wtd.write_to_database_lb2(False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     # 离心式冷水机1
     if cc1_load_ratio > 0:
+        cc1_power_consumption_total = ccc(cc1, gc, cc1_load_ratio)[1] # 设备本体+辅机总耗电
         cc1_chilled_water_temperature = gc.chilled_water_temperature
         cc1_cooling_water_temperature = cc1.cooling_water_temperature(cc1_load_ratio)
         cc1_wp_chilled_water_frequency = ccc(cc1, gc, cc1_load_ratio)[6]
         cc1_wp_cooling_water_frequency = ccc(cc1, gc, cc1_load_ratio)[7]
         cc1_cold_out = cc1.cooling_power_rated * cc1_load_ratio
-        cc1_power_consumption = ccc(cc1, gc, cc1_load_ratio)[3]
+        cc1_power_consumption = ccc(cc1, gc, cc1_load_ratio)[3] # 仅设备本体耗电
         cc1_chilled_water_flow = ccc(cc1, gc, cc1_load_ratio)[4]
         cc1_cooling_water_flow = ccc(cc1, gc, cc1_load_ratio)[5]
         cc1_wp_chilled_water_power_consumption = cc1.wp_chilled_water.pump_performance_data(cc1_chilled_water_flow, cc1_wp_chilled_water_frequency)[1]
@@ -663,16 +672,19 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
                           cc1_cold_out, cc1_power_consumption, cc1_chilled_water_flow, cc1_cooling_water_flow, cc1_wp_chilled_water_power_consumption,
                           cc1_wp_cooling_water_power_consumption, cc1_cooling_tower_power_consumption, cc1_cop, cc1_cost)
     else:
+        cc1_power_consumption_total = 0
+        # 写入数据库
         wtd.write_to_database_cc1(True, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     # 离心式冷水机2
     if cc2_load_ratio > 0:
+        cc2_power_consumption_total = ccc(cc2, gc, cc2_load_ratio)[1]  # 设备本体+辅机总耗电
         cc2_chilled_water_temperature = gc.chilled_water_temperature
         cc2_cooling_water_temperature = cc2.cooling_water_temperature(cc2_load_ratio)
         cc2_wp_chilled_water_frequency = ccc(cc2, gc, cc2_load_ratio)[6]
         cc2_wp_cooling_water_frequency = ccc(cc2, gc, cc2_load_ratio)[7]
         cc2_cold_out = cc2.cooling_power_rated * cc2_load_ratio
-        cc2_power_consumption = ccc(cc2, gc, cc2_load_ratio)[3]
+        cc2_power_consumption = ccc(cc2, gc, cc2_load_ratio)[3] # 仅设备本体耗电
         cc2_chilled_water_flow = ccc(cc2, gc, cc2_load_ratio)[4]
         cc2_cooling_water_flow = ccc(cc2, gc, cc2_load_ratio)[5]
         cc2_wp_chilled_water_power_consumption = cc2.wp_chilled_water.pump_performance_data(cc2_chilled_water_flow, cc2_wp_chilled_water_frequency)[1]
@@ -688,16 +700,19 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
                                   cc2_wp_cooling_water_power_consumption, cc2_cooling_tower_power_consumption,
                                   cc2_cop, cc2_cost)
     else:
+        cc2_power_consumption_total = 0
+        # 写入数据库
         wtd.write_to_database_cc2(True, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     # 离心式冷水机3（离心式热泵1制冷）
     if cc3_load_ratio > 0:
+        cc3_power_consumption_total = ccc(cc3, gc, cc3_load_ratio)[1]  # 设备本体+辅机总耗电
         cc3_chilled_water_temperature = gc.chilled_water_temperature
         cc3_cooling_water_temperature = cc3.cooling_water_temperature(cc3_load_ratio)
         cc3_wp_chilled_water_frequency = ccc(cc3, gc, cc3_load_ratio)[6]
         cc3_wp_cooling_water_frequency = ccc(cc3, gc, cc3_load_ratio)[7]
         cc3_cold_out = cc3.cooling_power_rated * cc3_load_ratio
-        cc3_power_consumption = ccc(cc3, gc, cc3_load_ratio)[3]
+        cc3_power_consumption = ccc(cc3, gc, cc3_load_ratio)[3] # 仅设备本体耗电
         cc3_chilled_water_flow = ccc(cc3, gc, cc3_load_ratio)[4]
         cc3_cooling_water_flow = ccc(cc3, gc, cc3_load_ratio)[5]
         cc3_wp_chilled_water_power_consumption = cc3.wp_chilled_water.pump_performance_data(cc3_chilled_water_flow, cc3_wp_chilled_water_frequency)[1]
@@ -713,16 +728,19 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
                                   cc3_wp_cooling_water_power_consumption, cc3_cooling_tower_power_consumption,
                                   cc3_cop, cc3_cost)
     else:
+        cc3_power_consumption_total = 0
+        # 写入数据库
         wtd.write_to_database_cc3(True, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     # 离心式冷水机4（离心式热泵2制冷）
     if cc4_load_ratio > 0:
+        cc4_power_consumption_total = ccc(cc4, gc, cc4_load_ratio)[1]  # 设备本体+辅机总耗电
         cc4_chilled_water_temperature = gc.chilled_water_temperature
         cc4_cooling_water_temperature = cc4.cooling_water_temperature(cc4_load_ratio)
         cc4_wp_chilled_water_frequency = ccc(cc4, gc, cc4_load_ratio)[6]
         cc4_wp_cooling_water_frequency = ccc(cc4, gc, cc4_load_ratio)[7]
         cc4_cold_out = cc4.cooling_power_rated * cc4_load_ratio
-        cc4_power_consumption = ccc(cc4, gc, cc4_load_ratio)[3]
+        cc4_power_consumption = ccc(cc4, gc, cc4_load_ratio)[3] # 仅设备本体耗电
         cc4_chilled_water_flow = ccc(cc4, gc, cc4_load_ratio)[4]
         cc4_cooling_water_flow = ccc(cc4, gc, cc4_load_ratio)[5]
         cc4_wp_chilled_water_power_consumption = cc4.wp_chilled_water.pump_performance_data(cc4_chilled_water_flow, cc4_wp_chilled_water_frequency)[1]
@@ -738,14 +756,17 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
                                   cc4_wp_cooling_water_power_consumption, cc4_cooling_tower_power_consumption,
                                   cc4_cop, cc4_cost)
     else:
+        cc4_power_consumption_total = 0
+        # 写入数据库
         wtd.write_to_database_cc4(True, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     # 空气源热泵1
     if ashpc1_load_ratio > 0:
+        ashp1_power_consumption_total = ashpcc(ashpc1, gc, ashpc1_load_ratio)[1]  # 设备本体+辅机总耗电
         environment_temperature = gc.environment_temperature
         ashp1_chilled_water_temperature = gc.chilled_water_temperature
         ashp1_wp_water_frequency = ashpcc(ashpc1, gc, ashpc1_load_ratio)[5]
-        ashp1_power_consumption = ashpcc(ashpc1, gc, ashpc1_load_ratio)[3]
+        ashp1_power_consumption = ashpcc(ashpc1, gc, ashpc1_load_ratio)[3] # 仅设备本体耗电
         ashp1_chilled_heat_water_flow = ashpcc(ashpc1, gc, ashpc1_load_ratio)[4]
         ashp1_wp_power_consumption = ashpc1.wp_chilled_water.pump_performance_data(ashp1_chilled_heat_water_flow, ashp1_wp_water_frequency)[1]
         ashp1_fan_power_consumption = 20
@@ -755,14 +776,17 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
                             ashp1_power_consumption, ashp1_chilled_heat_water_flow, ashp1_wp_power_consumption,
                             ashp1_fan_power_consumption, ashp1_cop, ashp1_cost)
     else:
+        ashp1_power_consumption_total = 0
+        # 写入数据库
         wtd.write_to_database_ashp1(True, True, False, 0, 0, 0, 0, 0, 0, 0)
 
     # 空气源热泵2
     if ashpc2_load_ratio > 0:
+        ashp2_power_consumption_total = ashpcc(ashpc2, gc, ashpc2_load_ratio)[1]  # 设备本体+辅机总耗电
         environment_temperature = gc.environment_temperature
         ashp2_chilled_water_temperature = gc.chilled_water_temperature
         ashp2_wp_water_frequency = ashpcc(ashpc2, gc, ashpc2_load_ratio)[5]
-        ashp2_power_consumption = ashpcc(ashpc2, gc, ashpc2_load_ratio)[3]
+        ashp2_power_consumption = ashpcc(ashpc2, gc, ashpc2_load_ratio)[3] # 仅设备本体耗电
         ashp2_chilled_heat_water_flow = ashpcc(ashpc2, gc, ashpc2_load_ratio)[4]
         ashp2_wp_power_consumption = ashpc2.wp_chilled_water.pump_performance_data(ashp2_chilled_heat_water_flow, ashp2_wp_water_frequency)[1]
         ashp2_fan_power_consumption = 20
@@ -773,14 +797,17 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
                                     ashp2_wp_power_consumption,
                                     ashp2_fan_power_consumption, ashp2_cop, ashp2_cost)
     else:
+        ashp2_power_consumption_total = 0
+        # 写入数据库
         wtd.write_to_database_ashp2(True, True, False, 0, 0, 0, 0, 0, 0, 0)
 
     # 空气源热泵3
     if ashpc3_load_ratio > 0:
+        ashp3_power_consumption_total = ashpcc(ashpc3, gc, ashpc3_load_ratio)[1]  # 设备本体+辅机总耗电
         environment_temperature = gc.environment_temperature
         ashp3_chilled_water_temperature = gc.chilled_water_temperature
         ashp3_wp_water_frequency = ashpcc(ashpc3, gc, ashpc3_load_ratio)[5]
-        ashp3_power_consumption = ashpcc(ashpc3, gc, ashpc3_load_ratio)[3]
+        ashp3_power_consumption = ashpcc(ashpc3, gc, ashpc3_load_ratio)[3] # 仅设备本体耗电
         ashp3_chilled_heat_water_flow = ashpcc(ashpc3, gc, ashpc3_load_ratio)[4]
         ashp3_wp_power_consumption = ashpc3.wp_chilled_water.pump_performance_data(ashp3_chilled_heat_water_flow, ashp3_wp_water_frequency)[1]
         ashp3_fan_power_consumption = 20
@@ -791,14 +818,17 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
                                     ashp3_wp_power_consumption,
                                     ashp3_fan_power_consumption, ashp3_cop, ashp3_cost)
     else:
+        ashp3_power_consumption_total = 0
+        # 写入数据库
         wtd.write_to_database_ashp3(True, True, False, 0, 0, 0, 0, 0, 0, 0)
 
     # 空气源热泵4
     if ashpc4_load_ratio > 0:
+        ashp4_power_consumption_total = ashpcc(ashpc4, gc, ashpc4_load_ratio)[1]  # 设备本体+辅机总耗电
         environment_temperature = gc.environment_temperature
         ashp4_chilled_water_temperature = gc.chilled_water_temperature
         ashp4_wp_water_frequency = ashpcc(ashpc4, gc, ashpc4_load_ratio)[5]
-        ashp4_power_consumption = ashpcc(ashpc4, gc, ashpc4_load_ratio)[3]
+        ashp4_power_consumption = ashpcc(ashpc4, gc, ashpc4_load_ratio)[3] # 仅设备本体耗电
         ashp4_chilled_heat_water_flow = ashpcc(ashpc4, gc, ashpc4_load_ratio)[4]
         ashp4_wp_power_consumption = ashpc4.wp_chilled_water.pump_performance_data(ashp4_chilled_heat_water_flow, ashp4_wp_water_frequency)[1]
         ashp4_fan_power_consumption = 20
@@ -809,6 +839,8 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
                                     ashp4_wp_power_consumption,
                                     ashp4_fan_power_consumption, ashp4_cop, ashp4_cost)
     else:
+        ashp4_power_consumption_total = 0
+        # 写入数据库
         wtd.write_to_database_ashp4(True, True, False, 0, 0, 0, 0, 0, 0, 0)
 
     # 蓄冷水罐
@@ -835,6 +867,8 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         wtd.write_to_database_ese1(False, False, True, ese1_wp_water_frequency,
                            ese1_chilled_heat_water_flow, ese1_wp_power_consumption)
     else:
+        ese1_wp_power_consumption = 0
+        # 写入数据库
         wtd.write_to_database_ese1(True, True, False, 0, 0, 0)
 
     # 蓄能水罐水泵2
@@ -846,6 +880,8 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         wtd.write_to_database_ese2(False, False, True, ese2_wp_water_frequency,
                                    ese2_chilled_heat_water_flow, ese2_wp_power_consumption)
     else:
+        ese2_wp_power_consumption = 0
+        # 写入数据库
         wtd.write_to_database_ese2(True, True, False, 0, 0, 0)
 
     # 蓄能水罐水泵3
@@ -857,6 +893,8 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         wtd.write_to_database_ese3(False, False, True, ese3_wp_water_frequency,
                                        ese3_chilled_heat_water_flow, ese3_wp_power_consumption)
     else:
+        ese3_wp_power_consumption = 0
+        # 写入数据库
         wtd.write_to_database_ese3(True, True, False, 0, 0, 0)
 
     # 天然气生活热水锅炉
@@ -876,7 +914,34 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
                                ngb3_wp_hot_water_power_consumption,
                                ngb3_efficiency, ngb3_cost, ngb3_natural_gas_consumption)
     else:
+        ngb3_natural_gas_consumption = 0
+        ngb3_power_consumption = 0
+        # 写入数据库
         wtd.write_to_database_ngb3(False, True, 0, 0, 0, 0, 0, 0, 0, 0)
+
+    # 写入系统共用数据结果
+    cost_total = station_cost_min
+    profit_total = station_profitis_max
+    electricity_out_total = station_electricity_out_all
+    cold_heat_out_total = station_cold_out_all
+    hot_water_out_total = lb_hot_water + ngb_hot_water
+    natural_gas_consume_total = ice1_natural_gas_consumption + ice2_natural_gas_consumption + ngb3_natural_gas_consumption
+    electricity_consume_total = ice1_power_consumption + ice2_power_consumption + lb1_power_consumption + lb2_power_consumption + cc1_power_consumption_total \
+                                + cc2_power_consumption_total + cc3_power_consumption_total + cc4_power_consumption_total + ashp1_power_consumption_total \
+                                + ashp2_power_consumption_total + ashp3_power_consumption_total + ashp4_power_consumption_total + ese1_wp_power_consumption\
+                                + ese2_wp_power_consumption + ese3_wp_power_consumption + ngb3_power_consumption
+    comprehensive_energy_utilization = (electricity_out_total + cold_heat_out_total + hot_water_out_total)*3600/(natural_gas_consume_total*gc.natural_gas_calorific_value)
+    cop_real_time = (cold_heat_out_total - lb_cold_load)/(cc1_power_consumption_total + cc2_power_consumption_total + cc3_power_consumption_total + cc4_power_consumption_total
+                    + ashp1_power_consumption_total + ashp2_power_consumption_total + ashp3_power_consumption_total + ashp4_power_consumption_total + ese1_wp_power_consumption
+                    + ese2_wp_power_consumption + ese3_wp_power_consumption)
+    reduction_in_carbon_emissions = 0
+    reduction_in_sulfide_emissions = 0
+    reduction_in_nitride_emissions = 0
+    reduction_in_dust_emissions = 0
+    wtd.write_to_database_system_utility(cost_total, profit_total, electricity_out_total,
+            cold_heat_out_total, hot_water_out_total, natural_gas_consume_total, electricity_consume_total, comprehensive_energy_utilization, cop_real_time,
+            reduction_in_carbon_emissions, reduction_in_sulfide_emissions, reduction_in_nitride_emissions, reduction_in_dust_emissions)
+
 
     # 打印出结果
     print("能源站利润最大值为： " + str(station_profitis_max) + "\n" + "能源站成本最小值为： " + str(

@@ -1,7 +1,4 @@
 import math
-from equipment import Energy_Storage_Equipment_Heat, Water_Pump
-from global_constant import Global_Constant
-
 
 def energy_storage_equipment_heat_function(heat_load_a, eseh1, eseh2, eseh3, gc):
     """蓄能水罐在供热和蓄热时的计算函数"""

@@ -77,10 +77,18 @@ class Global_Constant():
         # 溴化锂设备生活热水计算步长
         self.lb1_hot_water_step = 50
         self.lb2_hot_water_step = 50
+        # 制冷季的开始月份和日期
+        self.cooling_season_start_date = "05-15"
+        # 制冷季的结束月份和日期
+        self.cooling_season_end_date = "10-15"
+        # 采暖季的开始月份和日期
+        self.heating_season_start_date = "11-15"
+        # 采暖季的结束月份和日期
+        self.heating_season_end_date = "03-15"
         # 非谷电时间段列表(用与蓄冷蓄热策略计算)
         self.hour_ese_out = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
         # 程序计算周期（一小时计算几次），用于蓄冷蓄热计算
-        self.hour_num_of_calculations = 2
+        self.hour_num_of_calculations = 1
         # 神经网络负荷预测模型
         self.cold_load_model = tf.keras.models.load_model('./load_forecast_model/cold_load_forecast_model.h5')
         self.heat_load_model = tf.keras.models.load_model('./load_forecast_model/heat_load_forecast_model.h5')

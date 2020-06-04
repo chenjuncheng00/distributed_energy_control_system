@@ -2,7 +2,6 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 def cold_load(gc):
     # 项目冷负荷
     # 载入神经网络模型
@@ -27,7 +26,7 @@ def cold_load(gc):
     # 最终结果（单位kW）
     cold_load_result = gc.area * Y_cold_load_model/1000
     # 返回结果
-    return cold_load_result
+    return cold_load_result[0][0]
 
 
 def heat_load(gc):
@@ -54,14 +53,14 @@ def heat_load(gc):
     # 最终结果（单位kW）
     heat_load_result = gc.area * Y_heat_load_model / 1000
     # 返回结果
-    return heat_load_result
+    return heat_load_result[0][0]
 
 
-def hot_water_load():
+def hot_water_load(gc):
     # 项目生活热水负荷
     return 0
 
-def electricity_load():
+def electricity_load(gc):
     # 项目电负荷
     return 3000
 
