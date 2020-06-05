@@ -21,21 +21,21 @@ class Global_Constant():
         # 供热时出水温度
         self.heating_water_temperature = 55
         # 空气源热泵在作为一级低温热源制热时的出水温度
-        self.ashp_heat_source_water_temperature = 20
+        self.ashp_heat_source_water_temperature = 25
         # 冷冻水额定供回水温差
         self.chilled_water_temperature_difference_rated = 5
         # 冷却水额定供回水温差
         self.cooling_water_temperature_difference_rated = 5
         # 采暖水额定供回水温差
-        self.heating_water_temperature_difference_rated = 10
+        self.heating_water_temperature_difference_rated = 5
         # 离心式热泵低温热源水额定供回水温差
         self.heat_source_water_temperature_difference_rated = 5
         # 生活热水额定供回水温差
         self.hot_water_temperature_difference_rated = 20
         # 蓄冷装置蓄冷供冷时的冷冻水供回水温差
-        self.cooling_storage_water_temperature_difference_rated = 20
+        self.cooling_storage_water_temperature_difference_rated = 5
         # 蓄热装置蓄热供热时的采暖水供回水温差
-        self.heating_storage_water_temperature_difference_rated = 20
+        self.heating_storage_water_temperature_difference_rated = 5
         # 冷却水补水率
         self.cooling_water_supply_rate = 0.015
         # 闭式循环补水率

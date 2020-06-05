@@ -255,6 +255,12 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
     # 天然气锅炉制生活热水量
     ngb_hw_hot_water = ans[7][transition_season_index]
 
+    # 打印出结果
+    print("能源站利润最大值为： " + str(station_profitis_max) + "\n" + "能源站成本最小值为： " + str(station_cost_min) + "\n"
+          + "能源站供电功率为： " + str(station_electricity_out_all) + "\n" + "内燃机1负荷率为： " + str(ice1_load_ratio) + "\n" +
+          "内燃机2负荷率为： " + str(ice2_load_ratio) + "\n" + "溴化锂供生活热水功率为： " + str(
+        lb_hot_water) + "\n" + "天然气锅炉供生活热水功率为： " + str(ngb_hw_hot_water) + "\n")
+
     # 向数据库写入计算结果
     # 内燃机1和溴化锂1
     if ice1_load_ratio > 0:
@@ -271,11 +277,11 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
                                    ice1_residual_heat_efficiency, ice1_electrical_power, ice1_residual_heat_power,
                                    ice1_natural_gas_consumption, ice1_power_consumption, ice1_electrical_cost)
         # 溴化锂1
+        lb1_transition = Lithium_Bromide_Transition(ice1_residual_heat_power, lb1_wp_hot_water, gc)
         lb1_cold_heat_out = 0
         lb1_hot_water_out = lb_hot_water
         lb1_wp_heat_chilled_water_frequency = 0
         lb1_wp_cooling_water_frequency = 0
-        lb1_transition = Lithium_Bromide_Transition(ice1_residual_heat_power, lb1_wp_hot_water, gc)
         lb1_power_consumption = lbtf(lb1_hot_water_out, ice1_load_ratio, lb1_transition, gc)[0]
         lb1_chilled_heat_water_flow = 0
         lb1_cooling_water_flow = 0
@@ -297,6 +303,8 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
                                   lb1_hot_water_out,
                                   lb1_hot_water_cost, lb1_wp_hot_water_power_consumption, lb1_hot_water_flow)
     else:
+        ice1_electrical_power = 0
+        lb1_cold_heat_out = 0
         ice1_natural_gas_consumption = 0
         ice1_power_consumption = 0
         lb1_power_consumption = 0
@@ -319,11 +327,11 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
                                    ice2_residual_heat_efficiency, ice2_electrical_power, ice2_residual_heat_power,
                                    ice2_natural_gas_consumption, ice2_power_consumption, ice2_electrical_cost)
         # 溴化锂2
+        lb2_transition = Lithium_Bromide_Transition(ice2_residual_heat_power, lb2_wp_hot_water, gc)
         lb2_cold_heat_out = 0
         lb2_hot_water_out = lb_hot_water
         lb2_wp_heat_chilled_water_frequency = 0
         lb2_wp_cooling_water_frequency = 0
-        lb2_transition = Lithium_Bromide_Transition(ice2_residual_heat_power, lb2_wp_hot_water, gc)
         lb2_power_consumption = lbtf(lb2_hot_water_out, ice2_load_ratio, lb2_transition, gc)[0]
         lb2_chilled_heat_water_flow = 0
         lb2_cooling_water_flow = 0
@@ -346,6 +354,8 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
                                   lb2_hot_water_out,
                                   lb2_hot_water_cost, lb2_wp_hot_water_power_consumption, lb2_hot_water_flow)
     else:
+        ice2_electrical_power = 0
+        lb2_cold_heat_out = 0
         ice2_natural_gas_consumption = 0
         ice2_power_consumption = 0
         lb2_power_consumption = 0
@@ -380,10 +390,14 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
     profit_total = station_profitis_max
     electricity_out_total = station_electricity_out_all
     cold_heat_out_total = 0
-    hot_water_out_total = lb_hot_water + ngb_hot_water
+    hot_water_out_total = lb_hot_water + ngb_hw_hot_water
     natural_gas_consume_total = ice1_natural_gas_consumption + ice2_natural_gas_consumption + ngb3_natural_gas_consumption
     electricity_consume_total = ice1_power_consumption + ice2_power_consumption + lb1_power_consumption + lb2_power_consumption + ngb3_power_consumption
-    comprehensive_energy_utilization = (electricity_out_total + cold_heat_out_total + hot_water_out_total) * 3600 / (natural_gas_consume_total * gc.natural_gas_calorific_value)
+    if (ice1_natural_gas_consumption + ice2_natural_gas_consumption) > 0:
+        comprehensive_energy_utilization = (ice1_electrical_power + ice2_electrical_power + lb1_cold_heat_out + lb2_cold_heat_out) * 3600 \
+                                           / ((ice1_natural_gas_consumption + ice2_natural_gas_consumption) * gc.natural_gas_calorific_value)
+    else:
+        comprehensive_energy_utilization = 0
     cop_real_time = 0
     reduction_in_carbon_emissions = 0
     reduction_in_sulfide_emissions = 0
@@ -394,10 +408,3 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
                                          electricity_consume_total, comprehensive_energy_utilization, cop_real_time,
                                          reduction_in_carbon_emissions, reduction_in_sulfide_emissions,
                                          reduction_in_nitride_emissions, reduction_in_dust_emissions)
-
-    # 打印出结果
-    print("能源站利润最大值为： " + str(station_profitis_max) + "\n" + "能源站成本最小值为： " + str(station_cost_min) + "\n"
-          + "能源站供电功率为： " + str(station_electricity_out_all) + "\n" + "内燃机1负荷率为： " + str(ice1_load_ratio) + "\n" +
-          "内燃机2负荷率为： " + str(ice2_load_ratio) + "\n" + "溴化锂供生活热水功率为： " + str(lb_hot_water) + "\n" + "天然气锅炉供生活热水功率为： " + str(ngb_hw_hot_water) + "\n")
-
-

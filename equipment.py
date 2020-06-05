@@ -89,6 +89,9 @@ class Centrifugal_Chiller():
     def centrifugal_chiller_cop(self, load_ratio, chilled_water_temperature, cooling_water_temperature):
         # 如果设备负荷率大于等于0.5
         if load_ratio >= 0.5:
+            # 仅考虑负荷率，公式计算离心式冷水机COP
+            # cop = 149.37 * math.pow(load_ratio, 4) - 417.34 * math.pow(load_ratio, 3) \
+            #       + 441.96 * math.pow(load_ratio, 2) - 225.99 * load_ratio + 57.729
             # 输入
             x1 = (load_ratio - 0.5) / (1 - 0.5)
             x2 = (chilled_water_temperature - 5) / (12 - 5)
@@ -101,6 +104,8 @@ class Centrifugal_Chiller():
             cop = ans[0][0] * (8.522 - 5.025) + 5.025
         # 如果设备负荷率小于0.5
         else:
+            # 仅考虑负荷率，公式计算离心式冷水机COP
+            # cop = 179.83 * math.pow(load_ratio, 3) - 204.35 * math.pow(load_ratio, 2) + 86.047 * load_ratio - 2.0144
             # 输入
             x1 = (load_ratio - 0.1) / (0.5 - 0.1)
             x2 = (chilled_water_temperature - 5) / (12 - 5)
@@ -250,7 +255,11 @@ class Centrifugal_Heat_Pump_Heat():
 
     def centrifugal_heat_pump_cop(self, load_ratio, heating_water_temperature, heat_source_water_temperature):
         # 离心式热泵机组制热COP
-        cop = 5.8
+        if load_ratio >= 0.5:
+            cop = 5.8
+        else:
+            cop = 5.8
+        # 返回计算结果
         return cop
 
     def heating_water_flow_rated(self):

@@ -558,6 +558,19 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
     ashpc3_load_ratio = ans[20][cooling_season_index]
     ashpc4_load_ratio = ans[21][cooling_season_index]
 
+    # 打印出结果
+    print("能源站利润最大值为： " + str(station_profitis_max) + "\n" + "能源站成本最小值为： " + str(
+        station_cost_min) + "\n" + "能源站供冷功率为： " + str(station_cold_out_all) + "\n" + "蓄能装置冷负荷功率为： " + str(
+        esec_cold_load_out) + "\n" + "能源站供电功率为： " + str(station_electricity_out_all) + "\n" + "内燃机1负荷率为： " + str(
+        ice1_load_ratio) + "\n" + "内燃机2负荷率为： " + str(ice2_load_ratio) + "\n" + "离心式冷水机1负荷率为： " + str(
+        cc1_load_ratio) + "\n" + "离心式冷水机2负荷率为： " + str(cc2_load_ratio) + "\n" + "离心式冷水机3负荷率为： " + str(
+        cc3_load_ratio) + "\n" + "离心式冷水机4负荷率为： " + str(cc4_load_ratio) + "\n" + "风冷螺杆热泵1负荷率为： " + str(
+        ashpc1_load_ratio) + "\n" + "风冷螺杆热泵2负荷率为： " + str(ashpc2_load_ratio) + "\n" + "风冷螺杆热泵3负荷率为： " + str(
+        ashpc3_load_ratio) + "\n" + "风冷螺杆热泵4负荷率为： " + str(ashpc4_load_ratio) + "\n" + "溴化锂设备供冷功率为： " + str(
+        lb_cold_load) + "\n" + "溴化锂供生活热水功率为： " + str(lb_hot_water) + "\n" + "天然气锅炉供生活热水功率为： " + str(
+        ngb_hw_hot_water) + "\n" + "蓄能水罐水泵1负荷率： " + str(esec1_load_ratio) + "\n" + "蓄能水罐水泵2负荷率： " + str(
+        esec2_load_ratio) + "\n" + "蓄能水罐水泵3负荷率： " + str(esec3_load_ratio) + "\n")
+
     # 向数据库写入计算结果
     # 内燃机1和溴化锂1
     if ice1_load_ratio > 0:
@@ -574,18 +587,18 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
                                    ice1_residual_heat_efficiency, ice1_electrical_power, ice1_residual_heat_power,
                                    ice1_natural_gas_consumption, ice1_power_consumption, ice1_electrical_cost)
         # 溴化锂1
+        lb1_cold = Lithium_Bromide_Cold(ice1_residual_heat_power, lb1_wp_chilled_water, lb1_wp_cooling_water, lb1_wp_hot_water, gc)
         lb1_cold_heat_out = lb_cold_load * (ice1_load_ratio/(ice1_load_ratio + ice2_load_ratio))
-        lb1_wp_heat_chilled_water_frequency = lbcf(0, ice1_load_ratio, lb1_cold_heat_out, gc)[5]
-        lb1_wp_cooling_water_frequency = lbcf(0, ice1_load_ratio, lb1_cold_heat_out, gc)[6]
-        lb1_power_consumption = lbcf(0, ice1_load_ratio, lb1_cold_heat_out, gc)[1]
-        lb1_chilled_heat_water_flow = lbcf(0, ice1_load_ratio, lb1_cold_heat_out, gc)[3]
-        lb1_cooling_water_flow = lbcf(0, ice1_load_ratio, lb1_cold_heat_out, gc)[4]
+        lb1_wp_heat_chilled_water_frequency = lbcf(0, ice1_load_ratio, lb1_cold, gc)[5]
+        lb1_wp_cooling_water_frequency = lbcf(0, ice1_load_ratio, lb1_cold, gc)[6]
+        lb1_power_consumption = lbcf(0, ice1_load_ratio, lb1_cold, gc)[1]
+        lb1_chilled_heat_water_flow = lbcf(0, ice1_load_ratio, lb1_cold, gc)[3]
+        lb1_cooling_water_flow = lbcf(0, ice1_load_ratio, lb1_cold, gc)[4]
         lb1_wp_chilled_heat_water_power_consumption = lb1_wp_chilled_water.pump_performance_data(lb1_chilled_heat_water_flow, lb1_wp_heat_chilled_water_frequency)[1]
         lb1_wp_cooling_water_power_consumption = lb1_wp_cooling_water.pump_performance_data(lb1_cooling_water_flow, lb1_wp_cooling_water_frequency)[1]
         lb1_fan_power_consumption = 20
-        lb1_cold = Lithium_Bromide_Cold(ice1_residual_heat_power, lb1_wp_chilled_water, lb1_wp_cooling_water, lb1_wp_hot_water, gc)
         lb1_chilled_heat_cop = lb1_cold.cooling_cop(ice1_load_ratio)
-        lb1_chilled_heat_cost = lb1_power_consumption * gc.buy_electricity_price + lbcf(0, ice1_load_ratio, lb1_cold_heat_out, gc)[2] * gc.water_price
+        lb1_chilled_heat_cost = lb1_power_consumption * gc.buy_electricity_price + lbcf(0, ice1_load_ratio, lb1_cold, gc)[2] * gc.water_price
         lb1_hot_water_out = 0
         lb1_hot_water_cost = 0
         lb1_wp_hot_water_power_consumption = 0
@@ -598,6 +611,8 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
                                   lb1_wp_hot_water_power_consumption, lb1_hot_water_flow)
 
     else:
+        ice1_electrical_power = 0
+        lb1_cold_heat_out = 0
         ice1_natural_gas_consumption = 0
         ice1_power_consumption = 0
         lb1_power_consumption = 0
@@ -618,19 +633,19 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         wtd.write_to_database_ice2(True, False, False, 0, 0, 0, ice2_electrical_efficiency,
                                    ice2_residual_heat_efficiency, ice2_electrical_power, ice2_residual_heat_power,
                                    ice2_natural_gas_consumption, ice2_power_consumption, ice2_electrical_cost)
-        # 溴化锂1
+        # 溴化锂2
+        lb2_cold = Lithium_Bromide_Cold(ice2_residual_heat_power, lb2_wp_chilled_water, lb2_wp_cooling_water, lb2_wp_hot_water, gc)
         lb2_cold_heat_out = lb_cold_load * (ice2_load_ratio / (ice1_load_ratio + ice2_load_ratio))
-        lb2_wp_heat_chilled_water_frequency = lbcf(0, ice2_load_ratio, lb2_cold_heat_out, gc)[5]
-        lb2_wp_cooling_water_frequency = lbcf(0, ice2_load_ratio, lb2_cold_heat_out, gc)[6]
-        lb2_power_consumption = lbcf(0, ice2_load_ratio, lb2_cold_heat_out, gc)[1]
-        lb2_chilled_heat_water_flow = lbcf(0, ice2_load_ratio, lb2_cold_heat_out, gc)[3]
-        lb2_cooling_water_flow = lbcf(0, ice2_load_ratio, lb2_cold_heat_out, gc)[4]
+        lb2_wp_heat_chilled_water_frequency = lbcf(0, ice2_load_ratio, lb2_cold, gc)[5]
+        lb2_wp_cooling_water_frequency = lbcf(0, ice2_load_ratio, lb2_cold, gc)[6]
+        lb2_power_consumption = lbcf(0, ice2_load_ratio, lb2_cold, gc)[1]
+        lb2_chilled_heat_water_flow = lbcf(0, ice2_load_ratio, lb2_cold, gc)[3]
+        lb2_cooling_water_flow = lbcf(0, ice2_load_ratio, lb2_cold, gc)[4]
         lb2_wp_chilled_heat_water_power_consumption = lb2_wp_chilled_water.pump_performance_data(lb2_chilled_heat_water_flow, lb2_wp_heat_chilled_water_frequency)[1]
         lb2_wp_cooling_water_power_consumption = lb2_wp_cooling_water.pump_performance_data(lb2_cooling_water_flow, lb2_wp_cooling_water_frequency)[1]
         lb2_fan_power_consumption = 20
-        lb2_cold = Lithium_Bromide_Cold(ice2_residual_heat_power, lb2_wp_chilled_water, lb2_wp_cooling_water, lb2_wp_hot_water, gc)
         lb2_chilled_heat_cop = lb2_cold.cooling_cop(ice2_load_ratio)
-        lb2_chilled_heat_cost = lb2_power_consumption * gc.buy_electricity_price + lbcf(0, ice2_load_ratio, lb2_cold_heat_out, gc)[2] * gc.water_price
+        lb2_chilled_heat_cost = lb2_power_consumption * gc.buy_electricity_price + lbcf(0, ice2_load_ratio, lb2_cold, gc)[2] * gc.water_price
         lb2_hot_water_out = 0
         lb2_hot_water_cost = 0
         lb2_wp_hot_water_power_consumption = 0
@@ -644,6 +659,8 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
                                   lb2_hot_water_cost, lb2_wp_hot_water_power_consumption, lb2_hot_water_flow)
 
     else:
+        ice2_electrical_power = 0
+        lb2_cold_heat_out = 0
         ice2_natural_gas_consumption = 0
         ice2_power_consumption = 0
         lb2_power_consumption = 0
@@ -924,16 +941,24 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
     profit_total = station_profitis_max
     electricity_out_total = station_electricity_out_all
     cold_heat_out_total = station_cold_out_all
-    hot_water_out_total = lb_hot_water + ngb_hot_water
+    hot_water_out_total = lb_hot_water + ngb_hw_hot_water
     natural_gas_consume_total = ice1_natural_gas_consumption + ice2_natural_gas_consumption + ngb3_natural_gas_consumption
     electricity_consume_total = ice1_power_consumption + ice2_power_consumption + lb1_power_consumption + lb2_power_consumption + cc1_power_consumption_total \
                                 + cc2_power_consumption_total + cc3_power_consumption_total + cc4_power_consumption_total + ashp1_power_consumption_total \
                                 + ashp2_power_consumption_total + ashp3_power_consumption_total + ashp4_power_consumption_total + ese1_wp_power_consumption\
                                 + ese2_wp_power_consumption + ese3_wp_power_consumption + ngb3_power_consumption
-    comprehensive_energy_utilization = (electricity_out_total + cold_heat_out_total + hot_water_out_total)*3600/(natural_gas_consume_total*gc.natural_gas_calorific_value)
-    cop_real_time = (cold_heat_out_total - lb_cold_load)/(cc1_power_consumption_total + cc2_power_consumption_total + cc3_power_consumption_total + cc4_power_consumption_total
-                    + ashp1_power_consumption_total + ashp2_power_consumption_total + ashp3_power_consumption_total + ashp4_power_consumption_total + ese1_wp_power_consumption
-                    + ese2_wp_power_consumption + ese3_wp_power_consumption)
+    if (ice1_natural_gas_consumption + ice2_natural_gas_consumption) > 0:
+        comprehensive_energy_utilization = (ice1_electrical_power + ice2_electrical_power + lb1_cold_heat_out + lb2_cold_heat_out) * 3600 \
+                                           / ((ice1_natural_gas_consumption + ice2_natural_gas_consumption) * gc.natural_gas_calorific_value)
+    else:
+        comprehensive_energy_utilization = 0
+    eq_power_consumption_total = cc1_power_consumption_total + cc2_power_consumption_total + cc3_power_consumption_total + cc4_power_consumption_total \
+                                 + ashp1_power_consumption_total + ashp2_power_consumption_total + ashp3_power_consumption_total \
+                                 + ashp4_power_consumption_total + ese1_wp_power_consumption + ese2_wp_power_consumption + ese3_wp_power_consumption
+    if eq_power_consumption_total > 0:
+        cop_real_time = (cold_heat_out_total - lb_cold_load)/eq_power_consumption_total
+    else:
+        cop_real_time = 0
     reduction_in_carbon_emissions = 0
     reduction_in_sulfide_emissions = 0
     reduction_in_nitride_emissions = 0
@@ -941,17 +966,3 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
     wtd.write_to_database_system_utility(cost_total, profit_total, electricity_out_total,
             cold_heat_out_total, hot_water_out_total, natural_gas_consume_total, electricity_consume_total, comprehensive_energy_utilization, cop_real_time,
             reduction_in_carbon_emissions, reduction_in_sulfide_emissions, reduction_in_nitride_emissions, reduction_in_dust_emissions)
-
-
-    # 打印出结果
-    print("能源站利润最大值为： " + str(station_profitis_max) + "\n" + "能源站成本最小值为： " + str(
-        station_cost_min) + "\n" + "能源站供冷功率为： " + str(station_cold_out_all) + "\n" + "蓄能装置冷负荷功率为： " + str(
-        esec_cold_load_out) + "\n" + "能源站供电功率为： " + str(station_electricity_out_all) + "\n" + "内燃机1负荷率为： " + str(
-        ice1_load_ratio) + "\n" + "内燃机2负荷率为： " + str(ice2_load_ratio) + "\n" + "离心式冷水机1负荷率为： " + str(
-        cc1_load_ratio) + "\n" + "离心式冷水机2负荷率为： " + str(cc2_load_ratio) + "\n" + "离心式冷水机3负荷率为： " + str(
-        cc3_load_ratio) + "\n" + "离心式冷水机4负荷率为： " + str(cc4_load_ratio) + "\n" + "风冷螺杆热泵1负荷率为： " + str(
-        ashpc1_load_ratio) + "\n" + "风冷螺杆热泵2负荷率为： " + str(ashpc2_load_ratio) + "\n" + "风冷螺杆热泵3负荷率为： " + str(
-        ashpc3_load_ratio) + "\n" + "风冷螺杆热泵4负荷率为： " + str(ashpc4_load_ratio) + "\n" + "溴化锂设备供冷功率为： " + str(
-        lb_cold_load) + "\n" + "溴化锂供生活热水功率为： " + str(lb_hot_water) + "\n" + "天然气锅炉供生活热水功率为： " + str(
-        ngb_hw_hot_water) + "\n" + "蓄能水罐水泵1负荷率： " + str(esec1_load_ratio) + "\n" + "蓄能水罐水泵2负荷率： " + str(
-        esec2_load_ratio) + "\n" + "蓄能水罐水泵3负荷率： " + str(esec3_load_ratio) + "\n")
