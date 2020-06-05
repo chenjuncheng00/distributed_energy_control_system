@@ -1755,9 +1755,9 @@ def read_from_database_system_utility():
            natural_gas_pipe_flow_1, natural_gas_pipe_flow_2, hot_water_energy
 
 
-def read_from_database_load_forecast():
+def read_from_database_environment():
     """利用SyncBASE，从数据库中读取数据"""
-    # 读取系环境数据
+    # 读取环境数据
     syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
     syncbase.open()
 
@@ -1810,3 +1810,35 @@ def read_from_database_load_forecast():
     del syncbase
 
     return environment_temperature, environment_humidity, sun_radiation, wind_speed, wind_direction, personnel_density, equipment_fever
+
+
+def read_from_database_load_predict():
+    """利用SyncBASE，从数据库中读取数据"""
+    # 读取冷热电负荷预测值
+    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
+    syncbase.open()
+
+    # 冷/热负荷预测结果
+    state1, record1 = syncbase.get_reatime_data_by_name('cold_heat_prediction')
+    if state1:
+        cold_heat_prediction = record1.value
+    else:
+        cold_heat_prediction = 0
+    # 热水负荷预测结果
+    state2, record2 = syncbase.get_reatime_data_by_name('hot_water_prediction')
+    if state2:
+        hot_water_prediction = record2.value
+    else:
+        hot_water_prediction = 0
+    # 电负荷预测结果
+    state3, record3 = syncbase.get_reatime_data_by_name('electricity_prediction')
+    if state3:
+        electricity_prediction = record3.value
+    else:
+        electricity_prediction = 0
+
+    # 关闭syncbase
+    syncbase.close()
+    del syncbase
+
+    return cold_heat_prediction, hot_water_prediction, electricity_prediction

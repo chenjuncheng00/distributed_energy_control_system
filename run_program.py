@@ -1,15 +1,14 @@
 # 如要正常使用本程序，需要导入以下几个第三方程序库
 # numpy,tensorflow
 
-import datetime
 from equipment import Centrifugal_Chiller, Internal_Combustion_Engine, Water_Pump, Natural_Gas_Boiler_hot_water, Energy_Storage_Equipment_Cold, Air_Source_Heat_Pump_Cold
 from equipment import Energy_Storage_Equipment_Heat, Centrifugal_Heat_Pump_Heat, Air_Source_Heat_Pump_Heat, Natural_Gas_Boiler_heat
 from cooling_season_calculate import cooling_season_function as csf, print_cooling_season as pcs
 from heating_season_calculate import heating_season_function as hsf, print_heating_season as phs
 from transition_season_calculate import transition_season_function as tsf, print_transition_season as pts
 from global_constant import Global_Constant
-import project_load
-import write_to_database as wtd
+import read_from_database as rfd
+import datetime
 
 def run_program():
     """执行主程序"""
@@ -17,33 +16,32 @@ def run_program():
     # 实例化一个全局常量类
     gc = Global_Constant()
 
+    # 从数据库中读取冷热电负荷值
+    cold_heat_prediction = rfd.read_from_database_load_predict()[0]
+    hot_water_prediction = rfd.read_from_database_load_predict()[1]
+    electricity_prediction = rfd.read_from_database_load_predict()[2]
+    # 确定生活热水负荷和电负荷
+    hot_water_load = hot_water_prediction
+    electricity_load = electricity_prediction
     # 设置时间格式
     format_pattern = "%m-%d"
     # 获取当前的时间
     now_1 = str(datetime.datetime.now().strftime(format_pattern))
     now = datetime.datetime.strptime(now_1, format_pattern)
-    # 负荷情况
-    electricity_load = project_load.electricity_load(gc)
-    hot_water_load = project_load.hot_water_load(gc)
     # 根据时间判断，当前是制冷季、采暖季还是过渡季
     cooling_season_start_date = datetime.datetime.strptime(gc.cooling_season_start_date, format_pattern)
     cooling_season_end_date = datetime.datetime.strptime(gc.cooling_season_end_date, format_pattern)
     heating_season_start_date = datetime.datetime.strptime(gc.heating_season_start_date, format_pattern)
     heating_season_end_date = datetime.datetime.strptime(gc.heating_season_end_date, format_pattern)
     if now >= cooling_season_start_date and now <= cooling_season_end_date:
-        cold_load = project_load.cold_load(gc)
+        cold_load = cold_heat_prediction
         heat_load = 0
     elif now >= heating_season_start_date or now <= heating_season_end_date:
         cold_load = 0
-        heat_load = project_load.heat_load(gc)
+        heat_load = cold_heat_prediction
     else:
         cold_load = 0
         heat_load = 0
-    # 将负荷值写入数据库
-    cold_heat_prediction = max(cold_load, heat_load)
-    hot_water_prediction = hot_water_load
-    electricity_prediction = electricity_load
-    wtd.write_to_database_prediction(cold_heat_prediction, hot_water_prediction, electricity_prediction)
 
     # 实例化两个内燃机对象
     ice1 = Internal_Combustion_Engine(1500, gc, 0.5)

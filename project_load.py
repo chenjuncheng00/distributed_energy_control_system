@@ -1,6 +1,44 @@
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
+import datetime
+import write_to_database as wtd
+from global_constant import Global_Constant
+
+def load_predict():
+    """冷热电负荷预测，并写入数据库"""
+
+    # 实例化一个全局常量类
+    gc = Global_Constant()
+
+    # 设置时间格式
+    format_pattern = "%m-%d"
+    # 获取当前的时间
+    now_1 = str(datetime.datetime.now().strftime(format_pattern))
+    now = datetime.datetime.strptime(now_1, format_pattern)
+    # 负荷情况
+    electricity_load_result = electricity_load(gc)
+    hot_water_load_result = hot_water_load(gc)
+    # 根据时间判断，当前是制冷季、采暖季还是过渡季
+    cooling_season_start_date = datetime.datetime.strptime(gc.cooling_season_start_date, format_pattern)
+    cooling_season_end_date = datetime.datetime.strptime(gc.cooling_season_end_date, format_pattern)
+    heating_season_start_date = datetime.datetime.strptime(gc.heating_season_start_date, format_pattern)
+    heating_season_end_date = datetime.datetime.strptime(gc.heating_season_end_date, format_pattern)
+    if now >= cooling_season_start_date and now <= cooling_season_end_date:
+        cold_load_result = cold_load(gc)
+        heat_load_result = 0
+    elif now >= heating_season_start_date or now <= heating_season_end_date:
+        cold_load_result = 0
+        heat_load_result = heat_load(gc)
+    else:
+        cold_load_result = 0
+        heat_load_result = 0
+    # 将负荷值写入数据库
+    cold_heat_prediction = max(cold_load_result, heat_load_result)
+    hot_water_prediction = hot_water_load_result
+    electricity_prediction = electricity_load_result
+    wtd.write_to_database_prediction(cold_heat_prediction, hot_water_prediction, electricity_prediction)
+
 
 def cold_load(gc):
     # 项目冷负荷
@@ -163,10 +201,6 @@ def load_forecast_model_predict():
     # print(ans)
 
 
-def load_forecast_main():
-    """训练和预测合为一体"""
-    train_load_forecast_model()
-    load_forecast_model_predict()
-
-
-# load_forecast_main()
+# 执行程序
+if __name__ == '__main__':
+    load_predict()
