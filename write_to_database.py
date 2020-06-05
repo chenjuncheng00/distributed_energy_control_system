@@ -119,6 +119,9 @@ def write_to_database_lb1(lb1_remote_start, lb1_remote_stop, lb1_wp_heat_chilled
     # #1溴化锂制冷/制热成本
     # #1溴化锂制生活热水功率
     # #1溴化锂制生活热水成本
+    # #1溴化锂制生活热水泵电功率
+    # #1溴化锂制生活热水流量
+
     state2 = syncbase.write_batch_realtime_data_by_name(
         ['lb1_cold_heat_out', 'lb1_power_consumption', 'lb1_chilled_heat_water_flow', 'lb1_cooling_water_flow',
          'lb1_wp_chilled_heat_water_power_consumption', 'lb1_wp_cooling_water_power_consumption', 'lb1_fan_power_consumption',
