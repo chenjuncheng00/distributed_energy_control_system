@@ -17,9 +17,10 @@ def run_program():
     gc = Global_Constant()
 
     # 从数据库中读取冷热电负荷值
-    cold_heat_prediction = rfd.read_from_database_load_predict()[0]
-    hot_water_prediction = rfd.read_from_database_load_predict()[1]
-    electricity_prediction = rfd.read_from_database_load_predict()[2]
+    cold_prediction = rfd.read_from_database_load_predict()[0]
+    heat_prediction = rfd.read_from_database_load_predict()[1]
+    hot_water_prediction = rfd.read_from_database_load_predict()[2]
+    electricity_prediction = rfd.read_from_database_load_predict()[3]
     # 确定生活热水负荷和电负荷
     hot_water_load = hot_water_prediction
     electricity_load = electricity_prediction
@@ -34,11 +35,11 @@ def run_program():
     heating_season_start_date = datetime.datetime.strptime(gc.heating_season_start_date, format_pattern)
     heating_season_end_date = datetime.datetime.strptime(gc.heating_season_end_date, format_pattern)
     if now >= cooling_season_start_date and now <= cooling_season_end_date:
-        cold_load = cold_heat_prediction
+        cold_load = cold_prediction
         heat_load = 0
     elif now >= heating_season_start_date or now <= heating_season_end_date:
         cold_load = 0
-        heat_load = cold_heat_prediction
+        heat_load = heat_prediction
     else:
         cold_load = 0
         heat_load = 0

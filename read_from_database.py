@@ -1818,12 +1818,18 @@ def read_from_database_load_predict():
     syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
     syncbase.open()
 
-    # 冷/热负荷预测结果
-    state1, record1 = syncbase.get_reatime_data_by_name('cold_heat_prediction')
+    # 冷负荷预测结果
+    state1, record1 = syncbase.get_reatime_data_by_name('cold_prediction')
     if state1:
-        cold_heat_prediction = record1.value
+        cold_prediction = record1.value
     else:
-        cold_heat_prediction = 0
+        cold_prediction = 0
+    # 热负荷预测结果
+    state4, record4 = syncbase.get_reatime_data_by_name('heat_prediction')
+    if state4:
+        heat_prediction = record4.value
+    else:
+        heat_prediction = 0
     # 热水负荷预测结果
     state2, record2 = syncbase.get_reatime_data_by_name('hot_water_prediction')
     if state2:
@@ -1841,4 +1847,4 @@ def read_from_database_load_predict():
     syncbase.close()
     del syncbase
 
-    return cold_heat_prediction, hot_water_prediction, electricity_prediction
+    return cold_prediction, heat_prediction, hot_water_prediction, electricity_prediction
