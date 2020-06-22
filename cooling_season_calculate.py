@@ -1042,5 +1042,5 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
     reduction_in_dust_emissions = 0
     proportion_of_renewable_energy_power = 0
     wtd.write_to_database_system_utility(cost_total, income_total, profit_total, electricity_out_total, cold_heat_out_total, hot_water_out_total, natural_gas_consume_total,
-                                     electricity_consume_total, comprehensive_energy_utilization, proportion_of_renewable_energy_power, cop_real_time,
-                                     reduction_in_carbon_emissions, reduction_in_sulfide_emissions, reduction_in_nitride_emissions, reduction_in_dust_emissions)
+                                        electricity_consume_total, comprehensive_energy_utilization, proportion_of_renewable_energy_power, cop_real_time,
+                                        reduction_in_carbon_emissions, reduction_in_sulfide_emissions, reduction_in_nitride_emissions, reduction_in_dust_emissions)

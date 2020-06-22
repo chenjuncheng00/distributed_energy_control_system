@@ -1041,7 +1041,7 @@ def write_to_database_system_utility(cost_total, income_total, profit_total, ele
     # 供冷供热总功率
     # 供热水总功率
     # 天然气总耗量
-    # 购电总功率
+    # 能源站设备耗电总功率
     # 能源系统综合效率
     # 可再生能源发电占比
     # 空调系统实时能效比
