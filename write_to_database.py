@@ -1065,7 +1065,7 @@ def write_to_database_system_utility(cost_total, income_total, profit_total, ele
     syncbase.close()
     del syncbase
 
-def write_to_database_station_in_out(cold_out_total, heat_out_total, electricity_out_total, lb_cold_out_total, lb_heat_out_total, lb_hot_water_out_total,
+def write_to_database_station_in_out(cold_out_total, heat_out_total, electricity_generation_total, lb_cold_out_total, lb_heat_out_total, lb_hot_water_out_total,
                                      cc_cold_out_total, chp_cold_out_total, chp_heat_out_total, ashp_cold_out_total, ese_cold_out_total, ese_heat_out_total,
                                      ice_electricity_out_total, photovoltaic_electricity_out_total, wind_electricity_out_total, accumulator_electricity_out_total,
                                      buy_electricity_total, ngb_hot_water_out_total):
@@ -1093,10 +1093,10 @@ def write_to_database_station_in_out(cold_out_total, heat_out_total, electricity
     # 外购电总功率
     # 天然气锅炉供热水总功率
     state1 = syncbase.write_batch_realtime_data_by_name(
-              ['cold_out_total', 'heat_out_total', 'electricity_out_total', 'lb_cold_out_total', 'lb_heat_out_total',  'lb_hot_water_out_total', 'cc_cold_out_total',
+              ['cold_out_total', 'heat_out_total', 'electricity_generation_total', 'lb_cold_out_total', 'lb_heat_out_total',  'lb_hot_water_out_total', 'cc_cold_out_total',
               'chp_cold_out_total', 'chp_heat_out_total', 'ashp_cold_out_total', 'ese_cold_out_total', 'ese_heat_out_total', 'ice_electricity_out_total',
               'photovoltaic_electricity_out_total', 'wind_electricity_out_total', 'accumulator_electricity_out_total', 'buy_electricity_total', 'ngb_hot_water_out_total'],
-             [cold_out_total, heat_out_total, electricity_out_total, lb_cold_out_total, lb_heat_out_total, lb_hot_water_out_total, cc_cold_out_total,
+             [cold_out_total, heat_out_total, electricity_generation_total, lb_cold_out_total, lb_heat_out_total, lb_hot_water_out_total, cc_cold_out_total,
               chp_cold_out_total, chp_heat_out_total, ashp_cold_out_total, ese_cold_out_total, ese_heat_out_total, ice_electricity_out_total,
               photovoltaic_electricity_out_total, wind_electricity_out_total, accumulator_electricity_out_total, buy_electricity_total, ngb_hot_water_out_total])
 
