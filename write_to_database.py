@@ -30,7 +30,7 @@ def write_to_database_ice1(syncbase, ice1_remote_start, ice1_remote_stop, ice1_b
     state2 = syncbase.write_batch_realtime_data_by_name(
         ['ice1_electrical_efficiency', 'ice1_residual_heat_efficiency', 'ice1_electrical_power', 'ice1_residual_heat_power',
          'ice1_natural_gas_consumption', 'ice1_power_consumption', 'ice1_electrical_income', 'ice1_electrical_cost'],
-        [ice1_electrical_efficiency, ice1_residual_heat_efficiency, ice1_electrical_power, ice1_residual_heat_power,
+        [ice1_electrical_efficiency*100, ice1_residual_heat_efficiency*100, ice1_electrical_power, ice1_residual_heat_power,
          ice1_natural_gas_consumption, ice1_power_consumption, ice1_electrical_income, ice1_electrical_cost])
 
     # 报错
@@ -70,7 +70,7 @@ def write_to_database_ice2(syncbase, ice2_remote_start, ice2_remote_stop, ice2_b
         ['ice2_electrical_efficiency', 'ice2_residual_heat_efficiency', 'ice2_electrical_power',
          'ice2_residual_heat_power', 'ice2_natural_gas_consumption', 'ice2_power_consumption',
          'ice2_electrical_income', 'ice2_electrical_cost'],
-        [ice2_electrical_efficiency, ice2_residual_heat_efficiency, ice2_electrical_power, ice2_residual_heat_power,
+        [ice2_electrical_efficiency*100, ice2_residual_heat_efficiency*100, ice2_electrical_power, ice2_residual_heat_power,
          ice2_natural_gas_consumption, ice2_power_consumption, ice2_electrical_income, ice2_electrical_cost])
 
     # 报错
@@ -648,7 +648,7 @@ def write_to_database_ese(syncbase, ese_cold_heat_out, ese_residual_storage_ener
 
     state1 = syncbase.write_batch_realtime_data_by_name(
         ['ese_cold_heat_out', 'ese_residual_storage_energy', 'ese_cost', 'ese_proportion_in', 'ese_proportion_out'],
-        [ese_cold_heat_out, ese_residual_storage_energy, ese_cost, ese_proportion_in, ese_proportion_out])
+        [ese_cold_heat_out, ese_residual_storage_energy, ese_cost, ese_proportion_in*100, ese_proportion_out*100])
 
     # 报错
     if state1 == False:
@@ -786,7 +786,7 @@ def write_to_database_ngb1(syncbase, ngb1_remote_start, ngb1_remote_stop, ngb1_w
         ['ngb1_heat_out', 'ngb1_power_consumption', 'ngb1_heat_water_flow', 'ngb1_wp_heat_water_power_consumption',
          'ngb1_efficiency',' ngb1_income', 'ngb1_cost', 'ngb1_natural_gas_consumption'],
         [ngb1_heat_out, ngb1_power_consumption, ngb1_heat_water_flow, ngb1_wp_heat_water_power_consumption,
-         ngb1_efficiency, ngb1_income, ngb1_cost, ngb1_natural_gas_consumption])
+         ngb1_efficiency*100, ngb1_income, ngb1_cost, ngb1_natural_gas_consumption])
 
     # 报错
     if (state1 == False or state2 == False):
@@ -821,7 +821,7 @@ def write_to_database_ngb2(syncbase, ngb2_remote_start, ngb2_remote_stop, ngb2_w
         ['ngb2_heat_out', 'ngb2_power_consumption', 'ngb2_heat_water_flow', 'ngb2_wp_heat_water_power_consumption',
          'ngb2_efficiency', 'ngb2_income', 'ngb2_cost', 'ngb2_natural_gas_consumption'],
         [ngb2_heat_out, ngb2_power_consumption, ngb2_heat_water_flow, ngb2_wp_heat_water_power_consumption,
-         ngb2_efficiency, ngb2_income, ngb2_cost, ngb2_natural_gas_consumption])
+         ngb2_efficiency*100, ngb2_income, ngb2_cost, ngb2_natural_gas_consumption])
 
     # 报错
     if (state1 == False or state2 == False):
@@ -856,7 +856,7 @@ def write_to_database_ngb3(syncbase, ngb3_remote_start, ngb3_remote_stop, ngb3_w
         ['ngb3_hot_water_out', 'ngb3_power_consumption', 'ngb3_hot_water_flow', 'ngb3_wp_hot_water_power_consumption',
          'ngb3_efficiency', 'ngb3_income', 'ngb3_cost', 'ngb3_natural_gas_consumption'],
         [ngb3_hot_water_out, ngb3_power_consumption, ngb3_hot_water_flow, ngb3_wp_hot_water_power_consumption,
-         ngb3_efficiency, ngb3_income, ngb3_cost, ngb3_natural_gas_consumption])
+         ngb3_efficiency*100, ngb3_income, ngb3_cost, ngb3_natural_gas_consumption])
 
     # 报错
     if (state1 == False or state3 == False):
@@ -1016,9 +1016,9 @@ def write_to_database_equipment_efficiency(syncbase, ice_electrical_efficiency, 
             ['ice_electrical_efficiency', 'lb_cold_efficiency', 'lb_heat_efficiency', 'lb_hot_water_efficiency', 'cc_cold_cop',
              'chp_cold_cop', 'chp_heat_cop', 'ashp_cold_cop', 'ashp_heat_cop', 'ngb_hot_water_efficiency',
              'photovoltaic_electrical_efficiency', 'wind_electrical_efficiency'],
-            [ice_electrical_efficiency, lb_cold_efficiency, lb_heat_efficiency, lb_hot_water_efficiency, cc_cold_cop,
-             chp_cold_cop, chp_heat_cop, ashp_cold_cop, ashp_heat_cop, ngb_hot_water_efficiency,
-             photovoltaic_electrical_efficiency, wind_electrical_efficiency])
+            [ice_electrical_efficiency*100, lb_cold_efficiency*100, lb_heat_efficiency*100, lb_hot_water_efficiency*100, cc_cold_cop,
+             chp_cold_cop, chp_heat_cop, ashp_cold_cop, ashp_heat_cop, ngb_hot_water_efficiency*100,
+             photovoltaic_electrical_efficiency*100, wind_electrical_efficiency*100])
 
     # 报错
     if state1 == False:
