@@ -9,18 +9,20 @@ from transition_season_calculate import transition_season_function as tsf, print
 from global_constant import Global_Constant
 import read_from_database as rfd
 import datetime
+import time
+from syncbase_api import SyncBase_API
 
-def run_program():
+def run_program(syncbase):
     """执行主程序"""
 
     # 实例化一个全局常量类
     gc = Global_Constant()
 
     # 从数据库中读取冷热电负荷值
-    cold_prediction = rfd.read_from_database_load_predict()[0]
-    heat_prediction = rfd.read_from_database_load_predict()[1]
-    hot_water_prediction = rfd.read_from_database_load_predict()[2]
-    electricity_prediction = rfd.read_from_database_load_predict()[3]
+    cold_prediction = rfd.read_from_database_load_predict(syncbase)[0]
+    heat_prediction = rfd.read_from_database_load_predict(syncbase)[1]
+    hot_water_prediction = rfd.read_from_database_load_predict(syncbase)[2]
+    electricity_prediction = rfd.read_from_database_load_predict(syncbase)[3]
     # 确定生活热水负荷和电负荷
     hot_water_load = hot_water_prediction
     electricity_load = electricity_prediction
@@ -152,7 +154,7 @@ def run_program():
                             ashpc1, ashpc2, ashpc3, ashpc4, esec1, esec2, esec3, ngb_hot_water, gc)
         # 显示制冷季计算结果并写入数据库
         pcs(ans_csf, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_water, lb1_wp_chilled_water, lb2_wp_chilled_water,
-            lb1_wp_hot_water, lb2_wp_hot_water, cc1, cc2, cc3, cc4, ashpc1, ashpc2, ashpc3, ashpc4, esec1, esec2, esec3, ngb_hot_water, gc)
+            lb1_wp_hot_water, lb2_wp_hot_water, cc1, cc2, cc3, cc4, ashpc1, ashpc2, ashpc3, ashpc4, esec1, esec2, esec3, ngb_hot_water, gc, syncbase)
 
     # 采暖季计算
     elif cold_load <= 0 + gc.project_load_error and heat_load > 0 + gc.project_load_error:
@@ -161,16 +163,26 @@ def run_program():
                             chph1, chph2, chph3, chph4, ashph1, ashph2, ashph3, ashph4, eseh1, eseh2, eseh3, ngb_hot_water, gc)
         # 显示采暖季计算结果并写入数据库
         phs(ans_hsf, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_water, lb1_wp_hot_water, lb2_wp_hot_water, chph1, chph2,
-                         ashph1, ashph2, ashph3, ashph4, eseh1, eseh2, eseh3, ngb_hot_water, gc)
+                         ashph1, ashph2, ashph3, ashph4, eseh1, eseh2, eseh3, ngb_hot_water, gc, syncbase)
 
     # 过渡季负荷
     elif cold_load <= 0 + gc.project_load_error and heat_load <= 0 + gc.project_load_error:
         ans_tsf = tsf(hot_water_load, electricity_load, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water, ngb_hot_water, gc)
-        pts(ans_tsf, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water, ngb_hot_water, gc)
+        pts(ans_tsf, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water, ngb_hot_water, gc, syncbase)
 
     else:
         print("输入的负荷信息有误，请检查！")
 
 # 执行程序
 if __name__ == '__main__':
-    run_program()
+    # 打开Syncebase服务
+    syncbase = SyncBase_API('127.0.0.1', '8006')  # ip地址为本机
+    syncbase.open()
+    while True:
+        # 运行程序
+        run_program(syncbase)
+        # 15分钟计算一次
+        time.sleep(900)
+    # 关闭syncbase服务
+    # syncbase.close()
+    # del syncbase

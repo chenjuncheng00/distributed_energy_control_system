@@ -250,7 +250,7 @@ class TagInfo(object):
                     '测点工程上限：' + str(self.high_limit)))
 
 
-class SyncBase(object):
+class SyncBase_API(object):
     """读取SyncBase实时数据库的类"""
     
     def __init__(self, server_ip, server_port):

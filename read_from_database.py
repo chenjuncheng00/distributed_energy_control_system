@@ -1,10 +1,7 @@
-from syncbase import SyncBase
 
-def read_from_database_ice1():
+def read_from_database_ice1(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取内燃机1的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 1号内燃发电机
     # 运行状态（新增逻辑点）
@@ -62,20 +59,14 @@ def read_from_database_ice1():
     else:
         ice1_exhaust_flow = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return ice1_state, ice1_fault, ice1_actual_value_of_active_power, ice1_natural_gas_inlet_flow, \
            ice1_cylinder_jacket_water_secondary_side_supply_temperature, ice1_cylinder_jacket_water_secondary_side_return_temperature, \
            ice1_outlet_flue_gas_temperature, ice1_exhaust_temperature, ice1_exhaust_flow
 
 
-def read_from_database_ice2():
+def read_from_database_ice2(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取内燃机2的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 2号内燃发电机
     # 运行状态（新增逻辑点）
@@ -133,20 +124,14 @@ def read_from_database_ice2():
     else:
         ice2_exhaust_flow = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return ice2_state, ice2_fault, ice2_actual_value_of_active_power, ice2_natural_gas_inlet_flow, \
            ice2_cylinder_jacket_water_secondary_side_supply_temperature, ice2_cylinder_jacket_water_secondary_side_return_temperature, \
            ice2_outlet_flue_gas_temperature, ice2_exhaust_temperature, ice2_exhaust_flow
 
 
-def read_from_database_lb1():
+def read_from_database_lb1(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取烟气热水型溴化锂1的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     #  1#烟气热水型溴化锂
     # 运行状态（新增逻辑点）
@@ -222,21 +207,15 @@ def read_from_database_lb1():
     else:
         lb1_outlet_flue_gas_temperature = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return lb1_state, lb1_fault, lb1_heat_chilled_water_supply_temperature, lb1_heat_chilled_water_supply_flow, \
            lb1_heat_chilled_water_return_temperature, lb1_hot_water_supply_temperature, lb1_hot_water_supply_flow, \
            lb1_hot_water_return_temperature, lb1_cooling_water_supply_temperature, lb1_cooling_water_supply_flow, \
            lb1_cooling_water_return_temperature, lb1_outlet_flue_gas_temperature
 
 
-def read_from_database_lb2():
+def read_from_database_lb2(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取烟气热水型溴化锂2的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 2#烟气热水型溴化锂
     # 运行状态（新增逻辑点）
@@ -312,21 +291,15 @@ def read_from_database_lb2():
     else:
         lb2_outlet_flue_gas_temperature = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return lb2_state, lb2_fault, lb2_heat_chilled_water_supply_temperature, lb2_heat_chilled_water_supply_flow, \
            lb2_heat_chilled_water_return_temperature, lb2_hot_water_supply_temperature, lb2_hot_water_supply_flow, \
            lb2_hot_water_return_temperature, lb2_cooling_water_supply_temperature, lb2_cooling_water_supply_flow, \
            lb2_cooling_water_return_temperature, lb2_outlet_flue_gas_temperature
 
 
-def read_from_database_lb_utility():
+def read_from_database_lb_utility(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取烟气热水型溴化锂公用部分的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 烟气热水型溴化锂公用测点
     # 溴化锂机组冷热媒水供水母管温度
@@ -372,19 +345,13 @@ def read_from_database_lb_utility():
     else:
         lb_chilled_heat_water_energy = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return lb_heat_chilled_water_supply_temperature, lb_heat_chilled_water_supply_flow, lb_heat_chilled_water_return_temperature, \
            lb_cooling_water_supply_temperature, lb_cooling_water_supply_flow, lb_cooling_water_return_temperature, lb_chilled_heat_water_energy
 
 
-def read_from_database_cc1():
+def read_from_database_cc1(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取离心式冷水机1的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 1#离心式冷水机
     # 运行状态（新增逻辑点）
@@ -436,19 +403,13 @@ def read_from_database_cc1():
     else:
         cc1_cooling_water_return_temperature = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return cc1_state, cc1_fault, cc1_chilled_water_supply_temperature,cc1_chilled_water_supply_flow, cc1_chilled_water_return_temperature, \
            cc1_cooling_water_supply_temperature,cc1_cooling_water_supply_flow, cc1_cooling_water_return_temperature
 
 
-def read_from_database_cc2():
+def read_from_database_cc2(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取离心式冷水机2的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 2#离心式冷水机
     # 运行状态（新增逻辑点）
@@ -500,19 +461,13 @@ def read_from_database_cc2():
     else:
         cc2_cooling_water_return_temperature = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return cc2_state, cc2_fault, cc2_chilled_water_supply_temperature, cc2_chilled_water_supply_flow, cc2_chilled_water_return_temperature, \
            cc2_cooling_water_supply_temperature, cc2_cooling_water_supply_flow, cc2_cooling_water_return_temperature
 
 
-def read_from_database_cc3():
+def read_from_database_cc3(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取离心式冷水机3的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 3#离心式冷水机
     # 运行状态（新增逻辑点）
@@ -564,19 +519,13 @@ def read_from_database_cc3():
     else:
         cc3_cooling_water_return_temperature = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return cc3_state, cc3_fault, cc3_chilled_water_supply_temperature,cc3_chilled_water_supply_flow, cc3_chilled_water_return_temperature, \
            cc3_cooling_water_supply_temperature,cc3_cooling_water_supply_flow, cc3_cooling_water_return_temperature
 
 
-def read_from_database_cc4():
+def read_from_database_cc4(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取离心式冷水机4的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 4#离心式冷水机
     # 运行状态（新增逻辑点）
@@ -628,19 +577,13 @@ def read_from_database_cc4():
     else:
         cc4_cooling_water_return_temperature = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return cc4_state, cc4_fault, cc4_chilled_water_supply_temperature,cc4_chilled_water_supply_flow, cc4_chilled_water_return_temperature, \
            cc4_cooling_water_supply_temperature,cc4_cooling_water_supply_flow, cc4_cooling_water_return_temperature
 
 
-def read_from_database_cc_utility():
+def read_from_database_cc_utility(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取离心式冷水机公用部分的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 离心式冷水机公用
     # 离心式冷水机冷冻水供水母管温度
@@ -686,19 +629,13 @@ def read_from_database_cc_utility():
     else:
         cc_chilled_water_energy = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return cc_chilled_water_supply_temperature, cc_chilled_water_supply_flow, cc_chilled_water_return_temperature, \
            cc_cooling_water_supply_temperature, cc_cooling_water_supply_flow, cc_cooling_water_return_temperature, cc_chilled_water_energy
 
 
-def read_from_database_chp1():
+def read_from_database_chp1(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取离心式热泵1的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 1#离心式热泵
     # 运行状态（新增逻辑点）
@@ -750,19 +687,13 @@ def read_from_database_chp1():
     else:
         chp1_source_water_return_temperature = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return chp1_state, chp1_fault, chp1_heat_water_supply_temperature,chp1_heat_water_supply_flow, chp1_heat_water_return_temperature, \
            chp1_source_water_supply_temperature,chp1_source_water_supply_flow, chp1_source_water_return_temperature
 
 
-def read_from_database_chp2():
+def read_from_database_chp2(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取离心式热泵2的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 2#离心式热泵
     # 运行状态（新增逻辑点）
@@ -814,19 +745,13 @@ def read_from_database_chp2():
     else:
         chp2_source_water_return_temperature = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return chp2_state, chp2_fault, chp2_heat_water_supply_temperature,chp2_heat_water_supply_flow, chp2_heat_water_return_temperature, \
            chp2_source_water_supply_temperature,chp2_source_water_supply_flow, chp2_source_water_return_temperature
 
 
-def read_from_database_chp3():
+def read_from_database_chp3(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取离心式热泵3的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 3#离心式热泵
     # 运行状态（新增逻辑点）
@@ -878,19 +803,13 @@ def read_from_database_chp3():
     else:
         chp3_source_water_return_temperature = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return chp3_state, chp3_fault, chp3_heat_water_supply_temperature,chp3_heat_water_supply_flow, chp3_heat_water_return_temperature, \
            chp3_source_water_supply_temperature,chp3_source_water_supply_flow, chp3_source_water_return_temperature
 
 
-def read_from_database_chp4():
+def read_from_database_chp4(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取离心式热泵4的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 4#离心式热泵
     # 运行状态（新增逻辑点）
@@ -942,19 +861,13 @@ def read_from_database_chp4():
     else:
         chp4_source_water_return_temperature = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return chp4_state, chp4_fault, chp4_heat_water_supply_temperature,chp4_heat_water_supply_flow, chp4_heat_water_return_temperature, \
            chp4_source_water_supply_temperature,chp4_source_water_supply_flow, chp4_source_water_return_temperature
 
 
-def read_from_database_chp_utility():
+def read_from_database_chp_utility(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取离心式热泵公用部分的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 离心式热泵公用
     # 离心式热泵采暖水供水母管温度
@@ -1000,19 +913,13 @@ def read_from_database_chp_utility():
     else:
         chp_heat_water_energy = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return chp_heat_water_supply_temperature, chp_heat_water_supply_flow, chp_heat_water_return_temperature, \
            chp_source_water_supply_temperature, chp_source_water_supply_flow, chp_source_water_return_temperature, chp_heat_water_energy
 
 
-def read_from_database_ashp1():
+def read_from_database_ashp1(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取空气源热泵1的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 1#空气源热泵
     # 运行状态（新增逻辑点）
@@ -1046,18 +953,12 @@ def read_from_database_ashp1():
     else:
         ashp1_water_return_temperature = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return ashp1_state, ashp1_fault, ashp1_water_supply_temperature, ashp1_water_supply_flow, ashp1_water_return_temperature
 
 
-def read_from_database_ashp2():
+def read_from_database_ashp2(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取空气源热泵2的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 2#空气源热泵
     # 运行状态（新增逻辑点）
@@ -1091,18 +992,12 @@ def read_from_database_ashp2():
     else:
         ashp2_water_return_temperature = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return ashp2_state, ashp2_fault, ashp2_water_supply_temperature, ashp2_water_supply_flow, ashp2_water_return_temperature
 
 
-def read_from_database_ashp3():
+def read_from_database_ashp3(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取空气源热泵3的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 3#空气源热泵
     # 运行状态（新增逻辑点）
@@ -1136,18 +1031,12 @@ def read_from_database_ashp3():
     else:
         ashp3_water_return_temperature = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return ashp3_state, ashp3_fault, ashp3_water_supply_temperature, ashp3_water_supply_flow, ashp3_water_return_temperature
 
 
-def read_from_database_ashp4():
+def read_from_database_ashp4(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取空气源热泵4的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 4#空气源热泵
     # 运行状态（新增逻辑点）
@@ -1181,18 +1070,12 @@ def read_from_database_ashp4():
     else:
         ashp4_water_return_temperature = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return ashp4_state, ashp4_fault, ashp4_water_supply_temperature, ashp4_water_supply_flow, ashp4_water_return_temperature
 
 
-def read_from_database_ashp_utility():
+def read_from_database_ashp_utility(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取空气源热泵公用部分的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 空气源热泵公用
     # 空气源热泵冷热水供水母管温度
@@ -1220,18 +1103,12 @@ def read_from_database_ashp_utility():
     else:
         ashp_water_energy = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return ashp_water_supply_temperature, ashp_water_supply_flow, ashp_water_return_temperature, ashp_water_energy
 
 
-def read_from_database_ese1():
+def read_from_database_ese1(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取蓄冷蓄热装置1的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 1#蓄冷蓄热装置
     # 运行状态（新增逻辑点）
@@ -1265,18 +1142,12 @@ def read_from_database_ese1():
     else:
         ese1_water_return_temperature = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return ese1_state, ese1_fault, ese1_water_supply_temperature, ese1_water_supply_flow, ese1_water_return_temperature
 
 
-def read_from_database_ese2():
+def read_from_database_ese2(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取蓄冷蓄热装置2的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 2#蓄冷蓄热装置
     # 运行状态（新增逻辑点）
@@ -1310,18 +1181,12 @@ def read_from_database_ese2():
     else:
         ese2_water_return_temperature = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return ese2_state, ese2_fault, ese2_water_supply_temperature, ese2_water_supply_flow, ese2_water_return_temperature
 
 
-def read_from_database_ese3():
+def read_from_database_ese3(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取蓄冷蓄热装置3的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 3#蓄冷蓄热装置
     # 运行状态（新增逻辑点）
@@ -1355,18 +1220,12 @@ def read_from_database_ese3():
     else:
         ese3_water_return_temperature = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return ese3_state, ese3_fault, ese3_water_supply_temperature, ese3_water_supply_flow, ese3_water_return_temperature
 
 
-def read_from_database_ese4():
+def read_from_database_ese4(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取蓄冷蓄热装置4的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 4#蓄冷蓄热装置
     # 运行状态（新增逻辑点）
@@ -1400,18 +1259,11 @@ def read_from_database_ese4():
     else:
         ese4_water_return_temperature = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return ese4_state, ese4_fault, ese4_water_supply_temperature, ese4_water_supply_flow, ese4_water_return_temperature
 
 
-def read_from_database_ese_utility():
+def read_from_database_ese_utility(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
-    # 读取蓄冷蓄热装置公用部分的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 蓄冷蓄热装置公用
     # 蓄能水罐本体运行状态反馈
@@ -1451,18 +1303,11 @@ def read_from_database_ese_utility():
     else:
         ese_water_energy = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return ese_state, ese_fault, ese_water_supply_temperature, ese_water_supply_flow, ese_water_return_temperature, ese_water_energy
 
 
-def read_from_database_ngb1():
+def read_from_database_ngb1(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
-    # 读取天然气热水锅炉1的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 1#天然气热水锅炉
     # 运行状态（新增逻辑点）
@@ -1514,19 +1359,12 @@ def read_from_database_ngb1():
     else:
         ngb1_natural_gas_inlet_flow = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return ngb1_state, ngb1_fault, ngb1_heat_water_supply_temperature, ngb1_heat_water_supply_flow, ngb1_heat_water_return_temperature, \
            ngb1_outlet_flue_gas_temperature, ngb1_outlet_flue_gas_flow, ngb1_natural_gas_inlet_flow
 
 
-def read_from_database_ngb2():
+def read_from_database_ngb2(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
-    # 读取天然气热水锅炉2的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 2#天然气热水锅炉
     # 运行状态（新增逻辑点）
@@ -1578,19 +1416,12 @@ def read_from_database_ngb2():
     else:
         ngb2_natural_gas_inlet_flow = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return ngb2_state, ngb2_fault, ngb2_heat_water_supply_temperature, ngb2_heat_water_supply_flow, ngb2_heat_water_return_temperature, \
            ngb2_outlet_flue_gas_temperature, ngb2_outlet_flue_gas_flow, ngb2_natural_gas_inlet_flow
 
 
-def read_from_database_ngb3():
+def read_from_database_ngb3(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
-    # 读取天然气热水锅炉3的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 3#天然气热水锅炉
     # 运行状态（新增逻辑点）
@@ -1642,19 +1473,13 @@ def read_from_database_ngb3():
     else:
         ngb3_natural_gas_inlet_flow = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return ngb3_state, ngb3_fault, ngb3_hot_water_supply_temperature, ngb3_hot_water_supply_flow, ngb3_hot_water_return_temperature, \
            ngb3_outlet_flue_gas_temperature, ngb3_outlet_flue_gas_flow, ngb3_natural_gas_inlet_flow
 
 
-def read_from_database_ngb_utility():
+def read_from_database_ngb_utility(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取天然气热水锅炉公用部分的数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 天然气热水锅炉公用数据(1#和2#锅炉公用数据)
     # 天然气热水锅炉供水母管温度
@@ -1698,11 +1523,9 @@ def read_from_database_ngb_utility():
            ngb_exhaust_temperature, ngb_exhaust_flow, ngb_heat_water_energy
 
 
-def read_from_database_system_utility():
+def read_from_database_system_utility(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取系统公用数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 分水器温度
     state1, record1 = syncbase.get_reatime_data_by_name('manifold_temperature')
@@ -1747,19 +1570,13 @@ def read_from_database_system_utility():
     else:
         hot_water_energy = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return manifold_temperature, water_collector_temperature, hot_water_supply_pipe_temperature, hot_water_return_pipe_temperature, \
            natural_gas_pipe_flow_1, natural_gas_pipe_flow_2, hot_water_energy
 
 
-def read_from_database_environment():
+def read_from_database_environment(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取环境数据
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 环境干球温度
     state1, record1 = syncbase.get_reatime_data_by_name('environment_temperature')
@@ -1805,18 +1622,12 @@ def read_from_database_environment():
     else:
         equipment_fever = 0
 
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
-
     return environment_temperature, environment_humidity, sun_radiation, wind_speed, wind_direction, personnel_density, equipment_fever
 
 
-def read_from_database_load_predict():
+def read_from_database_load_predict(syncbase):
     """利用SyncBASE，从数据库中读取数据"""
     # 读取冷热电负荷预测值
-    syncbase = SyncBase('127.0.0.1', '8006')  # ip地址为本机
-    syncbase.open()
 
     # 冷负荷预测结果
     state1, record1 = syncbase.get_reatime_data_by_name('cold_prediction')
@@ -1842,9 +1653,5 @@ def read_from_database_load_predict():
         electricity_prediction = record3.value
     else:
         electricity_prediction = 0
-
-    # 关闭syncbase
-    syncbase.close()
-    del syncbase
 
     return cold_prediction, heat_prediction, hot_water_prediction, electricity_prediction

@@ -520,7 +520,7 @@ def heating_season_function(heat_load, hot_water_load, electricity_load, ice1, i
 
 
 def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_water, lb1_wp_hot_water, lb2_wp_hot_water, chph1, chph2,
-                         ashph1, ashph2, ashph3, ashph4, eseh1, eseh2, eseh3, ngb_hot_water, gc):
+                         ashph1, ashph2, ashph3, ashph4, eseh1, eseh2, eseh3, ngb_hot_water, gc, syncbase):
     """将制热季计算结果打印出来"""
     # 能源站总利润最大值
     profitis_max = max(ans[0])
@@ -590,7 +590,7 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
         ice1_power_consumption = ice1.auxiliary_equipment_power_consumption(ice1_load_ratio)
         ice1_electrical_income = ice1_electrical_power * gc.sale_electricity_price
         ice1_electrical_cost = ice1_natural_gas_consumption * gc.natural_gas_price + ice1_power_consumption * gc.buy_electricity_price
-        wtd.write_to_database_ice1(True, False, False, 0, 0, 0, ice1_electrical_efficiency,
+        wtd.write_to_database_ice1(syncbase, True, False, False, 0, 0, 0, ice1_electrical_efficiency,
                                    ice1_residual_heat_efficiency, ice1_electrical_power, ice1_residual_heat_power,
                                    ice1_natural_gas_consumption, ice1_power_consumption, ice1_electrical_income, ice1_electrical_cost)
         # 溴化锂1
@@ -617,7 +617,7 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
         lb1_heat_income = lb1_cold_heat_out * gc.heating_price
         lb1_hot_water_income = 0
         # 写入数据库
-        wtd.write_to_database_lb1(True, False, lb1_wp_heat_chilled_water_frequency, lb1_wp_cooling_water_frequency,
+        wtd.write_to_database_lb1(syncbase, True, False, lb1_wp_heat_chilled_water_frequency, lb1_wp_cooling_water_frequency,
                           lb1_cold_heat_out, lb1_power_consumption, lb1_chilled_heat_water_flow, lb1_cooling_water_flow,
                           lb1_wp_chilled_heat_water_power_consumption, lb1_wp_cooling_water_power_consumption, lb1_fan_power_consumption,
                           lb1_cold_cop, lb1_heat_cop, lb1_hot_water_cop, lb1_hot_water_out, lb1_cold_cost, lb1_heat_cost,
@@ -642,8 +642,8 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
         lb1_heat_income = 0
         lb1_hot_water_income = 0
         # 写入数据库
-        wtd.write_to_database_ice1(False, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-        wtd.write_to_database_lb1(False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        wtd.write_to_database_ice1(syncbase, False, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        wtd.write_to_database_lb1(syncbase, False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     # 内燃机2
     if ice2_load_ratio > 0:
@@ -656,12 +656,12 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
         ice2_power_consumption = ice2.auxiliary_equipment_power_consumption(ice2_load_ratio)
         ice2_electrical_income = ice2_electrical_power * gc.sale_electricity_price
         ice2_electrical_cost = ice2_natural_gas_consumption * gc.natural_gas_price + ice2_power_consumption * gc.buy_electricity_price
-        wtd.write_to_database_ice2(True, False, False, 0, 0, 0, ice2_electrical_efficiency,
+        wtd.write_to_database_ice2(syncbase, True, False, False, 0, 0, 0, ice2_electrical_efficiency,
                                    ice2_residual_heat_efficiency, ice2_electrical_power, ice2_residual_heat_power,
                                    ice2_natural_gas_consumption, ice2_power_consumption, ice2_electrical_income, ice2_electrical_cost)
         # 溴化锂2
         lb2_heat = Lithium_Bromide_Heat(ice2_residual_heat_power, lb2_wp_heating_water, lb2_wp_hot_water, gc)
-        lb2_cold_heat_out = lb_heat_load * (ice2_load_ratio / (ice2_load_ratio + ice2_load_ratio))
+        lb2_cold_heat_out = lb_heat_load * (ice2_load_ratio / (ice1_load_ratio + ice2_load_ratio))
         lb2_wp_heat_chilled_water_frequency = lbhf(0, ice2_load_ratio, lb2_heat, gc)[4]
         lb2_wp_cooling_water_frequency = 0
         lb2_power_consumption = lbhf(0, ice2_load_ratio, lb2_heat, gc)[1]
@@ -683,7 +683,7 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
         lb2_heat_income = lb2_cold_heat_out * gc.heating_price
         lb2_hot_water_income = 0
         # 写入数据库
-        wtd.write_to_database_lb2(True, False, lb2_wp_heat_chilled_water_frequency, lb2_wp_cooling_water_frequency,
+        wtd.write_to_database_lb2(syncbase, True, False, lb2_wp_heat_chilled_water_frequency, lb2_wp_cooling_water_frequency,
                                   lb2_cold_heat_out, lb2_power_consumption, lb2_chilled_heat_water_flow, lb2_cooling_water_flow,
                                   lb2_wp_chilled_heat_water_power_consumption, lb2_wp_cooling_water_power_consumption,
                                   lb2_fan_power_consumption, lb2_cold_cop, lb2_heat_cop, lb2_hot_water_cop, lb2_hot_water_out, lb2_cold_cost,
@@ -709,8 +709,8 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
         lb2_heat_income = 0
         lb2_hot_water_income = 0
         # 写入数据库
-        wtd.write_to_database_ice2(False, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-        wtd.write_to_database_lb2(False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        wtd.write_to_database_ice2(syncbase, False, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        wtd.write_to_database_lb2(syncbase, False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     # 离心式热泵1（制热）
     if chph1_load_ratio > 0:
@@ -729,7 +729,7 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
         chp1_income = chp1_heat_out * gc.heating_price
         chp1_cost = chpch(chph1, gc, chph1_load_ratio)[0]
         # 写入数据库
-        wtd.write_to_database_chp1(False, False, True, chp1_wp_heat_water_frequency, chp1_wp_source_water_frequency,
+        wtd.write_to_database_chp1(syncbase, False, False, True, chp1_wp_heat_water_frequency, chp1_wp_source_water_frequency,
                            chp1_heat_out, chp1_power_consumption, chp1_heat_water_flow, chp1_source_water_flow,
                            chp1_wp_heat_water_power_consumption, chp1_wp_source_water_power_consumption, chp1_cop, chp1_income, chp1_cost)
     else:
@@ -739,7 +739,7 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
         chp1_income = 0
         chp1_cost = 0
         # 写入数据库
-        wtd.write_to_database_chp1(True, True, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        wtd.write_to_database_chp1(syncbase, True, True, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     # 离心式热泵2（制热）
     if chph2_load_ratio > 0:
@@ -758,7 +758,7 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
         chp2_income = chp2_heat_out * gc.heating_price
         chp2_cost = chpch(chph2, gc, chph2_load_ratio)[0]
         # 写入数据库
-        wtd.write_to_database_chp2(False, False, True, chp2_wp_heat_water_frequency, chp2_wp_source_water_frequency,
+        wtd.write_to_database_chp2(syncbase, False, False, True, chp2_wp_heat_water_frequency, chp2_wp_source_water_frequency,
                            chp2_heat_out, chp2_power_consumption, chp2_heat_water_flow, chp2_source_water_flow,
                            chp2_wp_heat_water_power_consumption, chp2_wp_source_water_power_consumption, chp2_cop, chp2_income, chp2_cost)
     else:
@@ -768,7 +768,7 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
         chp2_income = 0
         chp2_cost = 0
         # 写入数据库
-        wtd.write_to_database_chp2(True, True, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        wtd.write_to_database_chp2(syncbase, True, True, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     # 空气源热泵1（制热）
     if ashph1_load_ratio > 0:
@@ -787,7 +787,7 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
         ashp1_cold_cost = 0
         ashp1_heat_cost = ashpch(ashph1, gc, ashph1_load_ratio)[0]
         # 写入数据库
-        wtd.write_to_database_ashp1(False, False, True, ashp1_wp_water_frequency,
+        wtd.write_to_database_ashp1(syncbase, False, False, True, ashp1_wp_water_frequency,
                                     ashp1_heat_out, ashp1_power_consumption, ashp1_chilled_heat_water_flow,
                                     ashp1_wp_power_consumption, ashp1_fan_power_consumption, ashp1_cold_cop,
                                     ashp1_heat_cop, ashp1_cold_income, ashp1_cold_cost, ashp1_heat_cost)
@@ -799,7 +799,7 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
         ashp1_cold_cost = 0
         ashp1_heat_cost = 0
         # 写入数据库
-        wtd.write_to_database_ashp1(False, False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        wtd.write_to_database_ashp1(syncbase, False, False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     # 空气源热泵2（制热）
     if ashph2_load_ratio > 0:
@@ -818,7 +818,7 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
         ashp2_cold_cost = 0
         ashp2_heat_cost = ashpch(ashph2, gc, ashph2_load_ratio)[0]
         # 写入数据库
-        wtd.write_to_database_ashp2(False, False, True, ashp2_wp_water_frequency,
+        wtd.write_to_database_ashp2(syncbase, False, False, True, ashp2_wp_water_frequency,
                                     ashp2_heat_out, ashp2_power_consumption, ashp2_chilled_heat_water_flow,
                                     ashp2_wp_power_consumption, ashp2_fan_power_consumption, ashp2_cold_cop,
                                     ashp2_heat_cop, ashp2_cold_income, ashp2_cold_cost, ashp2_heat_cost)
@@ -830,7 +830,7 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
         ashp2_cold_cost = 0
         ashp2_heat_cost = 0
         # 写入数据库
-        wtd.write_to_database_ashp2(False, False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        wtd.write_to_database_ashp2(syncbase, False, False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     # 空气源热泵3（制热）
     if ashph3_load_ratio > 0:
@@ -849,7 +849,7 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
         ashp3_cold_cost = 0
         ashp3_heat_cost = ashpch(ashph3, gc, ashph3_load_ratio)[0]
         # 写入数据库
-        wtd.write_to_database_ashp3(False, False, True, ashp3_wp_water_frequency,
+        wtd.write_to_database_ashp3(syncbase, False, False, True, ashp3_wp_water_frequency,
                                     ashp3_heat_out, ashp3_power_consumption, ashp3_chilled_heat_water_flow,
                                     ashp3_wp_power_consumption, ashp3_fan_power_consumption, ashp3_cold_cop,
                                     ashp3_heat_cop, ashp3_cold_income, ashp3_cold_cost, ashp3_heat_cost)
@@ -861,7 +861,7 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
         ashp3_cold_cost = 0
         ashp3_heat_cost = 0
         # 写入数据库
-        wtd.write_to_database_ashp3(False, False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        wtd.write_to_database_ashp3(syncbase, False, False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     # 空气源热泵4（制热）
     if ashph4_load_ratio > 0:
@@ -880,7 +880,7 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
         ashp4_cold_cost = 0
         ashp4_heat_cost = ashpch(ashph4, gc, ashph4_load_ratio)[0]
         # 写入数据库
-        wtd.write_to_database_ashp4(False, False, True, ashp4_wp_water_frequency,
+        wtd.write_to_database_ashp4(syncbase, False, False, True, ashp4_wp_water_frequency,
                                     ashp4_heat_out, ashp4_power_consumption, ashp4_chilled_heat_water_flow,
                                     ashp4_wp_power_consumption, ashp4_fan_power_consumption, ashp4_cold_cop,
                                     ashp4_heat_cop, ashp4_cold_income, ashp4_cold_cost, ashp4_heat_cost)
@@ -892,7 +892,7 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
         ashp4_cold_cost = 0
         ashp4_heat_cost = 0
         # 写入数据库
-        wtd.write_to_database_ashp4(False, False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        wtd.write_to_database_ashp4(syncbase, False, False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     # 蓄冷水罐
     if eseh_heat_load_out != 0:
@@ -907,11 +907,11 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
             ese_proportion_in = abs(eseh_heat_load_out / (station_heat_out_all - eseh_heat_load_out))
             ese_proportion_out = 0
         # 写入数据库
-        wtd.write_to_database_ese(ese_cold_heat_out, ese_residual_storage_energy, ese_cost, ese_proportion_in, ese_proportion_out)
+        wtd.write_to_database_ese(syncbase, ese_cold_heat_out, ese_residual_storage_energy, ese_cost, ese_proportion_in, ese_proportion_out)
     else:
         ese_cold_heat_out = 0
         ese_residual_storage_energy = esehsrr()[0] + esehsrr()[1] + esehsrr()[2]
-        wtd.write_to_database_ese(0, ese_residual_storage_energy, 0, 0, 0)
+        wtd.write_to_database_ese(syncbase, 0, ese_residual_storage_energy, 0, 0, 0)
 
     # 蓄能水罐水泵1
     if eseh1_load_ratio > 0:
@@ -919,12 +919,12 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
         ese1_chilled_heat_water_flow = esehc(eseh1, gc, eseh1_load_ratio)[3]
         ese1_wp_power_consumption = eseh1.wp_chilled_water.pump_performance_data(ese1_chilled_heat_water_flow, ese1_wp_water_frequency)[1]
         # 写入数据库
-        wtd.write_to_database_ese1(False, False, True, ese1_wp_water_frequency,
+        wtd.write_to_database_ese1(syncbase, False, False, True, ese1_wp_water_frequency,
                                    ese1_chilled_heat_water_flow, ese1_wp_power_consumption)
     else:
         ese1_wp_power_consumption = 0
         # 写入数据库
-        wtd.write_to_database_ese1(True, True, False, 0, 0, 0)
+        wtd.write_to_database_ese1(syncbase, True, True, False, 0, 0, 0)
 
     # 蓄能水罐水泵2
     if eseh2_load_ratio > 0:
@@ -932,12 +932,12 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
         ese2_chilled_heat_water_flow = esehc(eseh2, gc, eseh2_load_ratio)[3]
         ese2_wp_power_consumption = eseh2.wp_chilled_water.pump_performance_data(ese2_chilled_heat_water_flow, ese2_wp_water_frequency)[1]
         # 写入数据库
-        wtd.write_to_database_ese2(False, False, True, ese2_wp_water_frequency,
+        wtd.write_to_database_ese2(syncbase, False, False, True, ese2_wp_water_frequency,
                                    ese2_chilled_heat_water_flow, ese2_wp_power_consumption)
     else:
         ese2_wp_power_consumption = 0
         # 写入数据库
-        wtd.write_to_database_ese2(True, True, False, 0, 0, 0)
+        wtd.write_to_database_ese2(syncbase, True, True, False, 0, 0, 0)
 
     # 蓄能水罐水泵3
     if eseh3_load_ratio > 0:
@@ -945,12 +945,12 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
         ese3_chilled_heat_water_flow = esehc(eseh3, gc, eseh3_load_ratio)[3]
         ese3_wp_power_consumption = eseh3.wp_chilled_water.pump_performance_data(ese3_chilled_heat_water_flow, ese3_wp_water_frequency)[1]
         # 写入数据库
-        wtd.write_to_database_ese3(False, False, True, ese3_wp_water_frequency,
+        wtd.write_to_database_ese3(syncbase, False, False, True, ese3_wp_water_frequency,
                                    ese3_chilled_heat_water_flow, ese3_wp_power_consumption)
     else:
         ese3_wp_power_consumption = 0
         # 写入数据库
-        wtd.write_to_database_ese3(True, True, False, 0, 0, 0)
+        wtd.write_to_database_ese3(syncbase, True, True, False, 0, 0, 0)
 
     # 天然气生活热水锅炉
     if ngb_hw_hot_water > 0:
@@ -963,9 +963,9 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
         ngb3_efficiency = ngb_hot_water.boiler_efficiency(ngb3_load_ratio)
         ngb3_natural_gas_consumption = ngbiohw(ngb3_hot_water_out, ngb_hot_water, gc)[1]
         ngb3_income = ngb3_hot_water_out * gc.hot_water_price
-        ngb3_cost = ngbhc(ngb_hot_water, gc, ngb3_load_ratio)[0]
+        ngb3_cost = ngb3_natural_gas_consumption * gc.natural_gas_price + ngb3_natural_gas_consumption * gc.buy_electricity_price
         # 写入数据库
-        wtd.write_to_database_ngb3(True, False, ngb3_wp_hot_water_frequency,
+        wtd.write_to_database_ngb3(syncbase, True, False, ngb3_wp_hot_water_frequency,
                                    ngb3_hot_water_out, ngb3_power_consumption, ngb3_hot_water_flow,
                                    ngb3_wp_hot_water_power_consumption,
                                    ngb3_efficiency, ngb3_income, ngb3_cost, ngb3_natural_gas_consumption)
@@ -977,7 +977,7 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
         ngb3_income = 0
         ngb3_cost = 0
         # 写入数据库
-        wtd.write_to_database_ngb3(False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        wtd.write_to_database_ngb3(syncbase, False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     # 写入系统共用数据结果
     cost_total = station_cost_min
@@ -1007,7 +1007,7 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
     reduction_in_nitride_emissions = 0
     reduction_in_dust_emissions = 0
     proportion_of_renewable_energy_power = 0
-    wtd.write_to_database_system_utility(cost_total, income_total, profit_total, electricity_out_total, cold_heat_out_total, hot_water_out_total, natural_gas_consume_total,
+    wtd.write_to_database_system_utility(syncbase, cost_total, income_total, profit_total, electricity_out_total, cold_heat_out_total, hot_water_out_total, natural_gas_consume_total,
                                         electricity_consume_total, comprehensive_energy_utilization, proportion_of_renewable_energy_power, cop_real_time,
                                         reduction_in_carbon_emissions, reduction_in_sulfide_emissions, reduction_in_nitride_emissions, reduction_in_dust_emissions)
 
@@ -1031,7 +1031,7 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
     cold_out_total = lb_cold_out_total + cc_cold_out_total + chp_cold_out_total + ashp_cold_out_total + ese_cold_out_total
     heat_out_total = lb_heat_out_total + chp_heat_out_total + ese_heat_out_total
     # 写入数据库
-    wtd.write_to_database_station_in_out(cold_out_total, heat_out_total, electricity_generation_total,
+    wtd.write_to_database_station_in_out(syncbase, cold_out_total, heat_out_total, electricity_generation_total,
                                          lb_cold_out_total, lb_heat_out_total, lb_hot_water_out_total, cc_cold_out_total, chp_cold_out_total,
                                          chp_heat_out_total, ashp_cold_out_total, ese_cold_out_total, ese_heat_out_total,
                                          ice_electricity_out_total, photovoltaic_electricity_out_total,
@@ -1061,7 +1061,7 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
     ashp_heat_cost_total = ashp1_heat_cost + ashp2_heat_cost + ashp3_heat_cost + ashp4_heat_cost
     ngb_hot_water_cost_total = ngb3_cost
     # 写入数据库
-    wtd.write_to_database_income_cost(ice_income_total, lb_cold_income_total, lb_heat_income_total,
+    wtd.write_to_database_income_cost(syncbase, ice_income_total, lb_cold_income_total, lb_heat_income_total,
                                       lb_hot_water_income_total, cc_cold_income_total, chp_cold_income_total, chp_heat_income_total, ashp_cold_income_total,
                                       ngb_hot_water_income_total, photovoltaic_income_total, wind_income_total, ice_cost_total, lb_cold_cost_total,
                                       lb_heat_cost_total, lb_hot_water_cost_total, cc_cold_cost_total, chp_cold_cost_total,
@@ -1081,6 +1081,6 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
     photovoltaic_electrical_efficiency = 0
     wind_electrical_efficiency = 0
     # 写入数据库
-    wtd.write_to_database_equipment_efficiency(ice_electrical_efficiency, lb_cold_efficiency, lb_heat_efficiency,
+    wtd.write_to_database_equipment_efficiency(syncbase, ice_electrical_efficiency, lb_cold_efficiency, lb_heat_efficiency,
                                                lb_hot_water_efficiency, cc_cold_cop, chp_cold_cop, chp_heat_cop, ashp_cold_cop, ashp_heat_cop,
                                                ngb_hot_water_efficiency, photovoltaic_electrical_efficiency, wind_electrical_efficiency)
