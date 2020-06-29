@@ -904,7 +904,7 @@ def write_to_database_system_utility(syncbase, cost_total, income_total, profit_
          'electricity_consume_total', 'comprehensive_energy_utilization', 'proportion_of_renewable_energy_power', 'cop_real_time',
          'reduction_in_carbon_emissions', 'reduction_in_sulfide_emissions', 'reduction_in_nitride_emissions', 'reduction_in_dust_emissions'],
         [cost_total, income_total, profit_total, electricity_out_total, cold_heat_out_total, hot_water_out_total, natural_gas_consume_total, electricity_consume_total,
-         comprehensive_energy_utilization, proportion_of_renewable_energy_power, cop_real_time, reduction_in_carbon_emissions, reduction_in_sulfide_emissions,
+         comprehensive_energy_utilization*100, proportion_of_renewable_energy_power*100, cop_real_time, reduction_in_carbon_emissions, reduction_in_sulfide_emissions,
          reduction_in_nitride_emissions, reduction_in_dust_emissions])
 
     # 报错
