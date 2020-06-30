@@ -162,7 +162,7 @@ def natural_gas_boiler_in_out_hot_water(hot_water_load_ngb, ngb_hot_water, gc):
     # 此时天然气生活热水锅炉的负荷率
     ngb_load_ratio = hot_water_load_ngb/ngb_hot_water.heating_power_rated
     # 当前负荷下生活热水流量
-    hot_water_flow_now = ngb_hot_water.hot_water_flow()
+    hot_water_flow_now = ngb_hot_water.hot_water_flow(ngb_load_ratio)
     # 当前负荷下，锅炉效率
     boiler_efficiency_now = ngb_hot_water.boiler_efficiency(ngb_load_ratio)
     # 当前负荷率下，辅助设备耗电功率

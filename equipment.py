@@ -42,12 +42,17 @@ class Centrifugal_Chiller():
             # 如果负荷率大于等于40%，则随负荷率均匀变化，冷却水随负荷率变化
             if load_ratio >= 0.4:
                 ans =self.cooling_water_flow_rated() * load_ratio
-            else:
+            elif load_ratio < 0.4 and load_ratio >= self.load_min:
                 # 如果负荷率小于40%，则等于35%的流量，不再减少
                 ans = self.cooling_water_flow_rated() * 0.35
+            else:
+                ans = 0
         else:
             # 如果冷却水泵定频，始终等于额定流量
-            ans = self.cooling_water_flow_rated()
+            if load_ratio >= self.load_min:
+                ans = self.cooling_water_flow_rated()
+            else:
+                ans = 0
         # 返回结果
         return ans
 
@@ -58,12 +63,17 @@ class Centrifugal_Chiller():
             # 如果负荷率大于等于40%，则随负荷率均匀变化
             if load_ratio >= 0.4:
                 ans = load_ratio * self.chilled_water_flow_rated()
-            else:
+            elif load_ratio < 0.4 and load_ratio >= self.load_min:
                 # 如果负荷率小于40%，则等于32%的流量，不再减少
                 ans = 0.32 * self.chilled_water_flow_rated()
+            else:
+                ans = 0
         else:
             # 如果冷冻水泵定频，始终等于最大流量
-            ans= self.chilled_water_flow_rated()
+            if load_ratio >= self.load_min:
+                ans= self.chilled_water_flow_rated()
+            else:
+                ans = 0
         #返回结果
         return ans
 
@@ -222,12 +232,21 @@ class Centrifugal_Chiller():
                             wp_frequency_chilled_water += 1
         # 冷却塔风机耗电功率，某一负荷率下，风机为定频，功率保持不变
         cooling_tower_fan_power = 20
+        # 计算结果
+        if chilled_water_flow > 0:
+            ans_el = cooling_pump_power + chilled_pump_power + cooling_tower_fan_power
+            ans_wp_chilled = wp_frequency_chilled_water
+            ans_wp_cooling = wp_frequency_cooling_water
+        else:
+            ans_el = 0
+            ans_wp_chilled = 0
+            ans_wp_cooling = 0
         # 返回总辅助设备耗电功率，某一负荷率下
-        return cooling_pump_power + chilled_pump_power + cooling_tower_fan_power, wp_frequency_chilled_water, wp_frequency_cooling_water
+        return ans_el, ans_wp_chilled, ans_wp_cooling
 
     def centrifugal_chiller_power_consumption(self, load_ratio, centrifugal_chiller_cop):
         """离心式冷水机本身耗电功率，某一负荷率下"""
-        return load_ratio * self.cooling_power_rated/ centrifugal_chiller_cop
+        return load_ratio * self.cooling_power_rated / centrifugal_chiller_cop
 
 class Centrifugal_Heat_Pump_Heat():
     """类：离心式热泵机组；水源热泵、地源热泵的制热工况同样适用"""
@@ -286,13 +305,18 @@ class Centrifugal_Heat_Pump_Heat():
             # 如果负荷率大于等于40%，则随负荷率均匀变化，采暖水流量随负荷率变化
             if load_ratio >= 0.4:
                 ans = self.heating_water_flow_rated() * load_ratio
-            else:
+            elif load_ratio < 0.4 and load_ratio >= self.load_min:
                 # 如果负荷率小于40%，则等于35%的流量，不再减少
                 ans = self.heating_water_flow_rated() * 0.35
+            else:
+                ans = 0
         else:
             # 如果采暖水泵定频，始终等于额定流量
-            ans = self.heating_water_flow_rated()
-            # 返回结果
+            if load_ratio >= self.load_min:
+                ans = self.heating_water_flow_rated()
+            else:
+                ans = 0
+        # 返回结果
         return ans
 
     def heat_source_water_flow(self, load_ratio):
@@ -302,13 +326,18 @@ class Centrifugal_Heat_Pump_Heat():
             # 如果负荷率大于等于40%，则随负荷率均匀变化，采暖低温热源水流量随负荷率变化
             if load_ratio >= 0.4:
                 ans = self.heat_source_water_flow_rated() * load_ratio
-            else:
+            elif load_ratio < 0.4 and load_ratio >= self.load_min:
                 # 如果负荷率小于40%，则等于35%的流量，不再减少
                 ans = self.heat_source_water_flow_rated() * 0.35
+            else:
+                ans = 0
         else:
             # 如果采暖低温热源水泵定频，始终等于额定流量
-            ans = self.heat_source_water_flow_rated()
-            # 返回结果
+            if load_ratio >= self.load_min:
+                ans = self.heat_source_water_flow_rated()
+            else:
+                ans = 0
+        # 返回结果
         return ans
 
     def heat_source_water_temperature(self, load_ratio):
@@ -320,7 +349,6 @@ class Centrifugal_Heat_Pump_Heat():
         # 如果低温热源水泵为定频
         else:
             ans = 10
-
         # 返回计算结果
         return ans
 
@@ -421,9 +449,17 @@ class Centrifugal_Heat_Pump_Heat():
                             break
                         else:
                             wp_frequency_heating_water += 1
-
-        # 返回总辅助设备耗电功率，某一负荷率下
-        return heat_source_water_pump_power + heating_water_pump_power, wp_frequency_heating_water, wp_frequency_heat_source_water
+        # 计算结果
+        if heating_water_flow > 0:
+            ans_el = heat_source_water_pump_power + heating_water_pump_power
+            ans_wp_heating = wp_frequency_heating_water
+            ans_wp_source = wp_frequency_heat_source_water
+        else:
+            ans_el = 0
+            ans_wp_heating = 0
+            ans_wp_source = 0
+            # 返回总辅助设备耗电功率，某一负荷率下
+        return ans_el, ans_wp_heating, ans_wp_source
 
     def centrifugal_heat_pump_power_consumption(self, load_ratio, centrifugal_heat_pump_cop):
         """离心式热泵机组本身耗电功率，某一负荷率下"""
@@ -460,12 +496,17 @@ class Air_Source_Heat_Pump_Cold():
             # 如果负荷率大于等于40%，则随负荷率均匀变化
             if load_ratio >= 0.4:
                 ans = load_ratio * self.chilled_water_flow_rated()
-            else:
+            elif load_ratio < 0.4 and load_ratio >= self.load_min:
                 # 如果负荷率小于40%，则等于32%的流量，不再减少
                 ans = 0.32 * self.chilled_water_flow_rated()
+            else:
+                ans = 0
         else:
             # 如果冷冻水泵定频，始终等于最大流量
-            ans= self.chilled_water_flow_rated()
+            if load_ratio >= self.load_min:
+                ans = self.chilled_water_flow_rated()
+            else:
+                ans = 0
         #返回结果
         return ans
 
@@ -519,8 +560,15 @@ class Air_Source_Heat_Pump_Cold():
                             wp_frequency_chilled_water += 1
         # 冷却风机耗电功率，某一负荷率下，风机为定频，功率保持不变
         cooling_fan_power = 20
+        # 计算结果
+        if chilled_water_flow > 0:
+            ans_el = chilled_water_pump_power + cooling_fan_power
+            ans_wp = wp_frequency_chilled_water
+        else:
+            ans_el = 0
+            ans_wp = 0
         # 返回总辅助设备耗电功率，某一负荷率下
-        return chilled_water_pump_power + cooling_fan_power ,wp_frequency_chilled_water
+        return ans_el, ans_wp
 
     def air_source_heat_pump_cold_power_consumption(self, load_ratio, air_source_heat_pump_cold_cop):
         """空气源热泵制冷工况本身耗电功率，某一负荷率下"""
@@ -556,13 +604,18 @@ class Air_Source_Heat_Pump_Heat():
             # 如果负荷率大于等于40%，则随负荷率均匀变化，采暖水流量随负荷率变化
             if load_ratio >= 0.4:
                 ans = self.heating_water_flow_rated() * load_ratio
-            else:
+            elif load_ratio < 0.4 and load_ratio >= self.load_min:
                 # 如果负荷率小于40%，则等于35%的流量，不再减少
                 ans = self.heating_water_flow_rated() * 0.35
+            else:
+                ans = 0
         else:
             # 如果采暖水泵定频，始终等于额定流量
-            ans = self.heating_water_flow_rated()
-            # 返回结果
+            if load_ratio >= self.load_min:
+                ans = self.heating_water_flow_rated()
+            else:
+                ans = 0
+        # 返回结果
         return ans
 
     def air_source_heat_pump_heat_cop(self, load_ratio, heating_water_temperature, environment_temperature):
@@ -616,9 +669,15 @@ class Air_Source_Heat_Pump_Heat():
                             wp_frequency_heating_water += 1
         # 风机耗电功率，某一负荷率下，风机为定频，功率保持不变
         heating_fan_power = 20
-
+        # 计算结果
+        if heating_water_flow > 0:
+            ans_el = heating_water_pump_power + heating_fan_power
+            ans_wp = wp_frequency_heating_water
+        else:
+            ans_el = 0
+            ans_wp = 0
         # 返回总辅助设备耗电功率，某一负荷率下
-        return heating_water_pump_power + heating_fan_power, wp_frequency_heating_water
+        return ans_el, ans_wp
 
     def air_source_heat_pump_heat_power_consumption(self, load_ratio, air_source_heat_pump_heat_cop):
         """空气源热泵机组制热本身耗电功率，某一负荷率下"""
@@ -671,7 +730,11 @@ class Natural_Gas_Boiler_heat():
 
     def heating_water_flow(self, load_ratio, heating_water_temperature_difference):
         # 采暖水流量，某一负荷率下
-        return load_ratio * self.heating_power_rated * 3600 / 1000 / 4.2 / heating_water_temperature_difference
+        if load_ratio >= self.load_min:
+            ans = load_ratio * self.heating_power_rated * 3600 / 1000 / 4.2 / heating_water_temperature_difference
+        else:
+            ans = 0
+        return ans
 
     def boiler_efficiency(self, load_ratio):
         # 如果锅炉负荷率大于等于35%
@@ -731,9 +794,13 @@ class Natural_Gas_Boiler_heat():
                             break
                         else:
                             wp_frequency_heating_water += 1
-
+        # 计算结果
+        if heating_water_flow > 0:
+            ans = (12 + 12) + heating_pump_power
+        else:
+            ans = 0
         # 返回总辅助设备耗电功率，某一负荷率下,两个12分别3500kW锅炉为燃气设备和风机耗电（均为定频）
-        return (12 + 12) + heating_pump_power
+        return ans
 
     def natural_gas_consumption(self, load_ratio, boiler_efficiency):
         """锅炉设备天然气消耗量，某一负荷率下"""
@@ -763,9 +830,13 @@ class Natural_Gas_Boiler_hot_water():
         ans = self.heating_power_rated * 3600 / 1000 / 4.2 / self.hot_water_temperature_difference_rated
         return ans
 
-    def hot_water_flow(self):
+    def hot_water_flow(self, load_ratio):
         # 生活热水流量，定频水泵，在不同负荷率下，流量不变
-        return self.heating_power_rated * 3600 / 1000 / 4.2 / self.hot_water_temperature_difference_rated
+        if load_ratio >= self.load_min:
+            ans = self.heating_power_rated * 3600 / 1000 / 4.2 / self.hot_water_temperature_difference_rated
+        else:
+            ans = 0
+        return ans
 
     def boiler_efficiency(self, load_ratio):
         # 如果锅炉负荷率大于等于35%
@@ -779,8 +850,13 @@ class Natural_Gas_Boiler_hot_water():
         """辅助设备耗电功率计算"""
         # 采暖水泵耗电功率，某一负荷率下
         heating_pump_power = self.wp_hot_water.pump_performance_data(hot_water_flow, 50)[1]
+        # 计算结果
+        if hot_water_flow > 0:
+            ans = (12 + 12) + heating_pump_power
+        else:
+            ans = 0
         # 返回总辅助设备耗电功率，某一负荷率下,两个12分别3500kW锅炉为燃气设备和风机耗电（均为定频）
-        return (12 + 12) + heating_pump_power
+        return ans
 
     def natural_gas_consumption(self, load_ratio, boiler_efficiency):
         """锅炉设备天然气消耗量，某一负荷率下"""
@@ -824,14 +900,20 @@ class Internal_Combustion_Engine():
 
     def auxiliary_equipment_power_consumption(self, load_ratio):
         # 内燃机辅助设备耗电功率，均为定频泵和风机，功率不变
-        return 4 + 1.5 + 28.5 + 7.5 + 2.5 * 2
+        if load_ratio >= self.load_min:
+            ans = 4 + 1.5 + 28.5 + 7.5 + 2.5 * 2
+        else:
+            ans = 0
+        return ans
 
 
 class Lithium_Bromide_Cold():
     """类：溴化锂，制冷季"""
 
-    def __init__(self, residual_heat_power, wp_chilled_water, wp_cooling_water, wp_hot_water, gc):
+    def __init__(self, residual_heat_power, wp_chilled_water, wp_cooling_water, wp_hot_water, load_min, gc):
         """类的初始化"""
+        #  溴化锂最低负荷率
+        self.load_min = load_min
         # 余热利用功率，某一负荷率下，从内燃机类中导入
         self.residual_heat_power = residual_heat_power
         # 溴化锂采用的冷冻水泵
@@ -919,10 +1001,16 @@ class Lithium_Bromide_Cold():
         # 如果冷却水泵为变频
         if self.wp_cooling_water.frequency_scaling == True:
             # 溴化锂冷冻水变频泵最低负荷60%，流量按下列规律变化
-            ans = cooling_water_flow_rated * (0.7082 * math.pow(load_ratio, 2) - 0.5574 * load_ratio + 0.8492)
+            if load_ratio >= self.load_min:
+                ans = cooling_water_flow_rated * (0.7082 * math.pow(load_ratio, 2) - 0.5574 * load_ratio + 0.8492)
+            else:
+                ans = 0
         else:
             # 如果冷却水泵定频，始终等于额定流量
-            ans = cooling_water_flow_rated
+            if load_ratio >= self.load_min:
+                ans = cooling_water_flow_rated
+            else:
+                ans = 0
         # 返回结果
         return ans
 
@@ -943,10 +1031,16 @@ class Lithium_Bromide_Cold():
         # 如果冷冻水泵为变频
         if self.wp_chilled_water.frequency_scaling == True:
             # 溴化锂冷冻水泵为变频泵，流量按下列规律变化
-            ans = chilled_water_flow_rated*(0.4129 * math.pow(load_ratio, 2) - 0.2323 * load_ratio + 0.8194)
+            if load_ratio >= self.load_min:
+                ans = chilled_water_flow_rated*(0.4129 * math.pow(load_ratio, 2) - 0.2323 * load_ratio + 0.8194)
+            else:
+                ans = 0
         else:
             # 如果冷冻水泵定频，始终等于额定流量
-            ans = chilled_water_flow_rated
+            if load_ratio >= self.load_min:
+                ans = chilled_water_flow_rated
+            else:
+                ans = 0
         # 返回结果
         return ans
 
@@ -1042,13 +1136,25 @@ class Lithium_Bromide_Cold():
                             wp_frequency_chilled_water += 1
         # 冷却塔风机耗电功率，某一负荷率下，风机为定频，功率保持不变
         cooling_tower_fan_power = 20
-        # 返回总辅助设备耗电功率，某一负荷率下
-        return cooling_pump_power + chilled_pump_power + cooling_tower_fan_power, wp_frequency_chilled_water, wp_frequency_cooling_water
+        # 计算结果
+        if chilled_water_flow > 0:
+            ans_el = cooling_pump_power + chilled_pump_power + cooling_tower_fan_power
+            ans_wp_chilled = wp_frequency_chilled_water
+            ans_wp_cooling = wp_frequency_cooling_water
+        else:
+            ans_el = 0
+            ans_wp_chilled = 0
+            ans_wp_cooling = 0
+            # 返回总辅助设备耗电功率，某一负荷率下
+        return ans_el, ans_wp_chilled, ans_wp_cooling
 
     def auxiliary_equipment_power_consumption_hot_water(self, hot_water_flow):
         """计算生活热水辅机设备耗电量"""
         # 冷却水泵耗电功率，某一负荷率下
-        hot_water_pump_power = self.wp_hot_water.pump_performance_data(hot_water_flow, 50)[1]
+        if hot_water_flow > 0:
+            hot_water_pump_power = self.wp_hot_water.pump_performance_data(hot_water_flow, 50)[1]
+        else:
+            hot_water_pump_power = 0
         # 返回总辅助设备耗电功率，某一负荷率下
         return hot_water_pump_power
 
@@ -1056,8 +1162,10 @@ class Lithium_Bromide_Cold():
 class Lithium_Bromide_Heat():
     """类：溴化锂，制热季"""
 
-    def __init__(self, residual_heat_power, wp_heating_water, wp_hot_water, gc):
+    def __init__(self, residual_heat_power, wp_heating_water, wp_hot_water, load_min, gc):
         """类的初始化"""
+        # 溴化锂最低负荷率
+        self.load_min = load_min
         # 余热利用功率，某一负荷率下，从内燃机类中导入
         self.residual_heat_power = residual_heat_power
         # 溴化锂采用的采暖水泵
@@ -1120,10 +1228,16 @@ class Lithium_Bromide_Heat():
         # 如果采暖水泵为变频
         if self.wp_heating_water.frequency_scaling == True:
             # 溴化锂采暖水泵为变频，流量按下列规律变化
-            ans = heating_water_flow_rated * (0.8767 * math.pow(load_ratio, 2) - 0.7123 * load_ratio + 0.8356)
+            if load_ratio >= self.load_min:
+                ans = heating_water_flow_rated * (0.8767 * math.pow(load_ratio, 2) - 0.7123 * load_ratio + 0.8356)
+            else:
+                ans = 0
         else:
             # 如果采暖水泵定频，始终等于额定流量
-            ans = heating_water_flow_rated
+            if load_ratio >= self.load_min:
+                ans = heating_water_flow_rated
+            else:
+                ans = 0
         # 返回结果
         return ans
 
@@ -1172,14 +1286,23 @@ class Lithium_Bromide_Heat():
                             break
                         else:
                             wp_frequency_heating_water += 1
-
+        # 计算结果
+        if heating_water_flow > 0:
+            ans_el = heating_water_pump_power
+            ans_wp = wp_frequency_heating_water
+        else:
+            ans_el = 0
+            ans_wp = 0
         # 返回总辅助设备耗电功率，某一负荷率下
-        return heating_water_pump_power, wp_frequency_heating_water
+        return ans_el, ans_wp
 
     def auxiliary_equipment_power_consumption_hot_water(self, hot_water_flow):
         """计算生活热水辅机设备耗电量"""
         # 冷却水泵耗电功率，某一负荷率下
-        hot_water_pump_power = self.wp_hot_water.pump_performance_data(hot_water_flow, 50)[1]
+        if hot_water_flow > 0:
+            hot_water_pump_power = self.wp_hot_water.pump_performance_data(hot_water_flow, 50)[1]
+        else:
+            hot_water_pump_power = 0
         # 返回总辅助设备耗电功率，某一负荷率下
         return hot_water_pump_power
 
@@ -1187,8 +1310,10 @@ class Lithium_Bromide_Heat():
 class Lithium_Bromide_Transition():
     """类：溴化锂，过渡季"""
 
-    def __init__(self, residual_heat_power, wp_hot_water, gc):
+    def __init__(self, residual_heat_power, wp_hot_water, load_min, gc):
         """类的初始化"""
+        # 溴化锂最低负荷率
+        self.load_min = load_min
         # 余热利用功率，某一负荷率下，从内燃机类中导入
         self.residual_heat_power = residual_heat_power
         # 溴化锂采用的生活热水水泵
@@ -1230,7 +1355,10 @@ class Lithium_Bromide_Transition():
     def auxiliary_equipment_power_consumption_hot_water(self, hot_water_flow):
         """计算生活热水辅机设备耗电量"""
         # 冷却水泵耗电功率，某一负荷率下
-        hot_water_pump_power = self.wp_hot_water.pump_performance_data(hot_water_flow, 50)[1]
+        if hot_water_flow > 0:
+            hot_water_pump_power = self.wp_hot_water.pump_performance_data(hot_water_flow, 50)[1]
+        else:
+            hot_water_pump_power = 0
         # 返回总辅助设备耗电功率，某一负荷率下
         return hot_water_pump_power
 
@@ -1263,12 +1391,17 @@ class Energy_Storage_Equipment_Cold():
             # 如果负荷率大于等于40%，则随负荷率均匀变化
             if load_ratio >= 0.4:
                 ans = load_ratio * self.chilled_water_flow_rated()
-            else:
+            elif load_ratio < 0.4 and load_ratio >= self.load_min:
                 # 如果负荷率小于40%，则等于32%的流量，不再减少
                 ans = 0.32 * self.chilled_water_flow_rated()
+            else:
+                ans = 0
         else:
             # 如果冷冻水泵定频，始终等于最大流量
-            ans= self.chilled_water_flow_rated()
+            if load_ratio >= self.load_min:
+                ans= self.chilled_water_flow_rated()
+            else:
+                ans = 0
         #返回结果
         return ans
 
@@ -1317,9 +1450,15 @@ class Energy_Storage_Equipment_Cold():
                             break
                         else:
                             wp_frequency_chilled_water += 1
-
+        # 计算结果
+        if chilled_water_flow > 0:
+            ans_el = chilled_water_pump_power
+            ans_wp = wp_frequency_chilled_water
+        else:
+            ans_el = 0
+            ans_wp = 0
         # 返回总辅助设备耗电功率，某一负荷率下
-        return chilled_water_pump_power, wp_frequency_chilled_water
+        return ans_el, ans_wp
 
 
 class Energy_Storage_Equipment_Heat():
@@ -1404,9 +1543,14 @@ class Energy_Storage_Equipment_Heat():
                             break
                         else:
                             wp_frequency_heating_water += 1
-
+        if heating_water_flow > 0:
+            ans_el = heating_water_pump_power
+            ans_wp = wp_frequency_heating_water
+        else:
+            ans_el = 0
+            ans_wp = 0
         # 返回总辅助设备耗电功率，某一负荷率下
-        return heating_water_pump_power, wp_frequency_heating_water
+        return ans_el, ans_wp
 
 
 class Water_Pump():

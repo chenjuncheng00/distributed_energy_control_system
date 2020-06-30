@@ -279,7 +279,7 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
                                    ice1_natural_gas_consumption, ice1_power_consumption, ice1_electrical_income,
                                    ice1_electrical_cost)
         # 溴化锂1
-        lb1_transition = Lithium_Bromide_Transition(ice1_residual_heat_power, lb1_wp_hot_water, gc)
+        lb1_transition = Lithium_Bromide_Transition(ice1_residual_heat_power, lb1_wp_hot_water, 0.5, gc)
         lb1_cold_heat_out = 0
         lb1_wp_heat_chilled_water_frequency = 0
         lb1_wp_cooling_water_frequency = 0
@@ -376,7 +376,7 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
                                    ice2_natural_gas_consumption, ice2_power_consumption, ice2_electrical_income,
                                    ice2_electrical_cost)
         # 溴化锂2
-        lb2_transition = Lithium_Bromide_Transition(ice2_residual_heat_power, lb2_wp_hot_water, gc)
+        lb2_transition = Lithium_Bromide_Transition(ice2_residual_heat_power, lb2_wp_hot_water, 0.5, gc)
         lb2_cold_heat_out = 0
         lb2_wp_heat_chilled_water_frequency = 0
         lb2_wp_cooling_water_frequency = 0

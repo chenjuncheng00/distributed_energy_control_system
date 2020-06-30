@@ -66,7 +66,7 @@ def triple_supply_in_out_cold(load_ratio_ice, hot_water_load, ice, gc, wp_coolin
     # 内燃机余热功率
     residual_heat_power = internal_combustion_engine_function(load_ratio_ice, ice)[2]
     # 实例化一个溴化锂对象，制冷季
-    lb_cold = Lithium_Bromide_Cold(residual_heat_power, wp_chilled_water, wp_cooling_water, wp_hot_water, gc)
+    lb_cold = Lithium_Bromide_Cold(residual_heat_power, wp_chilled_water, wp_cooling_water, wp_hot_water, 0.5, gc)
     # 三联供系统冷负荷输出功率
     triple_supply_cold_load_now = lithium_bromide_cold_function(hot_water_load, load_ratio_ice, lb_cold, gc)[0]
     # 溴化锂冷冻水、冷却水流量
@@ -152,7 +152,7 @@ def triple_supply_in_out_heat(load_ratio_ice, hot_water_load, ice, gc, wp_heatin
     # 内燃机余热功率
     residual_heat_power = internal_combustion_engine_function(load_ratio_ice, ice)[2]
     # 实例化一个溴化锂对象
-    lb_heat = Lithium_Bromide_Heat(residual_heat_power, wp_heating_water, wp_hot_water, gc)
+    lb_heat = Lithium_Bromide_Heat(residual_heat_power, wp_heating_water, wp_hot_water, 0.5, gc)
     # 三联供系统热负荷输出功率
     triple_supply_heat_load_now = lithium_bromide_heat_function(hot_water_load, load_ratio_ice, lb_heat, gc)[0]
     # 溴化锂采暖水流量
@@ -217,7 +217,7 @@ def triple_supply_in_out_transition(load_ratio_ice, hot_water_load, ice, gc, wp_
     # 内燃机余热功率
     residual_heat_power = internal_combustion_engine_function(load_ratio_ice, ice)[2]
     # 实例化一个溴化锂对象
-    lb_transition = Lithium_Bromide_Transition(residual_heat_power, wp_hot_water, gc)
+    lb_transition = Lithium_Bromide_Transition(residual_heat_power, wp_hot_water, 0.5, gc)
     # 如果是单元制系统
     # 三联供系统自耗电功率，过渡季
     triple_supply_power_consumption_transition =internal_combustion_engine_cost(total_heat_input, load_ratio_ice, ice)[1] \

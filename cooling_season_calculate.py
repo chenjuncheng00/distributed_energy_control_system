@@ -587,7 +587,7 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
                                    ice1_residual_heat_efficiency, ice1_electrical_power, ice1_residual_heat_power,
                                    ice1_natural_gas_consumption, ice1_power_consumption, ice1_electrical_income, ice1_electrical_cost)
         # 溴化锂1
-        lb1_cold = Lithium_Bromide_Cold(ice1_residual_heat_power, lb1_wp_chilled_water, lb1_wp_cooling_water, lb1_wp_hot_water, gc)
+        lb1_cold = Lithium_Bromide_Cold(ice1_residual_heat_power, lb1_wp_chilled_water, lb1_wp_cooling_water, lb1_wp_hot_water, 0.5, gc)
         lb1_cold_heat_out = lb_cold_load * (ice1_load_ratio/(ice1_load_ratio + ice2_load_ratio))
         lb1_wp_heat_chilled_water_frequency = lbcf(0, ice1_load_ratio, lb1_cold, gc)[5]
         lb1_wp_cooling_water_frequency = lbcf(0, ice1_load_ratio, lb1_cold, gc)[6]
@@ -676,7 +676,7 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
                                    ice2_residual_heat_efficiency, ice2_electrical_power, ice2_residual_heat_power,
                                    ice2_natural_gas_consumption, ice2_power_consumption, ice2_electrical_income, ice2_electrical_cost)
         # 溴化锂2
-        lb2_cold = Lithium_Bromide_Cold(ice2_residual_heat_power, lb2_wp_chilled_water, lb2_wp_cooling_water, lb2_wp_hot_water, gc)
+        lb2_cold = Lithium_Bromide_Cold(ice2_residual_heat_power, lb2_wp_chilled_water, lb2_wp_cooling_water, lb2_wp_hot_water, 0.5, gc)
         lb2_cold_heat_out = lb_cold_load * (ice2_load_ratio / (ice1_load_ratio + ice2_load_ratio))
         lb2_wp_heat_chilled_water_frequency = lbcf(0, ice2_load_ratio, lb2_cold, gc)[5]
         lb2_wp_cooling_water_frequency = lbcf(0, ice2_load_ratio, lb2_cold, gc)[6]
