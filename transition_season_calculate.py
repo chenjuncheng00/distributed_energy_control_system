@@ -303,6 +303,16 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
         lb1_cold_income = 0
         lb1_heat_income = 0
         lb1_hot_water_income = lb1_hot_water_out * gc.hot_water_price
+        # 内燃机运行状态
+        ice1_start_state = True
+        ice1_stop_state = False
+        ice1_fault_state = False
+        # 溴化锂运行状态
+        lb1_cold_state = False
+        lb1_heat_state = False
+        lb1_hot_water_state = True
+        lb1_stop_state = False
+        lb1_fault_state = False
         # 写入数据库
         wtd.write_to_database_lb1(syncbase, True, False, lb1_wp_heat_chilled_water_frequency,
                                   lb1_wp_cooling_water_frequency,
@@ -336,6 +346,16 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
         lb1_hot_water_income = 0
         lb1_chilled_heat_water_flow = 0
         lb1_hot_water_flow = 0
+        # 1#内燃机运行状态
+        ice1_start_state = False
+        ice1_stop_state = True
+        ice1_fault_state = False
+        # 1#溴化锂运行状态
+        lb1_cold_state = False
+        lb1_heat_state = False
+        lb1_hot_water_state = False
+        lb1_stop_state = True
+        lb1_fault_state = False
         # 写入数据库
         wtd.write_to_database_ice1(syncbase, False, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
         wtd.write_to_database_lb1(syncbase, False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
@@ -380,6 +400,16 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
         lb2_cold_income = 0
         lb2_heat_income = 0
         lb2_hot_water_income = lb2_hot_water_out * gc.hot_water_price
+        # 2#内燃机运行状态
+        ice2_start_state = True
+        ice2_stop_state = False
+        ice2_fault_state = False
+        # 2#溴化锂运行状态
+        lb2_cold_state = False
+        lb2_heat_state = False
+        lb2_hot_water_state = True
+        lb2_stop_state = False
+        lb2_fault_state = False
         # 写入数据库
         wtd.write_to_database_lb2(syncbase, True, False, lb2_wp_heat_chilled_water_frequency,
                                   lb2_wp_cooling_water_frequency,
@@ -413,6 +443,16 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
         lb2_hot_water_income = 0
         lb2_chilled_heat_water_flow = 0
         lb2_hot_water_flow = 0
+        # 内燃机运行状态
+        ice2_start_state = False
+        ice2_stop_state = True
+        ice2_fault_state = False
+        # 溴化锂运行状态
+        lb2_cold_state = False
+        lb2_heat_state = False
+        lb2_hot_water_state = False
+        lb2_stop_state = True
+        lb2_fault_state = False
         # 写入数据库
         wtd.write_to_database_ice2(syncbase, False, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
         wtd.write_to_database_lb2(syncbase, False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
@@ -429,6 +469,10 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
         ngb3_natural_gas_consumption = ngbiohw(ngb3_hot_water_out, ngb_hot_water, gc)[1]
         ngb3_income = ngb3_hot_water_out * gc.hot_water_price
         ngb3_cost = ngb3_natural_gas_consumption * gc.natural_gas_price + ngb3_natural_gas_consumption * gc.buy_electricity_price
+        # 天然气热水锅炉运行状态
+        ngb_hot_water_state = True
+        ngb_stop_state = False
+        ngb_fault_state = False
         # 写入数据库
         wtd.write_to_database_ngb3(syncbase, True, False, ngb3_wp_hot_water_frequency,
                                    ngb3_hot_water_out, ngb3_power_consumption, ngb3_hot_water_flow,
@@ -442,6 +486,10 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
         ngb3_cost = 0
         ngb3_hot_water_out = 0
         ngb3_hot_water_flow = 0
+        # 天然气热水锅炉运行状态
+        ngb_hot_water_state = False
+        ngb_stop_state = True
+        ngb_fault_state = False
         # 写入数据库
         wtd.write_to_database_ngb3(syncbase, False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
@@ -588,3 +636,70 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
                                        cc2_chilled_water_supply_temperature, cc3_chilled_water_supply_temperature, cc4_chilled_water_supply_temperature,
                                        chp1_heat_water_supply_temperature, chp2_heat_water_supply_temperature, ashp1_water_supply_temperature,
                                        ashp2_water_supply_temperature, ashp3_water_supply_temperature, ashp4_water_supply_temperature, ese_water_supply_temperature)
+
+    # 写入设备运行状态
+    cc1_cold_state = False
+    cc1_stop_state = True
+    cc1_fault_state = False
+    cc2_cold_state = False
+    cc2_stop_state = True
+    cc2_fault_state = False
+    chp1_cold_state = False
+    chp1_heat_state = False
+    chp1_stop_state = True
+    chp1_fault_state = False
+    chp2_cold_state = False
+    chp2_heat_state = False
+    chp2_stop_state = True
+    chp2_fault_state = False
+    ashp1_cold_state = False
+    ashp1_heat_state = False
+    ashp1_stop_state = True
+    ashp1_fault_state = False
+    ashp2_cold_state = False
+    ashp2_heat_state = False
+    ashp2_stop_state = True
+    ashp2_fault_state = False
+    ashp3_cold_state = False
+    ashp3_heat_state = False
+    ashp3_stop_state = True
+    ashp3_fault_state = False
+    ashp4_cold_state = False
+    ashp4_heat_state = False
+    ashp4_stop_state = True
+    ashp4_fault_state = False
+    ese_cold_out_state = False
+    ese_heat_out_state = False
+    ese_cold_in_state = False
+    ese_heat_in_state = False
+    ese_stop_state = True
+    ese_fault_state = False
+    photovoltaic_start_state = False
+    photovoltaic_stop_state = True
+    photovoltaic_fault_state = False
+    wind_start_state = False
+    wind_stop_state = True
+    wind_fault_state = False
+    cdz_start_state = False
+    cdz_stop_state = True
+    cdz_fault_state = False
+    accumulator_electricity_out_state = False
+    accumulator_electricity_in_state = False
+    accumulator_stop_state = True
+    accumulator_fault_state = False
+    lamp_start_state = False
+    lamp_stop_state = True
+    lamp_fault_state = False
+    # 写入数据库
+    wtd.write_to_database_equipment_state(syncbase, ice1_start_state, ice1_stop_state, ice1_fault_state, ice2_start_state, ice2_stop_state, ice2_fault_state,
+                                      lb1_cold_state, lb1_heat_state, lb1_hot_water_state, lb1_stop_state, lb1_fault_state, lb2_cold_state,
+                                      lb2_heat_state, lb2_hot_water_state, lb2_stop_state, lb2_fault_state, cc1_cold_state, cc1_stop_state, cc1_fault_state,
+                                      cc2_cold_state, cc2_stop_state, cc2_fault_state, chp1_cold_state, chp1_heat_state, chp1_stop_state, chp1_fault_state,
+                                      chp2_cold_state, chp2_heat_state, chp2_stop_state, chp2_fault_state, ashp1_cold_state, ashp1_heat_state, ashp1_stop_state,
+                                      ashp1_fault_state, ashp2_cold_state, ashp2_heat_state, ashp2_stop_state, ashp2_fault_state, ashp3_cold_state,
+                                      ashp3_heat_state, ashp3_stop_state, ashp3_fault_state, ashp4_cold_state, ashp4_heat_state, ashp4_stop_state, ashp4_fault_state,
+                                      ese_cold_out_state, ese_heat_out_state, ese_cold_in_state, ese_heat_in_state, ese_stop_state, ese_fault_state,
+                                      ngb_hot_water_state, ngb_stop_state, ngb_fault_state, photovoltaic_start_state, photovoltaic_stop_state, photovoltaic_fault_state,
+                                      wind_start_state, wind_stop_state, wind_fault_state, cdz_start_state, cdz_stop_state, cdz_fault_state,
+                                      accumulator_electricity_out_state, accumulator_electricity_in_state, accumulator_stop_state, accumulator_fault_state,
+                                      lamp_start_state, lamp_stop_state, lamp_fault_state)

@@ -609,6 +609,16 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         lb1_cold_income = lb1_cold_heat_out * gc.cooling_price
         lb1_heat_income = 0
         lb1_hot_water_income = 0
+        # 内燃机运行状态
+        ice1_start_state = True
+        ice1_stop_state = False
+        ice1_fault_state = False
+        # 溴化锂运行状态
+        lb1_cold_state = True
+        lb1_heat_state = False
+        lb1_hot_water_state = False
+        lb1_stop_state = False
+        lb1_fault_state = False
         # 写入数据库
         wtd.write_to_database_lb1(syncbase, True, False, lb1_wp_heat_chilled_water_frequency, lb1_wp_cooling_water_frequency,
                           lb1_cold_heat_out, lb1_power_consumption, lb1_chilled_heat_water_flow, lb1_cooling_water_flow,
@@ -637,6 +647,16 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         lb1_hot_water_income = 0
         lb1_chilled_heat_water_flow = 0
         lb1_hot_water_flow = 0
+        # 1#内燃机运行状态
+        ice1_start_state = False
+        ice1_stop_state = True
+        ice1_fault_state = False
+        # 1#溴化锂运行状态
+        lb1_cold_state = False
+        lb1_heat_state = False
+        lb1_hot_water_state = False
+        lb1_stop_state = True
+        lb1_fault_state = False
         # 写入数据库
         wtd.write_to_database_ice1(syncbase, False, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
         wtd.write_to_database_lb1(syncbase, False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
@@ -678,6 +698,16 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         lb2_cold_income = lb2_cold_heat_out * gc.cooling_price
         lb2_heat_income = 0
         lb2_hot_water_income = 0
+        # 2#内燃机运行状态
+        ice2_start_state = True
+        ice2_stop_state = False
+        ice2_fault_state = False
+        # 2#溴化锂运行状态
+        lb2_cold_state = True
+        lb2_heat_state = False
+        lb2_hot_water_state = False
+        lb2_stop_state = False
+        lb2_fault_state = False
         # 写入数据库
         wtd.write_to_database_lb2(syncbase, True, False, lb2_wp_heat_chilled_water_frequency, lb2_wp_cooling_water_frequency,
                                   lb2_cold_heat_out, lb2_power_consumption, lb2_chilled_heat_water_flow, lb2_cooling_water_flow,
@@ -707,6 +737,16 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         lb2_hot_water_income = 0
         lb2_chilled_heat_water_flow = 0
         lb2_hot_water_flow = 0
+        # 内燃机运行状态
+        ice2_start_state = False
+        ice2_stop_state = True
+        ice2_fault_state = False
+        # 溴化锂运行状态
+        lb2_cold_state = False
+        lb2_heat_state = False
+        lb2_hot_water_state = False
+        lb2_stop_state = True
+        lb2_fault_state = False
         # 写入数据库
         wtd.write_to_database_ice2(syncbase, False, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
         wtd.write_to_database_lb2(syncbase, False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
@@ -728,6 +768,10 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         cc1_cop = cc1.centrifugal_chiller_cop(cc1_load_ratio, cc1_chilled_water_temperature, cc1_cooling_water_temperature)
         cc1_income = cc1_cold_out * gc.cooling_price
         cc1_cost = ccc(cc1, gc, cc1_load_ratio)[0]
+        # #1离心式冷水机运行状态
+        cc1_cold_state = True
+        cc1_stop_state = False
+        cc1_fault_state = False
         # 写入数据库
         wtd.write_to_database_cc1(syncbase, False, False, True, cc1_wp_chilled_water_frequency, cc1_wp_cooling_water_frequency,
                           cc1_cold_out, cc1_power_consumption, cc1_chilled_water_flow, cc1_cooling_water_flow, cc1_wp_chilled_water_power_consumption,
@@ -739,6 +783,10 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         cc1_cost = 0
         cc1_cold_out = 0
         cc1_chilled_water_flow = 0
+        # #1离心式冷水机运行状态
+        cc1_cold_state = False
+        cc1_stop_state = True
+        cc1_fault_state = False
         # 写入数据库
         wtd.write_to_database_cc1(syncbase, True, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
@@ -759,6 +807,10 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         cc2_cop = cc2.centrifugal_chiller_cop(cc2_load_ratio, cc2_chilled_water_temperature, cc2_cooling_water_temperature)
         cc2_income = cc2_cold_out * gc.cooling_price
         cc2_cost = ccc(cc2, gc, cc2_load_ratio)[0]
+        # #2离心式冷水机运行状态
+        cc2_cold_state = True
+        cc2_stop_state = False
+        cc2_fault_state = False
         # 写入数据库
         wtd.write_to_database_cc2(syncbase, False, False, True, cc2_wp_chilled_water_frequency,
                                   cc2_wp_cooling_water_frequency,
@@ -773,6 +825,10 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         cc2_cost = 0
         cc2_cold_out = 0
         cc2_chilled_water_flow = 0
+        # #2离心式冷水机运行状态
+        cc2_cold_state = False
+        cc2_stop_state = True
+        cc2_fault_state = False
         # 写入数据库
         wtd.write_to_database_cc2(syncbase, True, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
@@ -793,6 +849,11 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         cc3_cop = cc3.centrifugal_chiller_cop(cc3_load_ratio, cc3_chilled_water_temperature, cc3_cooling_water_temperature)
         cc3_income = cc3_cold_out * gc.cooling_price
         cc3_cost = ccc(cc3, gc, cc3_load_ratio)[0]
+        # #3离心式冷水机运行状态(#1离心式热泵制冷)
+        chp1_cold_state = True
+        chp1_heat_state = False
+        chp1_stop_state = False
+        chp1_fault_state = False
         # 写入数据库
         wtd.write_to_database_cc3(syncbase, False, False, True, cc3_wp_chilled_water_frequency,
                                   cc3_wp_cooling_water_frequency,
@@ -807,6 +868,11 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         cc3_cost = 0
         cc3_cold_out = 0
         cc3_chilled_water_flow = 0
+        # #3离心式冷水机运行状态(#1离心式热泵制冷)
+        chp1_cold_state = False
+        chp1_heat_state = False
+        chp1_stop_state = True
+        chp1_fault_state = False
         # 写入数据库
         wtd.write_to_database_cc3(syncbase, True, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
@@ -827,6 +893,11 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         cc4_cop = cc4.centrifugal_chiller_cop(cc4_load_ratio, cc4_chilled_water_temperature, cc4_cooling_water_temperature)
         cc4_income = cc4_cold_out * gc.cooling_price
         cc4_cost = ccc(cc4, gc, cc4_load_ratio)[0]
+        # #4离心式冷水机运行状态(#2离心式热泵制冷)
+        chp2_cold_state = True
+        chp2_heat_state = False
+        chp2_stop_state = False
+        chp2_fault_state = False
         # 写入数据库
         wtd.write_to_database_cc4(syncbase, False, False, True, cc4_wp_chilled_water_frequency,
                                   cc4_wp_cooling_water_frequency,
@@ -841,6 +912,11 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         cc4_cost = 0
         cc4_cold_out = 0
         cc4_chilled_water_flow = 0
+        # #4离心式冷水机运行状态(#2离心式热泵制冷)
+        chp2_cold_state = False
+        chp2_heat_state = False
+        chp2_stop_state = True
+        chp2_fault_state = False
         # 写入数据库
         wtd.write_to_database_cc4(syncbase, True, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
@@ -860,6 +936,11 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         ashp1_cold_income = ashp1_cold_out * gc.cooling_price
         ashp1_cold_cost = ashpcc(ashpc1, gc, ashpc1_load_ratio)[0]
         ashp1_heat_cost = 0
+        # #1空气源热泵运行状态
+        ashp1_cold_state =True
+        ashp1_heat_state = False
+        ashp1_stop_state = False
+        ashp1_fault_state = False
         wtd.write_to_database_ashp1(syncbase, False, False, True, ashp1_wp_water_frequency,
                                     ashp1_cold_out, ashp1_power_consumption, ashp1_chilled_heat_water_flow,
                                     ashp1_wp_power_consumption, ashp1_fan_power_consumption, ashp1_cold_cop, ashp1_heat_cop, ashp1_cold_income,
@@ -873,6 +954,11 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         ashp1_heat_cost = 0
         ashp1_cold_out = 0
         ashp1_chilled_heat_water_flow = 0
+        # #1空气源热泵运行状态
+        ashp1_cold_state = False
+        ashp1_heat_state = False
+        ashp1_stop_state = True
+        ashp1_fault_state = False
         # 写入数据库
         wtd.write_to_database_ashp1(syncbase, True, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
@@ -892,6 +978,11 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         ashp2_cold_income = ashp2_cold_out * gc.cooling_price
         ashp2_cold_cost = ashpcc(ashpc2, gc, ashpc2_load_ratio)[0]
         ashp2_heat_cost = 0
+        # #2空气源热泵运行状态
+        ashp2_cold_state = True
+        ashp2_heat_state = False
+        ashp2_stop_state = False
+        ashp2_fault_state = False
         wtd.write_to_database_ashp2(syncbase, False, False, True, ashp2_wp_water_frequency,
                                     ashp2_cold_out, ashp2_power_consumption, ashp2_chilled_heat_water_flow,
                                     ashp2_wp_power_consumption, ashp2_fan_power_consumption, ashp2_cold_cop,
@@ -905,6 +996,11 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         ashp2_heat_cost = 0
         ashp2_cold_out = 0
         ashp2_chilled_heat_water_flow = 0
+        # #2空气源热泵运行状态
+        ashp2_cold_state = False
+        ashp2_heat_state = False
+        ashp2_stop_state = True
+        ashp2_fault_state = False
         # 写入数据库
         wtd.write_to_database_ashp2(syncbase, True, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
@@ -924,6 +1020,11 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         ashp3_cold_income = ashp3_cold_out * gc.cooling_price
         ashp3_cold_cost = ashpcc(ashpc3, gc, ashpc3_load_ratio)[0]
         ashp3_heat_cost = 0
+        # #3空气源热泵运行状态
+        ashp3_cold_state = True
+        ashp3_heat_state = False
+        ashp3_stop_state = False
+        ashp3_fault_state = False
         wtd.write_to_database_ashp3(syncbase, False, False, True, ashp3_wp_water_frequency,
                                     ashp3_cold_out, ashp3_power_consumption, ashp3_chilled_heat_water_flow,
                                     ashp3_wp_power_consumption, ashp3_fan_power_consumption, ashp3_cold_cop, ashp3_heat_cop,
@@ -937,6 +1038,11 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         ashp3_heat_cost = 0
         ashp3_cold_out = 0
         ashp3_chilled_heat_water_flow = 0
+        # #3空气源热泵运行状态
+        ashp3_cold_state = False
+        ashp3_heat_state = False
+        ashp3_stop_state = True
+        ashp3_fault_state = False
         # 写入数据库
         wtd.write_to_database_ashp3(syncbase, True, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
@@ -956,6 +1062,11 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         ashp4_cold_income = ashp4_cold_out * gc.cooling_price
         ashp4_cold_cost = ashpcc(ashpc4, gc, ashpc4_load_ratio)[0]
         ashp4_heat_cost = 0
+        # #4空气源热泵运行状态
+        ashp4_cold_state = True
+        ashp4_heat_state = False
+        ashp4_stop_state = False
+        ashp4_fault_state = False
         wtd.write_to_database_ashp4(syncbase, False, False, True, ashp4_wp_water_frequency,
                                     ashp4_cold_out, ashp4_power_consumption, ashp4_chilled_heat_water_flow,
                                     ashp4_wp_power_consumption, ashp4_fan_power_consumption, ashp4_cold_cop,
@@ -969,6 +1080,11 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         ashp4_heat_cost = 0
         ashp4_cold_out = 0
         ashp4_chilled_heat_water_flow = 0
+        # #4空气源热泵运行状态
+        ashp4_cold_state = False
+        ashp4_heat_state = False
+        ashp4_stop_state = True
+        ashp4_fault_state = False
         # 写入数据库
         wtd.write_to_database_ashp4(syncbase, True, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
@@ -980,14 +1096,36 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         if esec_cold_load_out > 0:
             ese_proportion_in = 0
             ese_proportion_out = esec_cold_load_out / station_cold_out_all
+            # 蓄冷蓄热水罐运行状态
+            ese_cold_out_state = True
+            ese_heat_out_state = False
+            ese_cold_in_state = False
+            ese_heat_in_state = False
+            ese_stop_state = False
+            ese_fault_state = False
         else:
             ese_proportion_in = abs(esec_cold_load_out /(station_cold_out_all - esec_cold_load_out))
             ese_proportion_out = 0
+            # 蓄冷蓄热水罐运行状态
+            ese_cold_out_state = False
+            ese_heat_out_state = False
+            ese_cold_in_state = True
+            ese_heat_in_state = False
+            ese_stop_state = False
+            ese_fault_state = False
             # 写入数据库
         wtd.write_to_database_ese(syncbase, ese_cold_heat_out, ese_residual_storage_energy, ese_cost, ese_proportion_in, ese_proportion_out)
     else:
         ese_cold_heat_out = 0
         ese_residual_storage_energy = esecsrr()[0] + esecsrr()[1] + esecsrr()[2]
+        # 蓄冷蓄热水罐运行状态
+        ese_cold_out_state = False
+        ese_heat_out_state = False
+        ese_cold_in_state = False
+        ese_heat_in_state = False
+        ese_stop_state = True
+        ese_fault_state = False
+        # 写入数据库
         wtd.write_to_database_ese(syncbase, 0, ese_residual_storage_energy, 0, 0, 0)
 
     # 蓄能水罐水泵1
@@ -1044,6 +1182,10 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         ngb3_natural_gas_consumption = ngbiohw(ngb3_hot_water_out, ngb_hot_water, gc)[1]
         ngb3_income = ngb3_hot_water_out * gc.hot_water_price
         ngb3_cost = ngb3_natural_gas_consumption * gc.natural_gas_price + ngb3_natural_gas_consumption * gc.buy_electricity_price
+        # 天然气热水锅炉运行状态
+        ngb_hot_water_state = True
+        ngb_stop_state = False
+        ngb_fault_state = False
         # 写入数据库
         wtd.write_to_database_ngb3(syncbase, True, False, ngb3_wp_hot_water_frequency,
                                ngb3_hot_water_out, ngb3_power_consumption, ngb3_hot_water_flow,
@@ -1057,6 +1199,10 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         ngb3_cost = 0
         ngb3_hot_water_out = 0
         ngb3_hot_water_flow = 0
+        # 天然气热水锅炉运行状态
+        ngb_hot_water_state = False
+        ngb_stop_state = True
+        ngb_fault_state = False
         # 写入数据库
         wtd.write_to_database_ngb3(syncbase, False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
@@ -1245,3 +1391,34 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
                                        cc2_chilled_water_supply_temperature, cc3_chilled_water_supply_temperature, cc4_chilled_water_supply_temperature,
                                        chp1_heat_water_supply_temperature, chp2_heat_water_supply_temperature, ashp1_water_supply_temperature,
                                        ashp2_water_supply_temperature, ashp3_water_supply_temperature, ashp4_water_supply_temperature, ese_water_supply_temperature)
+
+    # 写入设备运行状态
+    photovoltaic_start_state = False
+    photovoltaic_stop_state = True
+    photovoltaic_fault_state = False
+    wind_start_state = False
+    wind_stop_state = True
+    wind_fault_state = False
+    cdz_start_state = False
+    cdz_stop_state = True
+    cdz_fault_state = False
+    accumulator_electricity_out_state = False
+    accumulator_electricity_in_state = False
+    accumulator_stop_state = True
+    accumulator_fault_state = False
+    lamp_start_state = False
+    lamp_stop_state = True
+    lamp_fault_state = False
+    # 写入数据库
+    wtd.write_to_database_equipment_state(syncbase, ice1_start_state, ice1_stop_state, ice1_fault_state, ice2_start_state, ice2_stop_state, ice2_fault_state,
+                                      lb1_cold_state, lb1_heat_state, lb1_hot_water_state, lb1_stop_state, lb1_fault_state, lb2_cold_state,
+                                      lb2_heat_state, lb2_hot_water_state, lb2_stop_state, lb2_fault_state, cc1_cold_state, cc1_stop_state, cc1_fault_state,
+                                      cc2_cold_state, cc2_stop_state, cc2_fault_state, chp1_cold_state, chp1_heat_state, chp1_stop_state, chp1_fault_state,
+                                      chp2_cold_state, chp2_heat_state, chp2_stop_state, chp2_fault_state, ashp1_cold_state, ashp1_heat_state, ashp1_stop_state,
+                                      ashp1_fault_state, ashp2_cold_state, ashp2_heat_state, ashp2_stop_state, ashp2_fault_state, ashp3_cold_state,
+                                      ashp3_heat_state, ashp3_stop_state, ashp3_fault_state, ashp4_cold_state, ashp4_heat_state, ashp4_stop_state, ashp4_fault_state,
+                                      ese_cold_out_state, ese_heat_out_state, ese_cold_in_state, ese_heat_in_state, ese_stop_state, ese_fault_state,
+                                      ngb_hot_water_state, ngb_stop_state, ngb_fault_state, photovoltaic_start_state, photovoltaic_stop_state, photovoltaic_fault_state,
+                                      wind_start_state, wind_stop_state, wind_fault_state, cdz_start_state, cdz_stop_state, cdz_fault_state,
+                                      accumulator_electricity_out_state, accumulator_electricity_in_state, accumulator_stop_state, accumulator_fault_state,
+                                      lamp_start_state, lamp_stop_state, lamp_fault_state)

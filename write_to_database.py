@@ -1083,3 +1083,114 @@ def write_to_database_temperature_flow(syncbase, chilled_water_supply_flow_total
     # 报错
     if state1 == False:
         print("温度和流量数据写入数据库错误！")
+
+def write_to_database_equipment_state(syncbase, ice1_start_state, ice1_stop_state, ice1_fault_state, ice2_start_state, ice2_stop_state, ice2_fault_state,
+                                      lb1_cold_state, lb1_heat_state, lb1_hot_water_state, lb1_stop_state, lb1_fault_state, lb2_cold_state,
+                                      lb2_heat_state, lb2_hot_water_state, lb2_stop_state, lb2_fault_state, cc1_cold_state, cc1_stop_state, cc1_fault_state,
+                                      cc2_cold_state, cc2_stop_state, cc2_fault_state, chp1_cold_state, chp1_heat_state, chp1_stop_state, chp1_fault_state,
+                                      chp2_cold_state, chp2_heat_state, chp2_stop_state, chp2_fault_state, ashp1_cold_state, ashp1_heat_state, ashp1_stop_state,
+                                      ashp1_fault_state, ashp2_cold_state, ashp2_heat_state, ashp2_stop_state, ashp2_fault_state, ashp3_cold_state,
+                                      ashp3_heat_state, ashp3_stop_state, ashp3_fault_state, ashp4_cold_state, ashp4_heat_state, ashp4_stop_state, ashp4_fault_state,
+                                      ese_cold_out_state, ese_heat_out_state, ese_cold_in_state, ese_heat_in_state, ese_stop_state, ese_fault_state,
+                                      ngb_hot_water_state, ngb_stop_state, ngb_fault_state, photovoltaic_start_state, photovoltaic_stop_state, photovoltaic_fault_state,
+                                      wind_start_state, wind_stop_state, wind_fault_state, cdz_start_state, cdz_stop_state, cdz_fault_state,
+                                      accumulator_electricity_out_state, accumulator_electricity_in_state, accumulator_stop_state, accumulator_fault_state,
+                                      lamp_start_state, lamp_stop_state, lamp_fault_state):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入设备的运行状态
+
+    # #1内燃机远程启动状态
+    # #1内燃机远程停机状态
+    # #1内燃机故障状态
+    # #2内燃机远程启动状态
+    # #2内燃机远程停机状态
+    # #2内燃机故障状态
+    # #1溴化锂制冷状态
+    # #1溴化锂制热状态
+    # #1溴化锂制热水状态
+    # #1溴化锂停机状态
+    # #1溴化锂故障状态
+    # #2溴化锂制冷状态
+    # #2溴化锂制热状态
+    # #2溴化锂制热水状态
+    # #2溴化锂停机状态
+    # #2溴化锂故障状态
+    # #1离心式冷水机制冷状态
+    # #1离心式冷水机停机状态
+    # #1离心式冷水机故障状态
+    # #2离心式冷水机制冷状态
+    # #2离心式冷水机停机状态
+    # #2离心式冷水机故障状态
+    # #1离心式热泵制冷状态
+    # #1离心式热泵制热状态
+    # #1离心式热泵停机状态
+    # #1离心式热泵故障状态
+    # #2离心式热泵制冷状态
+    # #2离心式热泵制热状态
+    # #2离心式热泵停机状态
+    # #2离心式热泵故障状态
+    # #1空气源热泵制冷状态
+    # #1空气源热泵制热状态
+    # #1空气源热泵停机状态
+    # #1空气源热泵故障状态
+    # #2空气源热泵制冷状态
+    # #2空气源热泵制热状态
+    # #2空气源热泵停机状态
+    # #2空气源热泵故障状态
+    # #3空气源热泵制冷状态
+    # #3空气源热泵制热状态
+    # #3空气源热泵停机状态
+    # #3空气源热泵故障状态
+    # #4空气源热泵制冷状态
+    # #4空气源热泵制热状态
+    # #4空气源热泵停机状态
+    # #4空气源热泵故障状态
+    # 蓄能水罐制冷状态
+    # 蓄能水罐制热状态
+    # 蓄能水罐蓄冷状态
+    # 蓄能水罐蓄热状态
+    # 蓄能水罐停机状态
+    # 蓄能水罐故障状态
+    # 天然气锅炉制热水状态
+    # 天然气锅炉停机状态
+    # 天然气锅炉故障状态
+    # 光伏发电状态
+    # 光伏停机状态
+    # 光伏故障状态
+    # 风电发电状态
+    # 风电停机状态
+    # 风电故障状态
+    # 充电桩发电状态
+    # 充电桩停机状态
+    # 充电桩故障状态
+    # 蓄电池充电状态
+    # 蓄电池供电状态
+    # 蓄电池停机状态
+    # 蓄电池故障状态
+    # 智慧路灯运行状态
+    # 智慧路灯停机状态
+    # 智慧路灯故障状态
+
+    state1 = syncbase.write_batch_realtime_data_by_name(['ice1_start_state', 'ice1_stop_state', 'ice1_fault_state', 'ice2_start_state', 'ice2_stop_state', 'ice2_fault_state', 'lb1_cold_state', 'lb1_heat_state',
+         'lb1_hot_water_state', 'lb1_stop_state', 'lb1_fault_state', 'lb2_cold_state', 'lb2_heat_state', 'lb2_hot_water_state', 'lb2_stop_state', 'lb2_fault_state',
+         'cc1_cold_state', 'cc1_stop_state', 'cc1_fault_state', 'cc2_cold_state', 'cc2_stop_state', 'cc2_fault_state', 'chp1_cold_state', 'chp1_heat_state', 'chp1_stop_state',
+         'chp1_fault_state', 'chp2_cold_state', 'chp2_heat_state', 'chp2_stop_state', 'chp2_fault_state', 'ashp1_cold_state', 'ashp1_heat_state', 'ashp1_stop_state',
+         'ashp1_fault_state', 'ashp2_cold_state', 'ashp2_heat_state', 'ashp2_stop_state', 'ashp2_fault_state', 'ashp3_cold_state', 'ashp3_heat_state', 'ashp3_stop_state',
+         'ashp3_fault_state', 'ashp4_cold_state', 'ashp4_heat_state', 'ashp4_stop_state', 'ashp4_fault_state', 'ese_cold_out_state', 'ese_heat_out_state', 'ese_cold_in_state',
+         'ese_heat_in_state', 'ese_stop_state', 'ese_fault_state', 'ngb_hot_water_state', 'ngb_stop_state', 'ngb_fault_state', 'photovoltaic_start_state', 'photovoltaic_stop_state',
+         'photovoltaic_fault_state', 'wind_start_state', 'wind_stop_state', 'wind_fault_state', 'cdz_start_state', 'cdz_stop_state', 'cdz_fault_state', 'accumulator_electricity_out_state',
+         'accumulator_electricity_in_state', 'accumulator_stop_state', 'accumulator_fault_state', 'lamp_start_state', 'lamp_stop_state', 'lamp_fault_state'],
+        [ice1_start_state, ice1_stop_state, ice1_fault_state, ice2_start_state, ice2_stop_state, ice2_fault_state, lb1_cold_state, lb1_heat_state,
+         lb1_hot_water_state, lb1_stop_state, lb1_fault_state, lb2_cold_state, lb2_heat_state, lb2_hot_water_state, lb2_stop_state, lb2_fault_state,
+         cc1_cold_state, cc1_stop_state, cc1_fault_state, cc2_cold_state, cc2_stop_state, cc2_fault_state, chp1_cold_state, chp1_heat_state, chp1_stop_state,
+         chp1_fault_state, chp2_cold_state, chp2_heat_state, chp2_stop_state, chp2_fault_state, ashp1_cold_state, ashp1_heat_state, ashp1_stop_state,
+         ashp1_fault_state, ashp2_cold_state, ashp2_heat_state, ashp2_stop_state, ashp2_fault_state, ashp3_cold_state, ashp3_heat_state, ashp3_stop_state,
+         ashp3_fault_state, ashp4_cold_state, ashp4_heat_state, ashp4_stop_state, ashp4_fault_state, ese_cold_out_state, ese_heat_out_state, ese_cold_in_state,
+         ese_heat_in_state, ese_stop_state, ese_fault_state, ngb_hot_water_state, ngb_stop_state, ngb_fault_state, photovoltaic_start_state, photovoltaic_stop_state,
+         photovoltaic_fault_state, wind_start_state, wind_stop_state, wind_fault_state, cdz_start_state, cdz_stop_state, cdz_fault_state, accumulator_electricity_out_state,
+         accumulator_electricity_in_state, accumulator_stop_state, accumulator_fault_state, lamp_start_state, lamp_stop_state, lamp_fault_state]
+        )
+
+    # 报错
+    if state1 == False:
+        print("设备运行状态写入数据库错误！")
