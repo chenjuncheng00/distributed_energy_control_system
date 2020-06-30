@@ -334,6 +334,8 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
         lb1_cold_income = 0
         lb1_heat_income = 0
         lb1_hot_water_income = 0
+        lb1_chilled_heat_water_flow = 0
+        lb1_hot_water_flow = 0
         # 写入数据库
         wtd.write_to_database_ice1(syncbase, False, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
         wtd.write_to_database_lb1(syncbase, False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
@@ -409,6 +411,8 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
         lb2_cold_income = 0
         lb2_heat_income = 0
         lb2_hot_water_income = 0
+        lb2_chilled_heat_water_flow = 0
+        lb2_hot_water_flow = 0
         # 写入数据库
         wtd.write_to_database_ice2(syncbase, False, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
         wtd.write_to_database_lb2(syncbase, False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
@@ -437,6 +441,7 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
         ngb3_income = 0
         ngb3_cost = 0
         ngb3_hot_water_out = 0
+        ngb3_hot_water_flow = 0
         # 写入数据库
         wtd.write_to_database_ngb3(syncbase, False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
@@ -538,3 +543,48 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
     wtd.write_to_database_equipment_efficiency(syncbase, ice_electrical_efficiency, lb_cold_efficiency, lb_heat_efficiency, lb_hot_water_efficiency,
                                            cc_cold_cop, chp_cold_cop, chp_heat_cop, ashp_cold_cop, ashp_heat_cop,
                                            ngb_hot_water_efficiency, photovoltaic_electrical_efficiency, wind_electrical_efficiency)
+
+    # 写入设备冷冻水出水温度和冷水生活热水总流量数据
+    chilled_water_supply_flow_total = 0
+    chilled_water_supply_temperature = 0
+    chilled_water_return_temperature = 0
+    heat_water_supply_flow_total = 0
+    heat_water_supply_temperature = 0
+    heat_water_return_temperature = 0
+    hot_water_supply_flow_total = lb1_hot_water_flow + lb2_hot_water_flow + ngb3_hot_water_flow
+    hot_water_supply_temperature = gc.hot_water_temperature
+    hot_water_return_temperature = gc.hot_water_temperature - gc.hot_water_temperature_difference_rated
+    lb1_heat_chilled_water_supply_temperature = 0
+    lb2_heat_chilled_water_supply_temperature = 0
+    if lb1_hot_water_out > 0:
+        lb1_hot_water_supply_temperature = gc.hot_water_temperature
+    else:
+        lb1_hot_water_supply_temperature = 0
+    if lb2_hot_water_out > 0:
+        lb2_hot_water_supply_temperature = gc.hot_water_temperature
+    else:
+        lb2_hot_water_supply_temperature = 0
+    if ngb3_hot_water_out > 0:
+        ngb3_hot_water_supply_temperature = gc.hot_water_temperature
+    else:
+        ngb3_hot_water_supply_temperature = 0
+    cc1_chilled_water_supply_temperature = 0
+    cc2_chilled_water_supply_temperature = 0
+    cc3_chilled_water_supply_temperature = 0
+    cc4_chilled_water_supply_temperature = 0
+    chp1_heat_water_supply_temperature = 0
+    chp2_heat_water_supply_temperature = 0
+    ashp1_water_supply_temperature = 0
+    ashp2_water_supply_temperature = 0
+    ashp3_water_supply_temperature = 0
+    ashp4_water_supply_temperature = 0
+    ese_water_supply_temperature = 0
+    # 写入数据库
+    wtd.write_to_database_temperature_flow(syncbase, chilled_water_supply_flow_total, chilled_water_supply_temperature, chilled_water_return_temperature,
+                                       heat_water_supply_flow_total, heat_water_supply_temperature, heat_water_return_temperature,
+                                       hot_water_supply_flow_total, hot_water_supply_temperature, hot_water_return_temperature,
+                                       lb1_heat_chilled_water_supply_temperature, lb1_hot_water_supply_temperature, lb2_heat_chilled_water_supply_temperature,
+                                       lb2_hot_water_supply_temperature, ngb3_hot_water_supply_temperature, cc1_chilled_water_supply_temperature,
+                                       cc2_chilled_water_supply_temperature, cc3_chilled_water_supply_temperature, cc4_chilled_water_supply_temperature,
+                                       chp1_heat_water_supply_temperature, chp2_heat_water_supply_temperature, ashp1_water_supply_temperature,
+                                       ashp2_water_supply_temperature, ashp3_water_supply_temperature, ashp4_water_supply_temperature, ese_water_supply_temperature)

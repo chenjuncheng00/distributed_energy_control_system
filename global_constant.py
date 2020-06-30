@@ -30,6 +30,8 @@ class Global_Constant():
         self.heating_water_temperature_difference_rated = 5
         # 离心式热泵低温热源水额定供回水温差
         self.heat_source_water_temperature_difference_rated = 5
+        # 生活热水出水温度额定值
+        self.hot_water_temperature = 85
         # 生活热水额定供回水温差
         self.hot_water_temperature_difference_rated = 20
         # 蓄冷装置蓄冷供冷时的冷冻水供回水温差

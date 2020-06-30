@@ -1023,3 +1023,63 @@ def write_to_database_equipment_efficiency(syncbase, ice_electrical_efficiency, 
     # 报错
     if state1 == False:
         print("设备效率数据写入数据库错误！")
+
+def write_to_database_temperature_flow(syncbase, chilled_water_supply_flow_total, chilled_water_supply_temperature, chilled_water_return_temperature,
+                                       heat_water_supply_flow_total, heat_water_supply_temperature, heat_water_return_temperature,
+                                       hot_water_supply_flow_total, hot_water_supply_temperature, hot_water_return_temperature,
+                                       lb1_heat_chilled_water_supply_temperature, lb1_hot_water_supply_temperature, lb2_heat_chilled_water_supply_temperature,
+                                       lb2_hot_water_supply_temperature, ngb3_hot_water_supply_temperature, cc1_chilled_water_supply_temperature,
+                                       cc2_chilled_water_supply_temperature, cc3_chilled_water_supply_temperature, cc4_chilled_water_supply_temperature,
+                                       chp1_heat_water_supply_temperature, chp2_heat_water_supply_temperature, ashp1_water_supply_temperature,
+                                       ashp2_water_supply_temperature, ashp3_water_supply_temperature, ashp4_water_supply_temperature, ese_water_supply_temperature):
+
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入冷热水温度和水流量数据
+
+    # 冷冻水供水母管流量
+    # 冷冻水供水母管温度
+    # 冷冻水回水母管温度
+    # 采暖水供水母管流量
+    # 采暖水供水母管温度
+    # 采暖水回水母管温度
+    # 生活热水供水母管流量
+    # 生活热水供水母管温度
+    # 生活热水回水母管温度"
+    # #1溴化锂冷/热水温度
+    # #1溴化锂生活热水温度
+    # #2溴化锂冷/热水温度
+    # #2溴化锂生活热水温度
+    # 天然气热水锅炉生活热水温
+    # #1离心式冷水机组供水温度
+    # #2离心式冷水机组供水温度
+    # #3离心式冷水机组供水温度(#1离心式热泵制冷出水温度）
+    # #4离心式冷水机组供水温度(#2离心式热泵制冷出水温度）
+    # #1离心式热泵组供水温度
+    # #1离心式热泵组供水温度
+    # #1空气源热泵供水温度
+    # #2空气源热泵供水温度
+    # #3空气源热泵供水温度
+    # #4空气源热泵供水温度
+    # 蓄能水罐供水母管温度
+
+    state1 = syncbase.write_batch_realtime_data_by_name(
+             ['chilled_water_supply_flow_total', 'chilled_water_supply_temperature', 'chilled_water_return_temperature',
+             'heat_water_supply_flow_total', 'heat_water_supply_temperature', 'heat_water_return_temperature',
+             'hot_water_supply_flow_total', 'hot_water_supply_temperature', 'hot_water_return_temperature',
+             'lb1_heat_chilled_water_supply_temperature', 'lb1_hot_water_supply_temperature', 'lb2_heat_chilled_water_supply_temperature',
+             'lb2_hot_water_supply_temperature', 'ngb3_hot_water_supply_temperature', 'cc1_chilled_water_supply_temperature',
+             'cc2_chilled_water_supply_temperature', 'cc3_chilled_water_supply_temperature', 'cc4_chilled_water_supply_temperature',
+             'chp1_heat_water_supply_temperature', 'chp2_heat_water_supply_temperature', 'ashp1_water_supply_temperature',
+             'ashp2_water_supply_temperature', 'ashp3_water_supply_temperature', 'ashp4_water_supply_temperature', 'ese_water_supply_temperature'],
+             [chilled_water_supply_flow_total, chilled_water_supply_temperature, chilled_water_return_temperature,
+             heat_water_supply_flow_total,heat_water_supply_temperature, heat_water_return_temperature,
+             hot_water_supply_flow_total, hot_water_supply_temperature, hot_water_return_temperature,
+             lb1_heat_chilled_water_supply_temperature, lb1_hot_water_supply_temperature, lb2_heat_chilled_water_supply_temperature,
+             lb2_hot_water_supply_temperature, ngb3_hot_water_supply_temperature, cc1_chilled_water_supply_temperature,
+             cc2_chilled_water_supply_temperature, cc3_chilled_water_supply_temperature, cc4_chilled_water_supply_temperature,
+             chp1_heat_water_supply_temperature, chp2_heat_water_supply_temperature, ashp1_water_supply_temperature,
+             ashp2_water_supply_temperature, ashp3_water_supply_temperature, ashp4_water_supply_temperature, ese_water_supply_temperature])
+
+    # 报错
+    if state1 == False:
+        print("温度和流量数据写入数据库错误！")
