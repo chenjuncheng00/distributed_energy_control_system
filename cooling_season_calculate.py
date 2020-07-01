@@ -1195,6 +1195,7 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
         ngb3_efficiency = 0
         ngb3_natural_gas_consumption = 0
         ngb3_power_consumption = 0
+        ngb3_wp_hot_water_power_consumption = 0
         ngb3_income = 0
         ngb3_cost = 0
         ngb3_hot_water_out = 0
@@ -1210,14 +1211,17 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
     cost_total = station_cost_min
     profit_total = station_profitis_max
     income_total = cost_total + profit_total
-    electricity_out_total = station_electricity_out_all
+    if station_electricity_out_all > 0:
+        electricity_out_total = station_electricity_out_all
+    else:
+        electricity_out_total = 0
     cold_heat_out_total = station_cold_out_all
     hot_water_out_total = lb_hot_water + ngb_hw_hot_water
     natural_gas_consume_total = ice1_natural_gas_consumption + ice2_natural_gas_consumption + ngb3_natural_gas_consumption
     electricity_consume_total = ice1_power_consumption + ice2_power_consumption + lb1_power_consumption + lb2_power_consumption + cc1_power_consumption_total \
                                 + cc2_power_consumption_total + cc3_power_consumption_total + cc4_power_consumption_total + ashp1_power_consumption_total \
                                 + ashp2_power_consumption_total + ashp3_power_consumption_total + ashp4_power_consumption_total + ese1_wp_power_consumption\
-                                + ese2_wp_power_consumption + ese3_wp_power_consumption + ngb3_power_consumption
+                                + ese2_wp_power_consumption + ese3_wp_power_consumption + ngb3_power_consumption + ngb3_wp_hot_water_power_consumption
     if (ice1_natural_gas_consumption + ice2_natural_gas_consumption) > 0:
         comprehensive_energy_utilization = (ice1_electrical_power + ice2_electrical_power + lb1_cold_heat_out + lb2_cold_heat_out) * 3600 \
                                            / ((ice1_natural_gas_consumption + ice2_natural_gas_consumption) * gc.natural_gas_calorific_value)
@@ -1245,7 +1249,10 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
     accumulator_electricity_out_total = 0
     electricity_generation_total = ice1_electrical_power + ice2_electrical_power + photovoltaic_electricity_out_total + wind_electricity_out_total + accumulator_electricity_out_total
     ice_electricity_out_total = ice1_electrical_power + ice2_electrical_power
-    buy_electricity_total = electricity_consume_total - electricity_generation_total
+    if electricity_consume_total - electricity_generation_total > 0:
+        buy_electricity_total = electricity_consume_total - electricity_generation_total
+    else:
+        buy_electricity_total = 0
     lb_cold_out_total = lb1_cold_heat_out + lb2_cold_heat_out
     lb_heat_out_total = 0
     lb_hot_water_out_total = lb1_hot_water_out + lb2_hot_water_out
