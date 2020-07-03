@@ -1,4 +1,5 @@
 import math
+import datetime
 from equipment import Lithium_Bromide_Transition
 from triple_supply_function import triple_supply_transition_function as tstf, triple_supply_in_out_transition as tsiot, lithium_bromide_transition_function as lbtf
 from natural_gas_boiler_funtion import natural_gas_boiler_in_out_hot_water as ngbiohw, natural_gas_boiler_heat_cost as ngbhc
@@ -712,3 +713,27 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
                                       wind_start_state, wind_stop_state, wind_fault_state, cdz_start_state, cdz_stop_state, cdz_fault_state,
                                       accumulator_electricity_out_state, accumulator_electricity_in_state, accumulator_stop_state, accumulator_fault_state,
                                       lamp_start_state, lamp_stop_state, lamp_fault_state)
+
+    wtd.write_to_database_ice_natural_gas_consumption_24(syncbase, datetime.datetime.now(), gc.period)
+    wtd.write_to_database_ngb_natural_gas_consumption_24(syncbase, datetime.datetime.now(), gc.period)
+    wtd.write_to_database_ice_electricity_out_24(syncbase, datetime.datetime.now(), gc.period)
+    wtd.write_to_database_photovoltaic_electricity_out_24(syncbase, datetime.datetime.now(), gc.period)
+    wtd.write_to_database_wind_electricity_out_24(syncbase, datetime.datetime.now(), gc.period)
+    wtd.write_to_database_lb_hot_water_out_24(syncbase, datetime.datetime.now(), gc.period)
+    wtd.write_to_database_ngb_hot_water_out_24(syncbase, datetime.datetime.now(), gc.period)
+    wtd.write_to_database_reduction_in_carbon_emissions_24(syncbase, datetime.datetime.now(), gc.period)
+    wtd.write_to_database_reduction_in_dust_emissions_24(syncbase, datetime.datetime.now(), gc.period)
+    wtd.write_to_database_reduction_in_nitride_emissions_24(syncbase, datetime.datetime.now(), gc.period)
+    wtd.write_to_database_reduction_in_sulfide_emissions_24(syncbase, datetime.datetime.now(), gc.period)
+    wtd.write_to_database_ice_income_total_24(syncbase, datetime.datetime.now(), gc.period)
+    wtd.write_to_database_lb_hot_water_income_total_24(syncbase, datetime.datetime.now(), gc.period)
+    wtd.write_to_database_ngb_hot_water_income_total_24(syncbase, datetime.datetime.now(), gc.period)
+    wtd.write_to_database_photovoltaic_income_total_24(syncbase, datetime.datetime.now(), gc.period)
+    wtd.write_to_database_wind_income_total_24(syncbase, datetime.datetime.now(), gc.period)
+    wtd.write_to_database_lb_hot_water_cost_total_24(syncbase, datetime.datetime.now(), gc.period)
+    wtd.write_to_database_ngb_hot_water_cost_total_24(syncbase, datetime.datetime.now(), gc.period)
+    wtd.write_to_database_ice_electrical_efficiency_24(syncbase, datetime.datetime.now(), gc.period)
+    wtd.write_to_database_lb_hot_water_efficiency_24(syncbase, datetime.datetime.now(), gc.period)
+    wtd.write_to_database_ngb_hot_water_efficiency_24(syncbase, datetime.datetime.now(), gc.period)
+    wtd.write_to_database_photovoltaic_electrical_efficiency_24(syncbase, datetime.datetime.now(), gc.period)
+    wtd.write_to_database_wind_electrical_efficiency_24(syncbase, datetime.datetime.now(), gc.period)

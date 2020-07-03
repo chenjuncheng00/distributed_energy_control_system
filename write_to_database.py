@@ -1,3 +1,4 @@
+from datetime import datetime as dt
 
 def write_to_database_ice1(syncbase, ice1_remote_start, ice1_remote_stop, ice1_black_start, ice1_active_power_set, ice1_reactive_power_set, ice1_power_factor_set,
                            ice1_electrical_efficiency, ice1_residual_heat_efficiency, ice1_electrical_power, ice1_residual_heat_power,
@@ -863,15 +864,15 @@ def write_to_database_ngb3(syncbase, ngb3_remote_start, ngb3_remote_stop, ngb3_w
         print("天然气热水锅炉3写入数据库出错！")
 
 
-def write_to_database_prediction(syncbase, cold_heat_prediction, hot_water_prediction, electricity_prediction):
+def write_to_database_prediction(syncbase, cold_prediction, heat_prediction, hot_water_prediction, electricity_prediction):
     """利用SyncBASE，向数据库中写入数据"""
     # 写入负荷预测数据结果
 
     # 冷热负荷预测值
     # 热水负荷预测值
     # 电负荷预测值
-    state1 = syncbase.write_batch_realtime_data_by_name(['cold_heat_prediction', 'hot_water_prediction', 'electricity_prediction'],
-                                                        [cold_heat_prediction, hot_water_prediction, electricity_prediction])
+    state1 = syncbase.write_batch_realtime_data_by_name(['cold_prediction', 'heat_prediction', 'hot_water_prediction', 'electricity_prediction'],
+                                                        [cold_prediction, heat_prediction, hot_water_prediction, electricity_prediction])
     # 报错
     if state1 == False:
         print("负荷预测数据写入数据库错误！")
@@ -1194,3 +1195,4086 @@ def write_to_database_equipment_state(syncbase, ice1_start_state, ice1_stop_stat
     # 报错
     if state1 == False:
         print("设备运行状态写入数据库错误！")
+
+
+def _print(records):
+    ans = []
+    if isinstance(records, dict):
+        records = records.values()
+    for record in records:
+        if isinstance(record, (list, dict)):
+            _print(record)
+        else:
+            ans.append(record.value)
+    # 返回结果
+    return ans
+
+
+def write_to_database_cold_prediction_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入冷负荷预测24小时折线图的值
+
+    # 获取当前的时间
+    now_year = now.year # 当前的年
+    now_month = now.month # 当前的月
+    now_day = now.day # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute # 当前的分钟
+    now_second = now.second # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('cold_prediction',
+                                                       dt(now_year, now_month, now_day, 0, 0, 0),
+                                                       dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                       period)
+    if state1 == False:
+        print("从数据库读取冷热负荷预测历史数据错误！")
+
+    cold_prediction_0 = _print(records1)[0]
+    cold_prediction_1 = _print(records1)[1]
+    cold_prediction_2 = _print(records1)[2]
+    cold_prediction_3 = _print(records1)[3]
+    cold_prediction_4 = _print(records1)[4]
+    cold_prediction_5 = _print(records1)[5]
+    cold_prediction_6 = _print(records1)[6]
+    cold_prediction_7 = _print(records1)[7]
+    cold_prediction_8 = _print(records1)[8]
+    cold_prediction_9 = _print(records1)[9]
+    cold_prediction_10 = _print(records1)[10]
+    cold_prediction_11 = _print(records1)[11]
+    cold_prediction_12 = _print(records1)[12]
+    cold_prediction_13 = _print(records1)[13]
+    cold_prediction_14 = _print(records1)[14]
+    cold_prediction_15 = _print(records1)[15]
+    cold_prediction_16 = _print(records1)[16]
+    cold_prediction_17 = _print(records1)[17]
+    cold_prediction_18 = _print(records1)[18]
+    cold_prediction_19 = _print(records1)[19]
+    cold_prediction_20 = _print(records1)[20]
+    cold_prediction_21 = _print(records1)[21]
+    cold_prediction_22 = _print(records1)[22]
+    cold_prediction_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['cold_prediction_0', 'cold_prediction_1', 'cold_prediction_2', 'cold_prediction_3', 'cold_prediction_4',
+         'cold_prediction_5', 'cold_prediction_6', 'cold_prediction_7', 'cold_prediction_8', 'cold_prediction_9',
+         'cold_prediction_10', 'cold_prediction_11', 'cold_prediction_12', 'cold_prediction_13', 'cold_prediction_14',
+         'cold_prediction_15', 'cold_prediction_16', 'cold_prediction_17', 'cold_prediction_18', 'cold_prediction_19',
+         'cold_prediction_20', 'cold_prediction_21', 'cold_prediction_22', 'cold_prediction_23'],
+        [cold_prediction_0, cold_prediction_1, cold_prediction_2, cold_prediction_3, cold_prediction_4,
+         cold_prediction_5, cold_prediction_6, cold_prediction_7, cold_prediction_8, cold_prediction_9,
+         cold_prediction_10, cold_prediction_11, cold_prediction_12, cold_prediction_13, cold_prediction_14,
+         cold_prediction_15, cold_prediction_16, cold_prediction_17, cold_prediction_18, cold_prediction_19,
+         cold_prediction_20, cold_prediction_21, cold_prediction_22, cold_prediction_23])
+    # 报错
+    if state2 == False:
+        print("24小时冷热负荷预测数据写入数据库错误！")
+
+
+def write_to_database_cold_actual_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入冷负荷实际值24小时折线图的值
+
+    # 获取当前的时间
+    now_year = now.year # 当前的年
+    now_month = now.month # 当前的月
+    now_day = now.day # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute # 当前的分钟
+    now_second = now.second # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('cold_out_total',
+                                                       dt(now_year, now_month, now_day, 0, 0, 0),
+                                                       dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                       period)
+    if state1 == False:
+        print("从数据库读取冷负荷实际值历史数据错误！")
+
+    cold_actual_0 = _print(records1)[0]
+    cold_actual_1 = _print(records1)[1]
+    cold_actual_2 = _print(records1)[2]
+    cold_actual_3 = _print(records1)[3]
+    cold_actual_4 = _print(records1)[4]
+    cold_actual_5 = _print(records1)[5]
+    cold_actual_6 = _print(records1)[6]
+    cold_actual_7 = _print(records1)[7]
+    cold_actual_8 = _print(records1)[8]
+    cold_actual_9 = _print(records1)[9]
+    cold_actual_10 = _print(records1)[10]
+    cold_actual_11 = _print(records1)[11]
+    cold_actual_12 = _print(records1)[12]
+    cold_actual_13 = _print(records1)[13]
+    cold_actual_14 = _print(records1)[14]
+    cold_actual_15 = _print(records1)[15]
+    cold_actual_16 = _print(records1)[16]
+    cold_actual_17 = _print(records1)[17]
+    cold_actual_18 = _print(records1)[18]
+    cold_actual_19 = _print(records1)[19]
+    cold_actual_20 = _print(records1)[20]
+    cold_actual_21 = _print(records1)[21]
+    cold_actual_22 = _print(records1)[22]
+    cold_actual_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['cold_actual_0', 'cold_actual_1', 'cold_actual_2', 'cold_actual_3', 'cold_actual_4',
+         'cold_actual_5', 'cold_actual_6', 'cold_actual_7', 'cold_actual_8', 'cold_actual_9',
+         'cold_actual_10', 'cold_actual_11', 'cold_actual_12', 'cold_actual_13', 'cold_actual_14',
+         'cold_actual_15', 'cold_actual_16', 'cold_actual_17', 'cold_actual_18', 'cold_actual_19',
+         'cold_actual_20', 'cold_actual_21', 'cold_actual_22', 'cold_actual_23'],
+        [cold_actual_0, cold_actual_1, cold_actual_2, cold_actual_3, cold_actual_4,
+         cold_actual_5, cold_actual_6, cold_actual_7, cold_actual_8, cold_actual_9,
+         cold_actual_10, cold_actual_11, cold_actual_12, cold_actual_13, cold_actual_14,
+         cold_actual_15, cold_actual_16, cold_actual_17, cold_actual_18, cold_actual_19,
+         cold_actual_20, cold_actual_21, cold_actual_22, cold_actual_23])
+    # 报错
+    if state2 == False:
+        print("24小时冷负荷实际值数据写入数据库错误！")
+
+
+def write_to_database_heat_prediction_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入热负荷预测24小时折线图的值
+
+    # 获取当前的时间
+    now_year = now.year # 当前的年
+    now_month = now.month # 当前的月
+    now_day = now.day # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute # 当前的分钟
+    now_second = now.second # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('heat_prediction',
+                                                       dt(now_year, now_month, now_day, 0, 0, 0),
+                                                       dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                       period)
+    if state1 == False:
+        print("从数据库读取热热负荷预测历史数据错误！")
+
+    heat_prediction_0 = _print(records1)[0]
+    heat_prediction_1 = _print(records1)[1]
+    heat_prediction_2 = _print(records1)[2]
+    heat_prediction_3 = _print(records1)[3]
+    heat_prediction_4 = _print(records1)[4]
+    heat_prediction_5 = _print(records1)[5]
+    heat_prediction_6 = _print(records1)[6]
+    heat_prediction_7 = _print(records1)[7]
+    heat_prediction_8 = _print(records1)[8]
+    heat_prediction_9 = _print(records1)[9]
+    heat_prediction_10 = _print(records1)[10]
+    heat_prediction_11 = _print(records1)[11]
+    heat_prediction_12 = _print(records1)[12]
+    heat_prediction_13 = _print(records1)[13]
+    heat_prediction_14 = _print(records1)[14]
+    heat_prediction_15 = _print(records1)[15]
+    heat_prediction_16 = _print(records1)[16]
+    heat_prediction_17 = _print(records1)[17]
+    heat_prediction_18 = _print(records1)[18]
+    heat_prediction_19 = _print(records1)[19]
+    heat_prediction_20 = _print(records1)[20]
+    heat_prediction_21 = _print(records1)[21]
+    heat_prediction_22 = _print(records1)[22]
+    heat_prediction_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['heat_prediction_0', 'heat_prediction_1', 'heat_prediction_2', 'heat_prediction_3', 'heat_prediction_4',
+         'heat_prediction_5', 'heat_prediction_6', 'heat_prediction_7', 'heat_prediction_8', 'heat_prediction_9',
+         'heat_prediction_10', 'heat_prediction_11', 'heat_prediction_12', 'heat_prediction_13', 'heat_prediction_14',
+         'heat_prediction_15', 'heat_prediction_16', 'heat_prediction_17', 'heat_prediction_18', 'heat_prediction_19',
+         'heat_prediction_20', 'heat_prediction_21', 'heat_prediction_22', 'heat_prediction_23'],
+        [heat_prediction_0, heat_prediction_1, heat_prediction_2, heat_prediction_3, heat_prediction_4,
+         heat_prediction_5, heat_prediction_6, heat_prediction_7, heat_prediction_8, heat_prediction_9,
+         heat_prediction_10, heat_prediction_11, heat_prediction_12, heat_prediction_13, heat_prediction_14,
+         heat_prediction_15, heat_prediction_16, heat_prediction_17, heat_prediction_18, heat_prediction_19,
+         heat_prediction_20, heat_prediction_21, heat_prediction_22, heat_prediction_23])
+    # 报错
+    if state2 == False:
+        print("24小时热热负荷预测数据写入数据库错误！")
+
+
+def write_to_database_heat_actual_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入热负荷实际值24小时折线图的值
+
+    # 获取当前的时间
+    now_year = now.year # 当前的年
+    now_month = now.month # 当前的月
+    now_day = now.day # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute # 当前的分钟
+    now_second = now.second # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('heat_out_total',
+                                                       dt(now_year, now_month, now_day, 0, 0, 0),
+                                                       dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                       period)
+    if state1 == False:
+        print("从数据库读取热负荷实际值历史数据错误！")
+
+    heat_actual_0 = _print(records1)[0]
+    heat_actual_1 = _print(records1)[1]
+    heat_actual_2 = _print(records1)[2]
+    heat_actual_3 = _print(records1)[3]
+    heat_actual_4 = _print(records1)[4]
+    heat_actual_5 = _print(records1)[5]
+    heat_actual_6 = _print(records1)[6]
+    heat_actual_7 = _print(records1)[7]
+    heat_actual_8 = _print(records1)[8]
+    heat_actual_9 = _print(records1)[9]
+    heat_actual_10 = _print(records1)[10]
+    heat_actual_11 = _print(records1)[11]
+    heat_actual_12 = _print(records1)[12]
+    heat_actual_13 = _print(records1)[13]
+    heat_actual_14 = _print(records1)[14]
+    heat_actual_15 = _print(records1)[15]
+    heat_actual_16 = _print(records1)[16]
+    heat_actual_17 = _print(records1)[17]
+    heat_actual_18 = _print(records1)[18]
+    heat_actual_19 = _print(records1)[19]
+    heat_actual_20 = _print(records1)[20]
+    heat_actual_21 = _print(records1)[21]
+    heat_actual_22 = _print(records1)[22]
+    heat_actual_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['heat_actual_0', 'heat_actual_1', 'heat_actual_2', 'heat_actual_3', 'heat_actual_4',
+         'heat_actual_5', 'heat_actual_6', 'heat_actual_7', 'heat_actual_8', 'heat_actual_9',
+         'heat_actual_10', 'heat_actual_11', 'heat_actual_12', 'heat_actual_13', 'heat_actual_14',
+         'heat_actual_15', 'heat_actual_16', 'heat_actual_17', 'heat_actual_18', 'heat_actual_19',
+         'heat_actual_20', 'heat_actual_21', 'heat_actual_22', 'heat_actual_23'],
+        [heat_actual_0, heat_actual_1, heat_actual_2, heat_actual_3, heat_actual_4,
+         heat_actual_5, heat_actual_6, heat_actual_7, heat_actual_8, heat_actual_9,
+         heat_actual_10, heat_actual_11, heat_actual_12, heat_actual_13, heat_actual_14,
+         heat_actual_15, heat_actual_16, heat_actual_17, heat_actual_18, heat_actual_19,
+         heat_actual_20, heat_actual_21, heat_actual_22, heat_actual_23])
+    # 报错
+    if state2 == False:
+        print("24小时热负荷实际值数据写入数据库错误！")
+
+
+def write_to_database_hot_water_prediction_actual_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入生活热水负荷预测和实际值24小时折线图的值
+
+    # 生活热水负荷预测值和实际值一样
+
+    # 获取当前的时间
+    now_year = now.year # 当前的年
+    now_month = now.month # 当前的月
+    now_day = now.day # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute # 当前的分钟
+    now_second = now.second # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('hot_water_prediction',
+                                                       dt(now_year, now_month, now_day, 0, 0, 0),
+                                                       dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                       period)
+    if state1 == False:
+        print("从数据库读取生活热水热负荷预测历史数据错误！")
+
+    hot_water_prediction_0 = _print(records1)[0]
+    hot_water_prediction_1 = _print(records1)[1]
+    hot_water_prediction_2 = _print(records1)[2]
+    hot_water_prediction_3 = _print(records1)[3]
+    hot_water_prediction_4 = _print(records1)[4]
+    hot_water_prediction_5 = _print(records1)[5]
+    hot_water_prediction_6 = _print(records1)[6]
+    hot_water_prediction_7 = _print(records1)[7]
+    hot_water_prediction_8 = _print(records1)[8]
+    hot_water_prediction_9 = _print(records1)[9]
+    hot_water_prediction_10 = _print(records1)[10]
+    hot_water_prediction_11 = _print(records1)[11]
+    hot_water_prediction_12 = _print(records1)[12]
+    hot_water_prediction_13 = _print(records1)[13]
+    hot_water_prediction_14 = _print(records1)[14]
+    hot_water_prediction_15 = _print(records1)[15]
+    hot_water_prediction_16 = _print(records1)[16]
+    hot_water_prediction_17 = _print(records1)[17]
+    hot_water_prediction_18 = _print(records1)[18]
+    hot_water_prediction_19 = _print(records1)[19]
+    hot_water_prediction_20 = _print(records1)[20]
+    hot_water_prediction_21 = _print(records1)[21]
+    hot_water_prediction_22 = _print(records1)[22]
+    hot_water_prediction_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['hot_water_prediction_0', 'hot_water_prediction_1', 'hot_water_prediction_2', 'hot_water_prediction_3', 'hot_water_prediction_4',
+         'hot_water_prediction_5', 'hot_water_prediction_6', 'hot_water_prediction_7', 'hot_water_prediction_8', 'hot_water_prediction_9',
+         'hot_water_prediction_10', 'hot_water_prediction_11', 'hot_water_prediction_12', 'hot_water_prediction_13', 'hot_water_prediction_14',
+         'hot_water_prediction_15', 'hot_water_prediction_16', 'hot_water_prediction_17', 'hot_water_prediction_18', 'hot_water_prediction_19',
+         'hot_water_prediction_20', 'hot_water_prediction_21', 'hot_water_prediction_22', 'hot_water_prediction_23'],
+        [hot_water_prediction_0, hot_water_prediction_1, hot_water_prediction_2, hot_water_prediction_3, hot_water_prediction_4,
+         hot_water_prediction_5, hot_water_prediction_6, hot_water_prediction_7, hot_water_prediction_8, hot_water_prediction_9,
+         hot_water_prediction_10, hot_water_prediction_11, hot_water_prediction_12, hot_water_prediction_13, hot_water_prediction_14,
+         hot_water_prediction_15, hot_water_prediction_16, hot_water_prediction_17, hot_water_prediction_18, hot_water_prediction_19,
+         hot_water_prediction_20, hot_water_prediction_21, hot_water_prediction_22, hot_water_prediction_23])
+    # 报错
+    if state2 == False:
+        print("24小时生活热水热负荷预测数据写入数据库错误！")
+
+    hot_water_actual_0 = _print(records1)[0]
+    hot_water_actual_1 = _print(records1)[1]
+    hot_water_actual_2 = _print(records1)[2]
+    hot_water_actual_3 = _print(records1)[3]
+    hot_water_actual_4 = _print(records1)[4]
+    hot_water_actual_5 = _print(records1)[5]
+    hot_water_actual_6 = _print(records1)[6]
+    hot_water_actual_7 = _print(records1)[7]
+    hot_water_actual_8 = _print(records1)[8]
+    hot_water_actual_9 = _print(records1)[9]
+    hot_water_actual_10 = _print(records1)[10]
+    hot_water_actual_11 = _print(records1)[11]
+    hot_water_actual_12 = _print(records1)[12]
+    hot_water_actual_13 = _print(records1)[13]
+    hot_water_actual_14 = _print(records1)[14]
+    hot_water_actual_15 = _print(records1)[15]
+    hot_water_actual_16 = _print(records1)[16]
+    hot_water_actual_17 = _print(records1)[17]
+    hot_water_actual_18 = _print(records1)[18]
+    hot_water_actual_19 = _print(records1)[19]
+    hot_water_actual_20 = _print(records1)[20]
+    hot_water_actual_21 = _print(records1)[21]
+    hot_water_actual_22 = _print(records1)[22]
+    hot_water_actual_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state3 = syncbase.write_batch_realtime_data_by_name(
+        ['hot_water_actual_0', 'hot_water_actual_1', 'hot_water_actual_2', 'hot_water_actual_3', 'hot_water_actual_4',
+         'hot_water_actual_5', 'hot_water_actual_6', 'hot_water_actual_7', 'hot_water_actual_8', 'hot_water_actual_9',
+         'hot_water_actual_10', 'hot_water_actual_11', 'hot_water_actual_12', 'hot_water_actual_13', 'hot_water_actual_14',
+         'hot_water_actual_15', 'hot_water_actual_16', 'hot_water_actual_17', 'hot_water_actual_18', 'hot_water_actual_19',
+         'hot_water_actual_20', 'hot_water_actual_21', 'hot_water_actual_22', 'hot_water_actual_23'],
+        [hot_water_actual_0, hot_water_actual_1, hot_water_actual_2, hot_water_actual_3, hot_water_actual_4,
+         hot_water_actual_5, hot_water_actual_6, hot_water_actual_7, hot_water_actual_8, hot_water_actual_9,
+         hot_water_actual_10, hot_water_actual_11, hot_water_actual_12, hot_water_actual_13, hot_water_actual_14,
+         hot_water_actual_15, hot_water_actual_16, hot_water_actual_17, hot_water_actual_18, hot_water_actual_19,
+         hot_water_actual_20, hot_water_actual_21, hot_water_actual_22, hot_water_actual_23])
+    # 报错
+    if state3 == False:
+        print("24小时生活热水负荷实际值数据写入数据库错误！")
+
+
+def write_to_database_ice_natural_gas_consumption_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入内燃机天然气耗量24小时的值
+
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据（内燃机1）
+    state1, records1 = syncbase.get_history_data_by_name('ice1_natural_gas_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+    if state1 == False:
+        print("从数据库读取内燃机1天然气耗量历史数据错误！")
+
+    # 从数据库读取历史数据（内燃机2）
+    state2, records2 = syncbase.get_history_data_by_name('ice2_natural_gas_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+    if state2 == False:
+        print("从数据库读取内燃机2天然气耗量历史数据错误！")
+
+    ice_natural_gas_consumption_0 = _print(records1)[0] + _print(records2)[0]
+    ice_natural_gas_consumption_1 = _print(records1)[1] + _print(records2)[1]
+    ice_natural_gas_consumption_2 = _print(records1)[2] + _print(records2)[2]
+    ice_natural_gas_consumption_3 = _print(records1)[3] + _print(records2)[3]
+    ice_natural_gas_consumption_4 = _print(records1)[4] + _print(records2)[4]
+    ice_natural_gas_consumption_5 = _print(records1)[5] + _print(records2)[5]
+    ice_natural_gas_consumption_6 = _print(records1)[6] + _print(records2)[6]
+    ice_natural_gas_consumption_7 = _print(records1)[7] + _print(records2)[7]
+    ice_natural_gas_consumption_8 = _print(records1)[8] + _print(records2)[8]
+    ice_natural_gas_consumption_9 = _print(records1)[9] + _print(records2)[9]
+    ice_natural_gas_consumption_10 = _print(records1)[10] + _print(records2)[10]
+    ice_natural_gas_consumption_11 = _print(records1)[11] + _print(records2)[11]
+    ice_natural_gas_consumption_12 = _print(records1)[12] + _print(records2)[12]
+    ice_natural_gas_consumption_13 = _print(records1)[13] + _print(records2)[13]
+    ice_natural_gas_consumption_14 = _print(records1)[14] + _print(records2)[14]
+    ice_natural_gas_consumption_15 = _print(records1)[15] + _print(records2)[15]
+    ice_natural_gas_consumption_16 = _print(records1)[16] + _print(records2)[16]
+    ice_natural_gas_consumption_17 = _print(records1)[17] + _print(records2)[17]
+    ice_natural_gas_consumption_18 = _print(records1)[18] + _print(records2)[18]
+    ice_natural_gas_consumption_19 = _print(records1)[19] + _print(records2)[19]
+    ice_natural_gas_consumption_20 = _print(records1)[20] + _print(records2)[20]
+    ice_natural_gas_consumption_21 = _print(records1)[21] + _print(records2)[21]
+    ice_natural_gas_consumption_22 = _print(records1)[22] + _print(records2)[22]
+    ice_natural_gas_consumption_23 = _print(records1)[23] + _print(records2)[23]
+
+    # 向数据库写入批量数据
+    state3 = syncbase.write_batch_realtime_data_by_name(
+        ['ice_natural_gas_consumption_0', 'ice_natural_gas_consumption_1', 'ice_natural_gas_consumption_2',
+         'ice_natural_gas_consumption_3', 'ice_natural_gas_consumption_4', 'ice_natural_gas_consumption_5',
+         'ice_natural_gas_consumption_6', 'ice_natural_gas_consumption_7', 'ice_natural_gas_consumption_8',
+         'ice_natural_gas_consumption_9', 'ice_natural_gas_consumption_10', 'ice_natural_gas_consumption_11',
+         'ice_natural_gas_consumption_12', 'ice_natural_gas_consumption_13', 'ice_natural_gas_consumption_14',
+         'ice_natural_gas_consumption_15', 'ice_natural_gas_consumption_16', 'ice_natural_gas_consumption_17',
+         'ice_natural_gas_consumption_18', 'ice_natural_gas_consumption_19', 'ice_natural_gas_consumption_20',
+         'ice_natural_gas_consumption_21', 'ice_natural_gas_consumption_22', 'ice_natural_gas_consumption_23'],
+        [ice_natural_gas_consumption_0, ice_natural_gas_consumption_1, ice_natural_gas_consumption_2,
+         ice_natural_gas_consumption_3, ice_natural_gas_consumption_4, ice_natural_gas_consumption_5,
+         ice_natural_gas_consumption_6, ice_natural_gas_consumption_7, ice_natural_gas_consumption_8,
+         ice_natural_gas_consumption_9, ice_natural_gas_consumption_10, ice_natural_gas_consumption_11,
+         ice_natural_gas_consumption_12, ice_natural_gas_consumption_13, ice_natural_gas_consumption_14,
+         ice_natural_gas_consumption_15, ice_natural_gas_consumption_16, ice_natural_gas_consumption_17,
+         ice_natural_gas_consumption_18, ice_natural_gas_consumption_19, ice_natural_gas_consumption_20,
+         ice_natural_gas_consumption_21, ice_natural_gas_consumption_22, ice_natural_gas_consumption_23])
+    # 报错
+    if state3 == False:
+        print("24小时内燃机天然气耗量数据写入数据库错误！")
+
+def write_to_database_ngb_natural_gas_consumption_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入天然气锅炉天然气耗量24小时的值
+
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('ngb3_natural_gas_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    if state1 == False:
+        print("从数据库读取生活热水锅炉天然气耗量历史数据错误！")
+
+    ngb_natural_gas_consumption_0 = _print(records1)[0]
+    ngb_natural_gas_consumption_1 = _print(records1)[1]
+    ngb_natural_gas_consumption_2 = _print(records1)[2]
+    ngb_natural_gas_consumption_3 = _print(records1)[3]
+    ngb_natural_gas_consumption_4 = _print(records1)[4]
+    ngb_natural_gas_consumption_5 = _print(records1)[5]
+    ngb_natural_gas_consumption_6 = _print(records1)[6]
+    ngb_natural_gas_consumption_7 = _print(records1)[7]
+    ngb_natural_gas_consumption_8 = _print(records1)[8]
+    ngb_natural_gas_consumption_9 = _print(records1)[9]
+    ngb_natural_gas_consumption_10 = _print(records1)[10]
+    ngb_natural_gas_consumption_11 = _print(records1)[11]
+    ngb_natural_gas_consumption_12 = _print(records1)[12]
+    ngb_natural_gas_consumption_13 = _print(records1)[13]
+    ngb_natural_gas_consumption_14 = _print(records1)[14]
+    ngb_natural_gas_consumption_15 = _print(records1)[15]
+    ngb_natural_gas_consumption_16 = _print(records1)[16]
+    ngb_natural_gas_consumption_17 = _print(records1)[17]
+    ngb_natural_gas_consumption_18 = _print(records1)[18]
+    ngb_natural_gas_consumption_19 = _print(records1)[19]
+    ngb_natural_gas_consumption_20 = _print(records1)[20]
+    ngb_natural_gas_consumption_21 = _print(records1)[21]
+    ngb_natural_gas_consumption_22 = _print(records1)[22]
+    ngb_natural_gas_consumption_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['ngb_natural_gas_consumption_0', 'ngb_natural_gas_consumption_1', 'ngb_natural_gas_consumption_2', 'ngb_natural_gas_consumption_3',
+         'ngb_natural_gas_consumption_4', 'ngb_natural_gas_consumption_5', 'ngb_natural_gas_consumption_6', 'ngb_natural_gas_consumption_7',
+         'ngb_natural_gas_consumption_8',  'ngb_natural_gas_consumption_9', 'ngb_natural_gas_consumption_10', 'ngb_natural_gas_consumption_11',
+         'ngb_natural_gas_consumption_12', 'ngb_natural_gas_consumption_13', 'ngb_natural_gas_consumption_14', 'ngb_natural_gas_consumption_15',
+         'ngb_natural_gas_consumption_16', 'ngb_natural_gas_consumption_17', 'ngb_natural_gas_consumption_18', 'ngb_natural_gas_consumption_19',
+         'ngb_natural_gas_consumption_20', 'ngb_natural_gas_consumption_21', 'ngb_natural_gas_consumption_22', 'ngb_natural_gas_consumption_23'],
+        [ngb_natural_gas_consumption_0, ngb_natural_gas_consumption_1, ngb_natural_gas_consumption_2, ngb_natural_gas_consumption_3, ngb_natural_gas_consumption_4,
+         ngb_natural_gas_consumption_5, ngb_natural_gas_consumption_6, ngb_natural_gas_consumption_7, ngb_natural_gas_consumption_8, ngb_natural_gas_consumption_9,
+         ngb_natural_gas_consumption_10, ngb_natural_gas_consumption_11, ngb_natural_gas_consumption_12, ngb_natural_gas_consumption_13, ngb_natural_gas_consumption_14,
+         ngb_natural_gas_consumption_15, ngb_natural_gas_consumption_16, ngb_natural_gas_consumption_17, ngb_natural_gas_consumption_18, ngb_natural_gas_consumption_19,
+         ngb_natural_gas_consumption_20, ngb_natural_gas_consumption_21, ngb_natural_gas_consumption_22, ngb_natural_gas_consumption_23])
+
+    # 报错
+    if state2 == False:
+        print("24小时生活热水锅炉天然气耗量数据写入数据库错误！")
+
+
+def write_to_database_cc_electricity_consumption_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入离心式冷水机耗电量24小时的值
+
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('cc1_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state2, records2 = syncbase.get_history_data_by_name('cc1_wp_chilled_water_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute,now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state3, records3 = syncbase.get_history_data_by_name('cc1_wp_cooling_water_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute,now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state4, records4 = syncbase.get_history_data_by_name('cc1_cooling_tower_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state5, records5 = syncbase.get_history_data_by_name('cc2_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state6, records6 = syncbase.get_history_data_by_name('cc2_wp_chilled_water_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute,now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state7, records7 = syncbase.get_history_data_by_name('cc2_wp_cooling_water_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute,now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state8, records8 = syncbase.get_history_data_by_name('cc2_cooling_tower_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    cc_electricity_consumption_0 = _print(records1)[0] +_print(records2)[0] + _print(records3)[0] + _print(records4)[0] \
+                                   + _print(records5)[0]+ _print(records6)[0] + _print(records7)[0] + _print(records8)[0]
+    cc_electricity_consumption_1 = _print(records1)[1] +_print(records2)[1] + _print(records3)[1] + _print(records4)[1] \
+                                   + _print(records5)[1]+ _print(records6)[1] + _print(records7)[1] + _print(records8)[1]
+    cc_electricity_consumption_2 = _print(records1)[2] +_print(records2)[2] + _print(records3)[2] + _print(records4)[2] \
+                                   + _print(records5)[2]+ _print(records6)[2] + _print(records7)[2] + _print(records8)[2]
+    cc_electricity_consumption_3 = _print(records1)[3] +_print(records2)[3] + _print(records3)[3] + _print(records4)[3] \
+                                   + _print(records5)[3]+ _print(records6)[3] + _print(records7)[3] + _print(records8)[3]
+    cc_electricity_consumption_4 = _print(records1)[4] + _print(records2)[4] + _print(records3)[4] + _print(records4)[4] \
+                                   + _print(records5)[4] + _print(records6)[4] + _print(records7)[4] + _print(records8)[4]
+    cc_electricity_consumption_5 = _print(records1)[5] + _print(records2)[5] + _print(records3)[5] + _print(records4)[5] \
+                                   + _print(records5)[5] + _print(records6)[5] + _print(records7)[5] + _print(records8)[5]
+    cc_electricity_consumption_6 = _print(records1)[6] + _print(records2)[6] + _print(records3)[6] + _print(records4)[6] \
+                                   + _print(records5)[6] + _print(records6)[6] + _print(records7)[6] + _print(records8)[6]
+    cc_electricity_consumption_7 = _print(records1)[7] + _print(records2)[7] + _print(records3)[7] + _print(records4)[7] \
+                                   + _print(records5)[7] + _print(records6)[7] + _print(records7)[7] + _print(records8)[7]
+    cc_electricity_consumption_8 = _print(records1)[8] + _print(records2)[8] + _print(records3)[8] + _print(records4)[8] \
+                                   + _print(records5)[8] + _print(records6)[8] + _print(records7)[8] + _print(records8)[8]
+    cc_electricity_consumption_9 = _print(records1)[9] + _print(records2)[9] + _print(records3)[9] + _print(records4)[9] \
+                                   + _print(records5)[9] + _print(records6)[9] + _print(records7)[9] + _print(records8)[9]
+    cc_electricity_consumption_10 = _print(records1)[10] + _print(records2)[10] + _print(records3)[10] + _print(records4)[10] \
+                                    + _print(records5)[10] + _print(records6)[10] + _print(records7)[10] + _print(records8)[10]
+    cc_electricity_consumption_11 = _print(records1)[11] + _print(records2)[11] + _print(records3)[11] + _print(records4)[11] \
+                                    + _print(records5)[11] + _print(records6)[11] + _print(records7)[11] + _print(records8)[11]
+    cc_electricity_consumption_12 = _print(records1)[12] + _print(records2)[12] + _print(records3)[12] + _print(records4)[12] \
+                                    + _print(records5)[12] + _print(records6)[12] + _print(records7)[12] + _print(records8)[12]
+    cc_electricity_consumption_13 = _print(records1)[13] + _print(records2)[13] + _print(records3)[13] + _print(records4)[13] \
+                                    + _print(records5)[13] + _print(records6)[13] + _print(records7)[13] + _print(records8)[13]
+    cc_electricity_consumption_14 = _print(records1)[14] + _print(records2)[14] + _print(records3)[14] + _print(records4)[14] \
+                                    + _print(records5)[14] + _print(records6)[14] + _print(records7)[14] + _print(records8)[14]
+    cc_electricity_consumption_15 = _print(records1)[15] + _print(records2)[15] + _print(records3)[15] + _print(records4)[15] \
+                                   + _print(records5)[15] + _print(records6)[15] + _print(records7)[15] + _print(records8)[15]
+    cc_electricity_consumption_16 = _print(records1)[16] + _print(records2)[16] + _print(records3)[16] + _print(records4)[16] \
+                                    + _print(records5)[16] + _print(records6)[16] + _print(records7)[16] + _print(records8)[16]
+    cc_electricity_consumption_17 = _print(records1)[17] + _print(records2)[17] + _print(records3)[17] + _print(records4)[17] \
+                                    + _print(records5)[17] + _print(records6)[17] + _print(records7)[17] + _print(records8)[17]
+    cc_electricity_consumption_18 = _print(records1)[18] + _print(records2)[18] + _print(records3)[18] + _print(records4)[18] \
+                                    + _print(records5)[18] + _print(records6)[18] + _print(records7)[18] + _print(records8)[18]
+    cc_electricity_consumption_19 = _print(records1)[19] + _print(records2)[19] + _print(records3)[19] + _print(records4)[19] \
+                                    + _print(records5)[19] + _print(records6)[19] + _print(records7)[19] + _print(records8)[19]
+    cc_electricity_consumption_20 = _print(records1)[20] + _print(records2)[20] + _print(records3)[20] + _print(records4)[20] \
+                                    + _print(records5)[20] + _print(records6)[20] + _print(records7)[20] + _print(records8)[20]
+    cc_electricity_consumption_21 = _print(records1)[21] + _print(records2)[21] + _print(records3)[21] + _print(records4)[21] \
+                                    + _print(records5)[21] + _print(records6)[21] + _print(records7)[21] + _print(records8)[21]
+    cc_electricity_consumption_22 = _print(records1)[22] + _print(records2)[22] + _print(records3)[22] + _print(records4)[22] \
+                                    + _print(records5)[22] + _print(records6)[22] + _print(records7)[22] + _print(records8)[22]
+    cc_electricity_consumption_23 = _print(records1)[23] + _print(records2)[23] + _print(records3)[23] + _print(records4)[23] \
+                                    + _print(records5)[23] + _print(records6)[23] + _print(records7)[23] + _print(records8)[23]
+
+    # 向数据库写入批量数据
+    state9 = syncbase.write_batch_realtime_data_by_name(
+        ['cc_electricity_consumption_0', 'cc_electricity_consumption_1', 'cc_electricity_consumption_2', 'cc_electricity_consumption_3',
+         'cc_electricity_consumption_4', 'cc_electricity_consumption_5', 'cc_electricity_consumption_6', 'cc_electricity_consumption_7',
+         'cc_electricity_consumption_8',  'cc_electricity_consumption_9', 'cc_electricity_consumption_10', 'cc_electricity_consumption_11',
+         'cc_electricity_consumption_12', 'cc_electricity_consumption_13', 'cc_electricity_consumption_14', 'cc_electricity_consumption_15',
+         'cc_electricity_consumption_16', 'cc_electricity_consumption_17', 'cc_electricity_consumption_18', 'cc_electricity_consumption_19',
+         'cc_electricity_consumption_20', 'cc_electricity_consumption_21', 'cc_electricity_consumption_22', 'cc_electricity_consumption_23'],
+        [cc_electricity_consumption_0, cc_electricity_consumption_1, cc_electricity_consumption_2, cc_electricity_consumption_3, cc_electricity_consumption_4,
+         cc_electricity_consumption_5, cc_electricity_consumption_6, cc_electricity_consumption_7, cc_electricity_consumption_8, cc_electricity_consumption_9,
+         cc_electricity_consumption_10, cc_electricity_consumption_11, cc_electricity_consumption_12, cc_electricity_consumption_13, cc_electricity_consumption_14,
+         cc_electricity_consumption_15, cc_electricity_consumption_16, cc_electricity_consumption_17, cc_electricity_consumption_18, cc_electricity_consumption_19,
+         cc_electricity_consumption_20, cc_electricity_consumption_21, cc_electricity_consumption_22, cc_electricity_consumption_23])
+
+
+def write_to_database_chp_cold_electricity_consumption_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入离心式热泵制冷耗电量24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('cc3_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state2, records2 = syncbase.get_history_data_by_name('cc3_wp_chilled_water_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state3, records3 = syncbase.get_history_data_by_name('cc3_wp_cooling_water_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state4, records4 = syncbase.get_history_data_by_name('cc3_cooling_tower_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state5, records5 = syncbase.get_history_data_by_name('cc4_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state6, records6 = syncbase.get_history_data_by_name('cc4_wp_chilled_water_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state7, records7 = syncbase.get_history_data_by_name('cc4_wp_cooling_water_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state8, records8 = syncbase.get_history_data_by_name('cc4_cooling_tower_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    chp_electricity_consumption_0 = _print(records1)[0] + _print(records2)[0] + _print(records3)[0] + _print(records4)[0] \
+                                    + _print(records5)[0] + _print(records6)[0] + _print(records7)[0] + _print(records8)[0]
+    chp_electricity_consumption_1 = _print(records1)[1] + _print(records2)[1] + _print(records3)[1] + _print(records4)[1] \
+                                    + _print(records5)[1] + _print(records6)[1] + _print(records7)[1] + _print(records8)[1]
+    chp_electricity_consumption_2 = _print(records1)[2] + _print(records2)[2] + _print(records3)[2] + _print(records4)[2] \
+                                    + _print(records5)[2] + _print(records6)[2] + _print(records7)[2] + _print(records8)[2]
+    chp_electricity_consumption_3 = _print(records1)[3] + _print(records2)[3] + _print(records3)[3] + _print(records4)[3] \
+                                    + _print(records5)[3] + _print(records6)[3] + _print(records7)[3] + _print(records8)[3]
+    chp_electricity_consumption_4 = _print(records1)[4] + _print(records2)[4] + _print(records3)[4] + _print(records4)[4] \
+                                    + _print(records5)[4] + _print(records6)[4] + _print(records7)[4] + _print(records8)[4]
+    chp_electricity_consumption_5 = _print(records1)[5] + _print(records2)[5] + _print(records3)[5] + _print(records4)[5] \
+                                    + _print(records5)[5] + _print(records6)[5] + _print(records7)[5] + _print(records8)[5]
+    chp_electricity_consumption_6 = _print(records1)[6] + _print(records2)[6] + _print(records3)[6] + _print(records4)[6] \
+                                    + _print(records5)[6] + _print(records6)[6] + _print(records7)[6] + _print(records8)[6]
+    chp_electricity_consumption_7 = _print(records1)[7] + _print(records2)[7] + _print(records3)[7] + _print(records4)[7] \
+                                    + _print(records5)[7] + _print(records6)[7] + _print(records7)[7] + _print(records8)[7]
+    chp_electricity_consumption_8 = _print(records1)[8] + _print(records2)[8] + _print(records3)[8] + _print(records4)[8] \
+                                    + _print(records5)[8] + _print(records6)[8] + _print(records7)[8] + _print(records8)[8]
+    chp_electricity_consumption_9 = _print(records1)[9] + _print(records2)[9] + _print(records3)[9] + _print(records4)[9] \
+                                    + _print(records5)[9] + _print(records6)[9] + _print(records7)[9] + _print(records8)[9]
+    chp_electricity_consumption_10 = _print(records1)[10] + _print(records2)[10] + _print(records3)[10] + _print(records4)[10] \
+                                     + _print(records5)[10] + _print(records6)[10] + _print(records7)[10] + _print(records8)[10]
+    chp_electricity_consumption_11 = _print(records1)[11] + _print(records2)[11] + _print(records3)[11] + _print(records4)[11] \
+                                     + _print(records5)[11] + _print(records6)[11] + _print(records7)[11] + _print(records8)[11]
+    chp_electricity_consumption_12 = _print(records1)[12] + _print(records2)[12] + _print(records3)[12] + _print(records4)[12] \
+                                     + _print(records5)[12] + _print(records6)[12] + _print(records7)[12] + _print(records8)[12]
+    chp_electricity_consumption_13 = _print(records1)[13] + _print(records2)[13] + _print(records3)[13] + _print(records4)[13] \
+                                     + _print(records5)[13] + _print(records6)[13] + _print(records7)[13] + _print(records8)[13]
+    chp_electricity_consumption_14 = _print(records1)[14] + _print(records2)[14] + _print(records3)[14] + _print(records4)[14] \
+                                     + _print(records5)[14] + _print(records6)[14] + _print(records7)[14] + _print(records8)[14]
+    chp_electricity_consumption_15 = _print(records1)[15] + _print(records2)[15] + _print(records3)[15] + _print(records4)[15] \
+                                     + _print(records5)[15] + _print(records6)[15] + _print(records7)[15] + _print(records8)[15]
+    chp_electricity_consumption_16 = _print(records1)[16] + _print(records2)[16] + _print(records3)[16] + _print(records4)[16] \
+                                     + _print(records5)[16] + _print(records6)[16] + _print(records7)[16] + _print(records8)[16]
+    chp_electricity_consumption_17 = _print(records1)[17] + _print(records2)[17] + _print(records3)[17] + _print(records4)[17] \
+                                     + _print(records5)[17] + _print(records6)[17] + _print(records7)[17] + _print(records8)[17]
+    chp_electricity_consumption_18 = _print(records1)[18] + _print(records2)[18] + _print(records3)[18] + _print(records4)[18] \
+                                     + _print(records5)[18] + _print(records6)[18] + _print(records7)[18] + _print(records8)[18]
+    chp_electricity_consumption_19 = _print(records1)[19] + _print(records2)[19] + _print(records3)[19] + _print(records4)[19] \
+                                     + _print(records5)[19] + _print(records6)[19] + _print(records7)[19] + _print(records8)[19]
+    chp_electricity_consumption_20 = _print(records1)[20] + _print(records2)[20] + _print(records3)[20] + _print(records4)[20] \
+                                     + _print(records5)[20] + _print(records6)[20] + _print(records7)[20] + _print(records8)[20]
+    chp_electricity_consumption_21 = _print(records1)[21] + _print(records2)[21] + _print(records3)[21] + _print(records4)[21] \
+                                     + _print(records5)[21] + _print(records6)[21] + _print(records7)[21] + _print(records8)[21]
+    chp_electricity_consumption_22 = _print(records1)[22] + _print(records2)[22] + _print(records3)[22] + _print(records4)[22] \
+                                     + _print(records5)[22] + _print(records6)[22] + _print(records7)[22] + _print(records8)[22]
+    chp_electricity_consumption_23 = _print(records1)[23] + _print(records2)[23] + _print(records3)[23] + _print(records4)[23] \
+                                     + _print(records5)[23] + _print(records6)[23] + _print(records7)[23] + _print(records8)[23]
+
+    # 向数据库写入批量数据
+    state9 = syncbase.write_batch_realtime_data_by_name(
+        ['chp_electricity_consumption_0', 'chp_electricity_consumption_1', 'chp_electricity_consumption_2',
+         'chp_electricity_consumption_3',
+         'chp_electricity_consumption_4', 'chp_electricity_consumption_5', 'chp_electricity_consumption_6',
+         'chp_electricity_consumption_7',
+         'chp_electricity_consumption_8', 'chp_electricity_consumption_9', 'chp_electricity_consumption_10',
+         'chp_electricity_consumption_11',
+         'chp_electricity_consumption_12', 'chp_electricity_consumption_13', 'chp_electricity_consumption_14',
+         'chp_electricity_consumption_15',
+         'chp_electricity_consumption_16', 'chp_electricity_consumption_17', 'chp_electricity_consumption_18',
+         'chp_electricity_consumption_19',
+         'chp_electricity_consumption_20', 'chp_electricity_consumption_21', 'chp_electricity_consumption_22',
+         'chp_electricity_consumption_23'],
+        [chp_electricity_consumption_0, chp_electricity_consumption_1, chp_electricity_consumption_2,
+         chp_electricity_consumption_3, chp_electricity_consumption_4,
+         chp_electricity_consumption_5, chp_electricity_consumption_6, chp_electricity_consumption_7,
+         chp_electricity_consumption_8, chp_electricity_consumption_9,
+         chp_electricity_consumption_10, chp_electricity_consumption_11, chp_electricity_consumption_12,
+         chp_electricity_consumption_13, chp_electricity_consumption_14,
+         chp_electricity_consumption_15, chp_electricity_consumption_16, chp_electricity_consumption_17,
+         chp_electricity_consumption_18, chp_electricity_consumption_19,
+         chp_electricity_consumption_20, chp_electricity_consumption_21, chp_electricity_consumption_22,
+         chp_electricity_consumption_23])
+
+
+
+def write_to_database_chp_heat_electricity_consumption_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入离心式热泵制热耗电量24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('chp1_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state2, records2 = syncbase.get_history_data_by_name('chp1_wp_heat_water_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state3, records3 = syncbase.get_history_data_by_name('chp1_wp_source_water_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state4, records4 = syncbase.get_history_data_by_name('chp2_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state5, records5 = syncbase.get_history_data_by_name('chp2_wp_heat_water_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state6, records6 = syncbase.get_history_data_by_name('chp2_wp_source_water_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    chp_electricity_consumption_0 = _print(records1)[0] + _print(records2)[0] + _print(records3)[0] + _print(records4)[0] \
+                                    + _print(records5)[0] + _print(records6)[0]
+    chp_electricity_consumption_1 = _print(records1)[1] + _print(records2)[1] + _print(records3)[1] + _print(records4)[1] \
+                                    + _print(records5)[1] + _print(records6)[1]
+    chp_electricity_consumption_2 = _print(records1)[2] + _print(records2)[2] + _print(records3)[2] + _print(records4)[2] \
+                                    + _print(records5)[2] + _print(records6)[2]
+    chp_electricity_consumption_3 = _print(records1)[3] + _print(records2)[3] + _print(records3)[3] + _print(records4)[3] \
+                                    + _print(records5)[3] + _print(records6)[3]
+    chp_electricity_consumption_4 = _print(records1)[4] + _print(records2)[4] + _print(records3)[4] + _print(records4)[4] \
+                                    + _print(records5)[4] + _print(records6)[4]
+    chp_electricity_consumption_5 = _print(records1)[5] + _print(records2)[5] + _print(records3)[5] + _print(records4)[5] \
+                                    + _print(records5)[5] + _print(records6)[5]
+    chp_electricity_consumption_6 = _print(records1)[6] + _print(records2)[6] + _print(records3)[6] + _print(records4)[6] \
+                                    + _print(records5)[6] + _print(records6)[6]
+    chp_electricity_consumption_7 = _print(records1)[7] + _print(records2)[7] + _print(records3)[7] + _print(records4)[7] \
+                                    + _print(records5)[7] + _print(records6)[7]
+    chp_electricity_consumption_8 = _print(records1)[8] + _print(records2)[8] + _print(records3)[8] + _print(records4)[8] \
+                                    + _print(records5)[8] + _print(records6)[8]
+    chp_electricity_consumption_9 = _print(records1)[9] + _print(records2)[9] + _print(records3)[9] + _print(records4)[9] \
+                                    + _print(records5)[9] + _print(records6)[9]
+    chp_electricity_consumption_10 = _print(records1)[10] + _print(records2)[10] + _print(records3)[10] + \
+                                     _print(records4)[10] + _print(records5)[10] + _print(records6)[10]
+    chp_electricity_consumption_11 = _print(records1)[11] + _print(records2)[11] + _print(records3)[11] + \
+                                     _print(records4)[11] + _print(records5)[11] + _print(records6)[11]
+    chp_electricity_consumption_12 = _print(records1)[12] + _print(records2)[12] + _print(records3)[12] + \
+                                     _print(records4)[12] + _print(records5)[12] + _print(records6)[12]
+    chp_electricity_consumption_13 = _print(records1)[13] + _print(records2)[13] + _print(records3)[13] + \
+                                     _print(records4)[13] + _print(records5)[13] + _print(records6)[13]
+    chp_electricity_consumption_14 = _print(records1)[14] + _print(records2)[14] + _print(records3)[14] + \
+                                     _print(records4)[14] + _print(records5)[14] + _print(records6)[14]
+    chp_electricity_consumption_15 = _print(records1)[15] + _print(records2)[15] + _print(records3)[15] + \
+                                     _print(records4)[15] + _print(records5)[15] + _print(records6)[15]
+    chp_electricity_consumption_16 = _print(records1)[16] + _print(records2)[16] + _print(records3)[16] + \
+                                     _print(records4)[16] + _print(records5)[16] + _print(records6)[16]
+    chp_electricity_consumption_17 = _print(records1)[17] + _print(records2)[17] + _print(records3)[17] + \
+                                     _print(records4)[17] + _print(records5)[17] + _print(records6)[17]
+    chp_electricity_consumption_18 = _print(records1)[18] + _print(records2)[18] + _print(records3)[18] + \
+                                     _print(records4)[18] + _print(records5)[18] + _print(records6)[18]
+    chp_electricity_consumption_19 = _print(records1)[19] + _print(records2)[19] + _print(records3)[19] + \
+                                     _print(records4)[19] + _print(records5)[19] + _print(records6)[19]
+    chp_electricity_consumption_20 = _print(records1)[20] + _print(records2)[20] + _print(records3)[20] + \
+                                     _print(records4)[20] + _print(records5)[20] + _print(records6)[20]
+    chp_electricity_consumption_21 = _print(records1)[21] + _print(records2)[21] + _print(records3)[21] + \
+                                     _print(records4)[21] + _print(records5)[21] + _print(records6)[21]
+    chp_electricity_consumption_22 = _print(records1)[22] + _print(records2)[22] + _print(records3)[22] + \
+                                     _print(records4)[22] + _print(records5)[22] + _print(records6)[22]
+    chp_electricity_consumption_23 = _print(records1)[23] + _print(records2)[23] + _print(records3)[23] + \
+                                     _print(records4)[23] + _print(records5)[23] + _print(records6)[23]
+
+    # 向数据库写入批量数据
+    state9 = syncbase.write_batch_realtime_data_by_name(
+        ['chp_electricity_consumption_0', 'chp_electricity_consumption_1', 'chp_electricity_consumption_2',
+         'chp_electricity_consumption_3',
+         'chp_electricity_consumption_4', 'chp_electricity_consumption_5', 'chp_electricity_consumption_6',
+         'chp_electricity_consumption_7',
+         'chp_electricity_consumption_8', 'chp_electricity_consumption_9', 'chp_electricity_consumption_10',
+         'chp_electricity_consumption_11',
+         'chp_electricity_consumption_12', 'chp_electricity_consumption_13', 'chp_electricity_consumption_14',
+         'chp_electricity_consumption_15',
+         'chp_electricity_consumption_16', 'chp_electricity_consumption_17', 'chp_electricity_consumption_18',
+         'chp_electricity_consumption_19',
+         'chp_electricity_consumption_20', 'chp_electricity_consumption_21', 'chp_electricity_consumption_22',
+         'chp_electricity_consumption_23'],
+        [chp_electricity_consumption_0, chp_electricity_consumption_1, chp_electricity_consumption_2,
+         chp_electricity_consumption_3, chp_electricity_consumption_4,
+         chp_electricity_consumption_5, chp_electricity_consumption_6, chp_electricity_consumption_7,
+         chp_electricity_consumption_8, chp_electricity_consumption_9,
+         chp_electricity_consumption_10, chp_electricity_consumption_11, chp_electricity_consumption_12,
+         chp_electricity_consumption_13, chp_electricity_consumption_14,
+         chp_electricity_consumption_15, chp_electricity_consumption_16, chp_electricity_consumption_17,
+         chp_electricity_consumption_18, chp_electricity_consumption_19,
+         chp_electricity_consumption_20, chp_electricity_consumption_21, chp_electricity_consumption_22,
+         chp_electricity_consumption_23])
+
+
+def write_to_database_ashp_electricity_consumption_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入空气源热泵制冷、制热耗电量24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('ashp1_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state2, records2 = syncbase.get_history_data_by_name('ashp1_wp_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state3, records3 = syncbase.get_history_data_by_name('ashp1_fan_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    # 从数据库读取历史数据
+    state4, records4 = syncbase.get_history_data_by_name('ashp2_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state5, records5 = syncbase.get_history_data_by_name('ashp2_wp_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state6, records6 = syncbase.get_history_data_by_name('ashp2_fan_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state7, records7 = syncbase.get_history_data_by_name('ashp3_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state8, records8 = syncbase.get_history_data_by_name('ashp3_wp_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    # 从数据库读取历史数据
+    state9, records9 = syncbase.get_history_data_by_name('ashp3_fan_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute,now_second),
+                                                         period)
+
+    # 从数据库读取历史数据
+    state10, records10 = syncbase.get_history_data_by_name('ashp4_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+    # 从数据库读取历史数据
+    state11, records11 = syncbase.get_history_data_by_name('ashp4_wp_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    # 从数据库读取历史数据
+    state12, records12 = syncbase.get_history_data_by_name('ashp4_fan_power_consumption',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    ashp_electricity_consumption_0 = _print(records1)[0] + _print(records2)[0] + _print(records3)[0] + _print(records4)[0] \
+                                     + _print(records5)[0] + _print(records6)[0] + _print(records7)[0] + _print(records8)[0]\
+                                     + _print(records9)[0] + _print(records10)[0] + _print(records11)[0] + _print(records12)[0]
+    ashp_electricity_consumption_1 = _print(records1)[1] + _print(records2)[1] + _print(records3)[1] + _print(records4)[1] \
+                                     + _print(records5)[1] + _print(records6)[1] + _print(records7)[1] + _print(records8)[1]\
+                                     + _print(records9)[1] + _print(records10)[1] + _print(records11)[1] + _print(records12)[1]
+    ashp_electricity_consumption_2 = _print(records1)[2] + _print(records2)[2] + _print(records3)[2] + _print(records4)[2] \
+                                     + _print(records5)[2] + _print(records6)[2] + _print(records7)[2] + _print(records8)[2]\
+                                     + _print(records9)[2] + _print(records10)[2] + _print(records11)[2] + _print(records12)[2]
+    ashp_electricity_consumption_3 = _print(records1)[3] + _print(records2)[3] + _print(records3)[3] + _print(records4)[3] \
+                                     + _print(records5)[3] + _print(records6)[3] + _print(records7)[3] + _print(records8)[3]\
+                                     + _print(records9)[3] + _print(records10)[3] + _print(records11)[3] + _print(records12)[3]
+    ashp_electricity_consumption_4 = _print(records1)[4] + _print(records2)[4] + _print(records3)[4] + _print(records4)[4] \
+                                     + _print(records5)[4] + _print(records6)[4] + _print(records7)[4] + _print(records8)[4]\
+                                     + _print(records9)[4] + _print(records10)[4] + _print(records11)[4] + _print(records12)[4]
+    ashp_electricity_consumption_5 = _print(records1)[5] + _print(records2)[5] + _print(records3)[5] + _print(records4)[5] \
+                                     + _print(records5)[5] + _print(records6)[5] + _print(records7)[5] + _print(records8)[5]\
+                                     + _print(records9)[5] + _print(records10)[5] + _print(records11)[5] + _print(records12)[5]
+    ashp_electricity_consumption_6 = _print(records1)[6] + _print(records2)[6] + _print(records3)[6] + _print(records4)[6] \
+                                     + _print(records5)[6] + _print(records6)[6] + _print(records7)[6] + _print(records8)[6]\
+                                     + _print(records9)[6] + _print(records10)[6] + _print(records11)[6] + _print(records12)[6]
+    ashp_electricity_consumption_7 = _print(records1)[7] + _print(records2)[7] + _print(records3)[7] + _print(records4)[7] \
+                                     + _print(records5)[7] + _print(records6)[7] + _print(records7)[7] + _print(records8)[7]\
+                                     + _print(records9)[7] + _print(records10)[7] + _print(records11)[7] + _print(records12)[7]
+    ashp_electricity_consumption_8 = _print(records1)[8] + _print(records2)[8] + _print(records3)[8] + _print(records4)[8] \
+                                     + _print(records5)[8] + _print(records6)[8] + _print(records7)[8] + _print(records8)[8]\
+                                     + _print(records9)[8] + _print(records10)[8] + _print(records11)[8] + _print(records12)[8]
+    ashp_electricity_consumption_9 = _print(records1)[9] + _print(records2)[9] + _print(records3)[9] + _print(records4)[9] \
+                                     + _print(records5)[9] + _print(records6)[9] + _print(records7)[9] + _print(records8)[9]\
+                                     + _print(records9)[9] + _print(records10)[9] + _print(records11)[9] + _print(records12)[9]
+    ashp_electricity_consumption_10 = _print(records1)[10] + _print(records2)[10] + _print(records3)[10] + _print(records4)[10] \
+                                      + _print(records5)[10] + _print(records6)[10] + _print(records7)[10] + _print(records8)[10]\
+                                      + _print(records9)[10] + _print(records10)[10] + _print(records11)[10] + _print(records12)[10]
+    ashp_electricity_consumption_11 = _print(records1)[11] + _print(records2)[11] + _print(records3)[11] + _print(records4)[11] \
+                                      + _print(records5)[11] + _print(records6)[11] + _print(records7)[11] + _print(records8)[11]\
+                                      + _print(records9)[11] + _print(records10)[11] + _print(records11)[11] + _print(records12)[11]
+    ashp_electricity_consumption_12 = _print(records1)[12] + _print(records2)[12] + _print(records3)[12] + _print(records4)[12] \
+                                      + _print(records5)[12] + _print(records6)[12] + _print(records7)[12] + _print(records8)[12]\
+                                      + _print(records9)[12] + _print(records10)[12] + _print(records11)[12] + _print(records12)[12]
+    ashp_electricity_consumption_13 = _print(records1)[13] + _print(records2)[13] + _print(records3)[13] + _print(records4)[13] \
+                                      + _print(records5)[13] + _print(records6)[13] + _print(records7)[13] + _print(records8)[13]\
+                                      + _print(records9)[13] + _print(records10)[13] + _print(records11)[13] + _print(records12)[13]
+    ashp_electricity_consumption_14 = _print(records1)[14] + _print(records2)[14] + _print(records3)[14] + _print(records4)[14] \
+                                      + _print(records5)[14] + _print(records6)[14] + _print(records7)[14] + _print(records8)[14]\
+                                      + _print(records9)[14] + _print(records10)[14] + _print(records11)[14] + _print(records12)[14]
+    ashp_electricity_consumption_15 = _print(records1)[15] + _print(records2)[15] + _print(records3)[15] + _print(records4)[15] \
+                                      + _print(records5)[15] + _print(records6)[15] + _print(records7)[15] + _print(records8)[15]\
+                                      + _print(records9)[15] + _print(records10)[15] + _print(records11)[15] + _print(records12)[15]
+    ashp_electricity_consumption_16 = _print(records1)[16] + _print(records2)[16] + _print(records3)[16] + _print(records4)[16] \
+                                      + _print(records5)[16] + _print(records6)[16] + _print(records7)[16] + _print(records8)[16]\
+                                      + _print(records9)[16] + _print(records10)[16] + _print(records11)[16] + _print(records12)[16]
+    ashp_electricity_consumption_17 = _print(records1)[17] + _print(records2)[17] + _print(records3)[17] + _print(records4)[17] \
+                                      + _print(records5)[17] + _print(records6)[17] + _print(records7)[17] + _print(records8)[17]\
+                                      + _print(records9)[17] + _print(records10)[17] + _print(records11)[17] + _print(records12)[17]
+    ashp_electricity_consumption_18 = _print(records1)[18] + _print(records2)[18] + _print(records3)[18] + _print(records4)[18] \
+                                      + _print(records5)[18] + _print(records6)[18] + _print(records7)[18] + _print(records8)[18]\
+                                      + _print(records9)[18] + _print(records10)[18] + _print(records11)[18] + _print(records12)[18]
+    ashp_electricity_consumption_19 = _print(records1)[19] + _print(records2)[19] + _print(records3)[19] + _print(records4)[19] \
+                                      + _print(records5)[19] + _print(records6)[19] + _print(records7)[19] + _print(records8)[19]\
+                                      + _print(records9)[19] + _print(records10)[19] + _print(records11)[19] + _print(records12)[19]
+    ashp_electricity_consumption_20 = _print(records1)[20] + _print(records2)[20] + _print(records3)[20] + _print(records4)[20] \
+                                      + _print(records5)[20] + _print(records6)[20] + _print(records7)[20] + _print(records8)[20]\
+                                      + _print(records9)[20] + _print(records10)[20] + _print(records11)[20] + _print(records12)[20]
+    ashp_electricity_consumption_21 = _print(records1)[21] + _print(records2)[21] + _print(records3)[21] + _print(records4)[21] \
+                                      + _print(records5)[21] + _print(records6)[21] + _print(records7)[21] + _print(records8)[21]\
+                                      + _print(records9)[21] + _print(records10)[21] + _print(records11)[21] + _print(records12)[21]
+    ashp_electricity_consumption_22 = _print(records1)[22] + _print(records2)[22] + _print(records3)[22] + _print(records4)[22] \
+                                      + _print(records5)[22] + _print(records6)[22] + _print(records7)[22] + _print(records8)[22]\
+                                      + _print(records9)[22] + _print(records10)[22] + _print(records11)[22] + _print(records12)[22]
+    ashp_electricity_consumption_23 = _print(records1)[23] + _print(records2)[23] + _print(records3)[23] + _print(records4)[23] \
+                                      + _print(records5)[23] + _print(records6)[23] + _print(records7)[23] + _print(records8)[23]\
+                                      + _print(records9)[23] + _print(records10)[23] + _print(records11)[23] + _print(records12)[23]
+
+    # 向数据库写入批量数据
+    state9 = syncbase.write_batch_realtime_data_by_name(
+        ['ashp_electricity_consumption_0', 'ashp_electricity_consumption_1', 'ashp_electricity_consumption_2',
+         'ashp_electricity_consumption_3',
+         'ashp_electricity_consumption_4', 'ashp_electricity_consumption_5', 'ashp_electricity_consumption_6',
+         'ashp_electricity_consumption_7',
+         'ashp_electricity_consumption_8', 'ashp_electricity_consumption_9', 'ashp_electricity_consumption_10',
+         'ashp_electricity_consumption_11',
+         'ashp_electricity_consumption_12', 'ashp_electricity_consumption_13', 'ashp_electricity_consumption_14',
+         'ashp_electricity_consumption_15',
+         'ashp_electricity_consumption_16', 'ashp_electricity_consumption_17', 'ashp_electricity_consumption_18',
+         'ashp_electricity_consumption_19',
+         'ashp_electricity_consumption_20', 'ashp_electricity_consumption_21', 'ashp_electricity_consumption_22',
+         'ashp_electricity_consumption_23'],
+        [ashp_electricity_consumption_0, ashp_electricity_consumption_1, ashp_electricity_consumption_2,
+         ashp_electricity_consumption_3, ashp_electricity_consumption_4,
+         ashp_electricity_consumption_5, ashp_electricity_consumption_6, ashp_electricity_consumption_7,
+         ashp_electricity_consumption_8, ashp_electricity_consumption_9,
+         ashp_electricity_consumption_10, ashp_electricity_consumption_11, ashp_electricity_consumption_12,
+         ashp_electricity_consumption_13, ashp_electricity_consumption_14,
+         ashp_electricity_consumption_15, ashp_electricity_consumption_16, ashp_electricity_consumption_17,
+         ashp_electricity_consumption_18, ashp_electricity_consumption_19,
+         ashp_electricity_consumption_20, ashp_electricity_consumption_21, ashp_electricity_consumption_22,
+         ashp_electricity_consumption_23])
+
+def write_to_database_ice_electricity_out_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入内燃机发电功率24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('ice_electricity_out_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    ice_electricity_out_0 = _print(records1)[0]
+    ice_electricity_out_1 = _print(records1)[1]
+    ice_electricity_out_2 = _print(records1)[2]
+    ice_electricity_out_3 = _print(records1)[3]
+    ice_electricity_out_4 = _print(records1)[4]
+    ice_electricity_out_5 = _print(records1)[5]
+    ice_electricity_out_6 = _print(records1)[6]
+    ice_electricity_out_7 = _print(records1)[7]
+    ice_electricity_out_8 = _print(records1)[8]
+    ice_electricity_out_9 = _print(records1)[9]
+    ice_electricity_out_10 = _print(records1)[10]
+    ice_electricity_out_11 = _print(records1)[11]
+    ice_electricity_out_12 = _print(records1)[12]
+    ice_electricity_out_13 = _print(records1)[13]
+    ice_electricity_out_14 = _print(records1)[14]
+    ice_electricity_out_15 = _print(records1)[15]
+    ice_electricity_out_16 = _print(records1)[16]
+    ice_electricity_out_17 = _print(records1)[17]
+    ice_electricity_out_18 = _print(records1)[18]
+    ice_electricity_out_19 = _print(records1)[19]
+    ice_electricity_out_20 = _print(records1)[20]
+    ice_electricity_out_21 = _print(records1)[21]
+    ice_electricity_out_22 = _print(records1)[22]
+    ice_electricity_out_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['ice_electricity_out_0', 'ice_electricity_out_1', 'ice_electricity_out_2', 'ice_electricity_out_3',
+         'ice_electricity_out_4',
+         'ice_electricity_out_5', 'ice_electricity_out_6', 'ice_electricity_out_7', 'ice_electricity_out_8',
+         'ice_electricity_out_9',
+         'ice_electricity_out_10', 'ice_electricity_out_11', 'ice_electricity_out_12', 'ice_electricity_out_13',
+         'ice_electricity_out_14',
+         'ice_electricity_out_15', 'ice_electricity_out_16', 'ice_electricity_out_17', 'ice_electricity_out_18',
+         'ice_electricity_out_19',
+         'ice_electricity_out_20', 'ice_electricity_out_21', 'ice_electricity_out_22', 'ice_electricity_out_23'],
+        [ice_electricity_out_0, ice_electricity_out_1, ice_electricity_out_2, ice_electricity_out_3,
+         ice_electricity_out_4,
+         ice_electricity_out_5, ice_electricity_out_6, ice_electricity_out_7, ice_electricity_out_8,
+         ice_electricity_out_9,
+         ice_electricity_out_10, ice_electricity_out_11, ice_electricity_out_12, ice_electricity_out_13,
+         ice_electricity_out_14,
+         ice_electricity_out_15, ice_electricity_out_16, ice_electricity_out_17, ice_electricity_out_18,
+         ice_electricity_out_19,
+         ice_electricity_out_20, ice_electricity_out_21, ice_electricity_out_22, ice_electricity_out_23])
+
+
+def write_to_database_photovoltaic_electricity_out_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入光伏发电功率24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('photovoltaic_electricity_out_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    photovoltaic_electricity_out_0 = _print(records1)[0]
+    photovoltaic_electricity_out_1 = _print(records1)[1]
+    photovoltaic_electricity_out_2 = _print(records1)[2]
+    photovoltaic_electricity_out_3 = _print(records1)[3]
+    photovoltaic_electricity_out_4 = _print(records1)[4]
+    photovoltaic_electricity_out_5 = _print(records1)[5]
+    photovoltaic_electricity_out_6 = _print(records1)[6]
+    photovoltaic_electricity_out_7 = _print(records1)[7]
+    photovoltaic_electricity_out_8 = _print(records1)[8]
+    photovoltaic_electricity_out_9 = _print(records1)[9]
+    photovoltaic_electricity_out_10 = _print(records1)[10]
+    photovoltaic_electricity_out_11 = _print(records1)[11]
+    photovoltaic_electricity_out_12 = _print(records1)[12]
+    photovoltaic_electricity_out_13 = _print(records1)[13]
+    photovoltaic_electricity_out_14 = _print(records1)[14]
+    photovoltaic_electricity_out_15 = _print(records1)[15]
+    photovoltaic_electricity_out_16 = _print(records1)[16]
+    photovoltaic_electricity_out_17 = _print(records1)[17]
+    photovoltaic_electricity_out_18 = _print(records1)[18]
+    photovoltaic_electricity_out_19 = _print(records1)[19]
+    photovoltaic_electricity_out_20 = _print(records1)[20]
+    photovoltaic_electricity_out_21 = _print(records1)[21]
+    photovoltaic_electricity_out_22 = _print(records1)[22]
+    photovoltaic_electricity_out_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['photovoltaic_electricity_out_0', 'photovoltaic_electricity_out_1', 'photovoltaic_electricity_out_2', 'photovoltaic_electricity_out_3',
+         'photovoltaic_electricity_out_4',
+         'photovoltaic_electricity_out_5', 'photovoltaic_electricity_out_6', 'photovoltaic_electricity_out_7', 'photovoltaic_electricity_out_8',
+         'photovoltaic_electricity_out_9',
+         'photovoltaic_electricity_out_10', 'photovoltaic_electricity_out_11', 'photovoltaic_electricity_out_12', 'photovoltaic_electricity_out_13',
+         'photovoltaic_electricity_out_14',
+         'photovoltaic_electricity_out_15', 'photovoltaic_electricity_out_16', 'photovoltaic_electricity_out_17', 'photovoltaic_electricity_out_18',
+         'photovoltaic_electricity_out_19',
+         'photovoltaic_electricity_out_20', 'photovoltaic_electricity_out_21', 'photovoltaic_electricity_out_22', 'photovoltaic_electricity_out_23'],
+        [photovoltaic_electricity_out_0, photovoltaic_electricity_out_1, photovoltaic_electricity_out_2, photovoltaic_electricity_out_3,
+         photovoltaic_electricity_out_4,
+         photovoltaic_electricity_out_5, photovoltaic_electricity_out_6, photovoltaic_electricity_out_7, photovoltaic_electricity_out_8,
+         photovoltaic_electricity_out_9,
+         photovoltaic_electricity_out_10, photovoltaic_electricity_out_11, photovoltaic_electricity_out_12, photovoltaic_electricity_out_13,
+         photovoltaic_electricity_out_14,
+         photovoltaic_electricity_out_15, photovoltaic_electricity_out_16, photovoltaic_electricity_out_17, photovoltaic_electricity_out_18,
+         photovoltaic_electricity_out_19,
+         photovoltaic_electricity_out_20, photovoltaic_electricity_out_21, photovoltaic_electricity_out_22, photovoltaic_electricity_out_23])
+
+
+def write_to_database_wind_electricity_out_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入风力发电功率24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('wind_electricity_out_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    wind_electricity_out_0 = _print(records1)[0]
+    wind_electricity_out_1 = _print(records1)[1]
+    wind_electricity_out_2 = _print(records1)[2]
+    wind_electricity_out_3 = _print(records1)[3]
+    wind_electricity_out_4 = _print(records1)[4]
+    wind_electricity_out_5 = _print(records1)[5]
+    wind_electricity_out_6 = _print(records1)[6]
+    wind_electricity_out_7 = _print(records1)[7]
+    wind_electricity_out_8 = _print(records1)[8]
+    wind_electricity_out_9 = _print(records1)[9]
+    wind_electricity_out_10 = _print(records1)[10]
+    wind_electricity_out_11 = _print(records1)[11]
+    wind_electricity_out_12 = _print(records1)[12]
+    wind_electricity_out_13 = _print(records1)[13]
+    wind_electricity_out_14 = _print(records1)[14]
+    wind_electricity_out_15 = _print(records1)[15]
+    wind_electricity_out_16 = _print(records1)[16]
+    wind_electricity_out_17 = _print(records1)[17]
+    wind_electricity_out_18 = _print(records1)[18]
+    wind_electricity_out_19 = _print(records1)[19]
+    wind_electricity_out_20 = _print(records1)[20]
+    wind_electricity_out_21 = _print(records1)[21]
+    wind_electricity_out_22 = _print(records1)[22]
+    wind_electricity_out_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['wind_electricity_out_0', 'wind_electricity_out_1', 'wind_electricity_out_2', 'wind_electricity_out_3',
+         'wind_electricity_out_4',
+         'wind_electricity_out_5', 'wind_electricity_out_6', 'wind_electricity_out_7', 'wind_electricity_out_8',
+         'wind_electricity_out_9',
+         'wind_electricity_out_10', 'wind_electricity_out_11', 'wind_electricity_out_12', 'wind_electricity_out_13',
+         'wind_electricity_out_14',
+         'wind_electricity_out_15', 'wind_electricity_out_16', 'wind_electricity_out_17', 'wind_electricity_out_18',
+         'wind_electricity_out_19',
+         'wind_electricity_out_20', 'wind_electricity_out_21', 'wind_electricity_out_22', 'wind_electricity_out_23'],
+        [wind_electricity_out_0, wind_electricity_out_1, wind_electricity_out_2, wind_electricity_out_3,
+         wind_electricity_out_4,
+         wind_electricity_out_5, wind_electricity_out_6, wind_electricity_out_7, wind_electricity_out_8,
+         wind_electricity_out_9,
+         wind_electricity_out_10, wind_electricity_out_11, wind_electricity_out_12, wind_electricity_out_13,
+         wind_electricity_out_14,
+         wind_electricity_out_15, wind_electricity_out_16, wind_electricity_out_17, wind_electricity_out_18,
+         wind_electricity_out_19,
+         wind_electricity_out_20, wind_electricity_out_21, wind_electricity_out_22, wind_electricity_out_23])
+
+
+def write_to_database_lb_cold_out_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入溴化锂制冷功率24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('lb_cold_out_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    lb_cold_out_0 = _print(records1)[0]
+    lb_cold_out_1 = _print(records1)[1]
+    lb_cold_out_2 = _print(records1)[2]
+    lb_cold_out_3 = _print(records1)[3]
+    lb_cold_out_4 = _print(records1)[4]
+    lb_cold_out_5 = _print(records1)[5]
+    lb_cold_out_6 = _print(records1)[6]
+    lb_cold_out_7 = _print(records1)[7]
+    lb_cold_out_8 = _print(records1)[8]
+    lb_cold_out_9 = _print(records1)[9]
+    lb_cold_out_10 = _print(records1)[10]
+    lb_cold_out_11 = _print(records1)[11]
+    lb_cold_out_12 = _print(records1)[12]
+    lb_cold_out_13 = _print(records1)[13]
+    lb_cold_out_14 = _print(records1)[14]
+    lb_cold_out_15 = _print(records1)[15]
+    lb_cold_out_16 = _print(records1)[16]
+    lb_cold_out_17 = _print(records1)[17]
+    lb_cold_out_18 = _print(records1)[18]
+    lb_cold_out_19 = _print(records1)[19]
+    lb_cold_out_20 = _print(records1)[20]
+    lb_cold_out_21 = _print(records1)[21]
+    lb_cold_out_22 = _print(records1)[22]
+    lb_cold_out_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['lb_cold_out_0', 'lb_cold_out_1', 'lb_cold_out_2', 'lb_cold_out_3', 'lb_cold_out_4',
+         'lb_cold_out_5', 'lb_cold_out_6', 'lb_cold_out_7', 'lb_cold_out_8', 'lb_cold_out_9',
+         'lb_cold_out_10', 'lb_cold_out_11', 'lb_cold_out_12', 'lb_cold_out_13', 'lb_cold_out_14',
+         'lb_cold_out_15', 'lb_cold_out_16', 'lb_cold_out_17', 'lb_cold_out_18', 'lb_cold_out_19',
+         'lb_cold_out_20', 'lb_cold_out_21', 'lb_cold_out_22', 'lb_cold_out_23'],
+        [lb_cold_out_0, lb_cold_out_1, lb_cold_out_2, lb_cold_out_3, lb_cold_out_4,
+         lb_cold_out_5, lb_cold_out_6, lb_cold_out_7, lb_cold_out_8, lb_cold_out_9,
+         lb_cold_out_10, lb_cold_out_11, lb_cold_out_12, lb_cold_out_13, lb_cold_out_14,
+         lb_cold_out_15, lb_cold_out_16, lb_cold_out_17, lb_cold_out_18, lb_cold_out_19,
+         lb_cold_out_20, lb_cold_out_21, lb_cold_out_22, lb_cold_out_23])
+
+
+def write_to_database_cc_cold_out_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入离心式冷水机制冷功率24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('cc_cold_out_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    cc_cold_out_0 = _print(records1)[0]
+    cc_cold_out_1 = _print(records1)[1]
+    cc_cold_out_2 = _print(records1)[2]
+    cc_cold_out_3 = _print(records1)[3]
+    cc_cold_out_4 = _print(records1)[4]
+    cc_cold_out_5 = _print(records1)[5]
+    cc_cold_out_6 = _print(records1)[6]
+    cc_cold_out_7 = _print(records1)[7]
+    cc_cold_out_8 = _print(records1)[8]
+    cc_cold_out_9 = _print(records1)[9]
+    cc_cold_out_10 = _print(records1)[10]
+    cc_cold_out_11 = _print(records1)[11]
+    cc_cold_out_12 = _print(records1)[12]
+    cc_cold_out_13 = _print(records1)[13]
+    cc_cold_out_14 = _print(records1)[14]
+    cc_cold_out_15 = _print(records1)[15]
+    cc_cold_out_16 = _print(records1)[16]
+    cc_cold_out_17 = _print(records1)[17]
+    cc_cold_out_18 = _print(records1)[18]
+    cc_cold_out_19 = _print(records1)[19]
+    cc_cold_out_20 = _print(records1)[20]
+    cc_cold_out_21 = _print(records1)[21]
+    cc_cold_out_22 = _print(records1)[22]
+    cc_cold_out_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['cc_cold_out_0', 'cc_cold_out_1', 'cc_cold_out_2', 'cc_cold_out_3', 'cc_cold_out_4',
+         'cc_cold_out_5', 'cc_cold_out_6', 'cc_cold_out_7', 'cc_cold_out_8', 'cc_cold_out_9',
+         'cc_cold_out_10', 'cc_cold_out_11', 'cc_cold_out_12', 'cc_cold_out_13', 'cc_cold_out_14',
+         'cc_cold_out_15', 'cc_cold_out_16', 'cc_cold_out_17', 'cc_cold_out_18', 'cc_cold_out_19',
+         'cc_cold_out_20', 'cc_cold_out_21', 'cc_cold_out_22', 'cc_cold_out_23'],
+        [cc_cold_out_0, cc_cold_out_1, cc_cold_out_2, cc_cold_out_3, cc_cold_out_4,
+         cc_cold_out_5, cc_cold_out_6, cc_cold_out_7, cc_cold_out_8, cc_cold_out_9,
+         cc_cold_out_10, cc_cold_out_11, cc_cold_out_12, cc_cold_out_13, cc_cold_out_14,
+         cc_cold_out_15, cc_cold_out_16, cc_cold_out_17, cc_cold_out_18, cc_cold_out_19,
+         cc_cold_out_20, cc_cold_out_21, cc_cold_out_22, cc_cold_out_23])
+
+
+def write_to_database_chp_cold_out_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入离心式热泵制冷功率24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('chp_cold_out_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    chp_cold_out_0 = _print(records1)[0]
+    chp_cold_out_1 = _print(records1)[1]
+    chp_cold_out_2 = _print(records1)[2]
+    chp_cold_out_3 = _print(records1)[3]
+    chp_cold_out_4 = _print(records1)[4]
+    chp_cold_out_5 = _print(records1)[5]
+    chp_cold_out_6 = _print(records1)[6]
+    chp_cold_out_7 = _print(records1)[7]
+    chp_cold_out_8 = _print(records1)[8]
+    chp_cold_out_9 = _print(records1)[9]
+    chp_cold_out_10 = _print(records1)[10]
+    chp_cold_out_11 = _print(records1)[11]
+    chp_cold_out_12 = _print(records1)[12]
+    chp_cold_out_13 = _print(records1)[13]
+    chp_cold_out_14 = _print(records1)[14]
+    chp_cold_out_15 = _print(records1)[15]
+    chp_cold_out_16 = _print(records1)[16]
+    chp_cold_out_17 = _print(records1)[17]
+    chp_cold_out_18 = _print(records1)[18]
+    chp_cold_out_19 = _print(records1)[19]
+    chp_cold_out_20 = _print(records1)[20]
+    chp_cold_out_21 = _print(records1)[21]
+    chp_cold_out_22 = _print(records1)[22]
+    chp_cold_out_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['chp_cold_out_0', 'chp_cold_out_1', 'chp_cold_out_2', 'chp_cold_out_3', 'chp_cold_out_4',
+         'chp_cold_out_5', 'chp_cold_out_6', 'chp_cold_out_7', 'chp_cold_out_8', 'chp_cold_out_9',
+         'chp_cold_out_10', 'chp_cold_out_11', 'chp_cold_out_12', 'chp_cold_out_13', 'chp_cold_out_14',
+         'chp_cold_out_15', 'chp_cold_out_16', 'chp_cold_out_17', 'chp_cold_out_18', 'chp_cold_out_19',
+         'chp_cold_out_20', 'chp_cold_out_21', 'chp_cold_out_22', 'chp_cold_out_23'],
+        [chp_cold_out_0, chp_cold_out_1, chp_cold_out_2, chp_cold_out_3, chp_cold_out_4,
+         chp_cold_out_5, chp_cold_out_6, chp_cold_out_7, chp_cold_out_8, chp_cold_out_9,
+         chp_cold_out_10, chp_cold_out_11, chp_cold_out_12, chp_cold_out_13, chp_cold_out_14,
+         chp_cold_out_15, chp_cold_out_16, chp_cold_out_17, chp_cold_out_18, chp_cold_out_19,
+         chp_cold_out_20, chp_cold_out_21, chp_cold_out_22, chp_cold_out_23])
+
+
+def write_to_database_ashp_cold_out_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入空气源热泵制冷功率24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('ashp_cold_out_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    ashp_cold_out_0 = _print(records1)[0]
+    ashp_cold_out_1 = _print(records1)[1]
+    ashp_cold_out_2 = _print(records1)[2]
+    ashp_cold_out_3 = _print(records1)[3]
+    ashp_cold_out_4 = _print(records1)[4]
+    ashp_cold_out_5 = _print(records1)[5]
+    ashp_cold_out_6 = _print(records1)[6]
+    ashp_cold_out_7 = _print(records1)[7]
+    ashp_cold_out_8 = _print(records1)[8]
+    ashp_cold_out_9 = _print(records1)[9]
+    ashp_cold_out_10 = _print(records1)[10]
+    ashp_cold_out_11 = _print(records1)[11]
+    ashp_cold_out_12 = _print(records1)[12]
+    ashp_cold_out_13 = _print(records1)[13]
+    ashp_cold_out_14 = _print(records1)[14]
+    ashp_cold_out_15 = _print(records1)[15]
+    ashp_cold_out_16 = _print(records1)[16]
+    ashp_cold_out_17 = _print(records1)[17]
+    ashp_cold_out_18 = _print(records1)[18]
+    ashp_cold_out_19 = _print(records1)[19]
+    ashp_cold_out_20 = _print(records1)[20]
+    ashp_cold_out_21 = _print(records1)[21]
+    ashp_cold_out_22 = _print(records1)[22]
+    ashp_cold_out_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['ashp_cold_out_0', 'ashp_cold_out_1', 'ashp_cold_out_2', 'ashp_cold_out_3', 'ashp_cold_out_4',
+         'ashp_cold_out_5', 'ashp_cold_out_6', 'ashp_cold_out_7', 'ashp_cold_out_8', 'ashp_cold_out_9',
+         'ashp_cold_out_10', 'ashp_cold_out_11', 'ashp_cold_out_12', 'ashp_cold_out_13', 'ashp_cold_out_14',
+         'ashp_cold_out_15', 'ashp_cold_out_16', 'ashp_cold_out_17', 'ashp_cold_out_18', 'ashp_cold_out_19',
+         'ashp_cold_out_20', 'ashp_cold_out_21', 'ashp_cold_out_22', 'ashp_cold_out_23'],
+        [ashp_cold_out_0, ashp_cold_out_1, ashp_cold_out_2, ashp_cold_out_3, ashp_cold_out_4,
+         ashp_cold_out_5, ashp_cold_out_6, ashp_cold_out_7, ashp_cold_out_8, ashp_cold_out_9,
+         ashp_cold_out_10, ashp_cold_out_11, ashp_cold_out_12, ashp_cold_out_13, ashp_cold_out_14,
+         ashp_cold_out_15, ashp_cold_out_16, ashp_cold_out_17, ashp_cold_out_18, ashp_cold_out_19,
+         ashp_cold_out_20, ashp_cold_out_21, ashp_cold_out_22, ashp_cold_out_23])
+
+
+def write_to_database_ese_cold_out_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入蓄冷水罐制冷功率24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('ese_cold_out_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    ese_cold_out_0 = _print(records1)[0]
+    ese_cold_out_1 = _print(records1)[1]
+    ese_cold_out_2 = _print(records1)[2]
+    ese_cold_out_3 = _print(records1)[3]
+    ese_cold_out_4 = _print(records1)[4]
+    ese_cold_out_5 = _print(records1)[5]
+    ese_cold_out_6 = _print(records1)[6]
+    ese_cold_out_7 = _print(records1)[7]
+    ese_cold_out_8 = _print(records1)[8]
+    ese_cold_out_9 = _print(records1)[9]
+    ese_cold_out_10 = _print(records1)[10]
+    ese_cold_out_11 = _print(records1)[11]
+    ese_cold_out_12 = _print(records1)[12]
+    ese_cold_out_13 = _print(records1)[13]
+    ese_cold_out_14 = _print(records1)[14]
+    ese_cold_out_15 = _print(records1)[15]
+    ese_cold_out_16 = _print(records1)[16]
+    ese_cold_out_17 = _print(records1)[17]
+    ese_cold_out_18 = _print(records1)[18]
+    ese_cold_out_19 = _print(records1)[19]
+    ese_cold_out_20 = _print(records1)[20]
+    ese_cold_out_21 = _print(records1)[21]
+    ese_cold_out_22 = _print(records1)[22]
+    ese_cold_out_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['ese_cold_out_0', 'ese_cold_out_1', 'ese_cold_out_2', 'ese_cold_out_3', 'ese_cold_out_4',
+         'ese_cold_out_5', 'ese_cold_out_6', 'ese_cold_out_7', 'ese_cold_out_8', 'ese_cold_out_9',
+         'ese_cold_out_10', 'ese_cold_out_11', 'ese_cold_out_12', 'ese_cold_out_13', 'ese_cold_out_14',
+         'ese_cold_out_15', 'ese_cold_out_16', 'ese_cold_out_17', 'ese_cold_out_18', 'ese_cold_out_19',
+         'ese_cold_out_20', 'ese_cold_out_21', 'ese_cold_out_22', 'ese_cold_out_23'],
+        [ese_cold_out_0, ese_cold_out_1, ese_cold_out_2, ese_cold_out_3, ese_cold_out_4,
+         ese_cold_out_5, ese_cold_out_6, ese_cold_out_7, ese_cold_out_8, ese_cold_out_9,
+         ese_cold_out_10, ese_cold_out_11, ese_cold_out_12, ese_cold_out_13, ese_cold_out_14,
+         ese_cold_out_15, ese_cold_out_16, ese_cold_out_17, ese_cold_out_18, ese_cold_out_19,
+         ese_cold_out_20, ese_cold_out_21, ese_cold_out_22, ese_cold_out_23])
+
+def write_to_database_lb_heat_out_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入溴化锂制热功率24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('lb_heat_out_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    lb_heat_out_0 = _print(records1)[0]
+    lb_heat_out_1 = _print(records1)[1]
+    lb_heat_out_2 = _print(records1)[2]
+    lb_heat_out_3 = _print(records1)[3]
+    lb_heat_out_4 = _print(records1)[4]
+    lb_heat_out_5 = _print(records1)[5]
+    lb_heat_out_6 = _print(records1)[6]
+    lb_heat_out_7 = _print(records1)[7]
+    lb_heat_out_8 = _print(records1)[8]
+    lb_heat_out_9 = _print(records1)[9]
+    lb_heat_out_10 = _print(records1)[10]
+    lb_heat_out_11 = _print(records1)[11]
+    lb_heat_out_12 = _print(records1)[12]
+    lb_heat_out_13 = _print(records1)[13]
+    lb_heat_out_14 = _print(records1)[14]
+    lb_heat_out_15 = _print(records1)[15]
+    lb_heat_out_16 = _print(records1)[16]
+    lb_heat_out_17 = _print(records1)[17]
+    lb_heat_out_18 = _print(records1)[18]
+    lb_heat_out_19 = _print(records1)[19]
+    lb_heat_out_20 = _print(records1)[20]
+    lb_heat_out_21 = _print(records1)[21]
+    lb_heat_out_22 = _print(records1)[22]
+    lb_heat_out_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['lb_heat_out_0', 'lb_heat_out_1', 'lb_heat_out_2', 'lb_heat_out_3', 'lb_heat_out_4',
+         'lb_heat_out_5', 'lb_heat_out_6', 'lb_heat_out_7', 'lb_heat_out_8', 'lb_heat_out_9',
+         'lb_heat_out_10', 'lb_heat_out_11', 'lb_heat_out_12', 'lb_heat_out_13', 'lb_heat_out_14',
+         'lb_heat_out_15', 'lb_heat_out_16', 'lb_heat_out_17', 'lb_heat_out_18', 'lb_heat_out_19',
+         'lb_heat_out_20', 'lb_heat_out_21', 'lb_heat_out_22', 'lb_heat_out_23'],
+        [lb_heat_out_0, lb_heat_out_1, lb_heat_out_2, lb_heat_out_3, lb_heat_out_4,
+         lb_heat_out_5, lb_heat_out_6, lb_heat_out_7, lb_heat_out_8, lb_heat_out_9,
+         lb_heat_out_10, lb_heat_out_11, lb_heat_out_12, lb_heat_out_13, lb_heat_out_14,
+         lb_heat_out_15, lb_heat_out_16, lb_heat_out_17, lb_heat_out_18, lb_heat_out_19,
+         lb_heat_out_20, lb_heat_out_21, lb_heat_out_22, lb_heat_out_23])
+
+
+def write_to_database_chp_heat_out_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入离心式热泵制热功率24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('chp_heat_out_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    chp_heat_out_0 = _print(records1)[0]
+    chp_heat_out_1 = _print(records1)[1]
+    chp_heat_out_2 = _print(records1)[2]
+    chp_heat_out_3 = _print(records1)[3]
+    chp_heat_out_4 = _print(records1)[4]
+    chp_heat_out_5 = _print(records1)[5]
+    chp_heat_out_6 = _print(records1)[6]
+    chp_heat_out_7 = _print(records1)[7]
+    chp_heat_out_8 = _print(records1)[8]
+    chp_heat_out_9 = _print(records1)[9]
+    chp_heat_out_10 = _print(records1)[10]
+    chp_heat_out_11 = _print(records1)[11]
+    chp_heat_out_12 = _print(records1)[12]
+    chp_heat_out_13 = _print(records1)[13]
+    chp_heat_out_14 = _print(records1)[14]
+    chp_heat_out_15 = _print(records1)[15]
+    chp_heat_out_16 = _print(records1)[16]
+    chp_heat_out_17 = _print(records1)[17]
+    chp_heat_out_18 = _print(records1)[18]
+    chp_heat_out_19 = _print(records1)[19]
+    chp_heat_out_20 = _print(records1)[20]
+    chp_heat_out_21 = _print(records1)[21]
+    chp_heat_out_22 = _print(records1)[22]
+    chp_heat_out_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['chp_heat_out_0', 'chp_heat_out_1', 'chp_heat_out_2', 'chp_heat_out_3', 'chp_heat_out_4',
+         'chp_heat_out_5', 'chp_heat_out_6', 'chp_heat_out_7', 'chp_heat_out_8', 'chp_heat_out_9',
+         'chp_heat_out_10', 'chp_heat_out_11', 'chp_heat_out_12', 'chp_heat_out_13', 'chp_heat_out_14',
+         'chp_heat_out_15', 'chp_heat_out_16', 'chp_heat_out_17', 'chp_heat_out_18', 'chp_heat_out_19',
+         'chp_heat_out_20', 'chp_heat_out_21', 'chp_heat_out_22', 'chp_heat_out_23'],
+        [chp_heat_out_0, chp_heat_out_1, chp_heat_out_2, chp_heat_out_3, chp_heat_out_4,
+         chp_heat_out_5, chp_heat_out_6, chp_heat_out_7, chp_heat_out_8, chp_heat_out_9,
+         chp_heat_out_10, chp_heat_out_11, chp_heat_out_12, chp_heat_out_13, chp_heat_out_14,
+         chp_heat_out_15, chp_heat_out_16, chp_heat_out_17, chp_heat_out_18, chp_heat_out_19,
+         chp_heat_out_20, chp_heat_out_21, chp_heat_out_22, chp_heat_out_23])
+
+
+def write_to_database_ese_heat_out_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入蓄热水罐制热功率24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('ese_heat_out_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    ese_heat_out_0 = _print(records1)[0]
+    ese_heat_out_1 = _print(records1)[1]
+    ese_heat_out_2 = _print(records1)[2]
+    ese_heat_out_3 = _print(records1)[3]
+    ese_heat_out_4 = _print(records1)[4]
+    ese_heat_out_5 = _print(records1)[5]
+    ese_heat_out_6 = _print(records1)[6]
+    ese_heat_out_7 = _print(records1)[7]
+    ese_heat_out_8 = _print(records1)[8]
+    ese_heat_out_9 = _print(records1)[9]
+    ese_heat_out_10 = _print(records1)[10]
+    ese_heat_out_11 = _print(records1)[11]
+    ese_heat_out_12 = _print(records1)[12]
+    ese_heat_out_13 = _print(records1)[13]
+    ese_heat_out_14 = _print(records1)[14]
+    ese_heat_out_15 = _print(records1)[15]
+    ese_heat_out_16 = _print(records1)[16]
+    ese_heat_out_17 = _print(records1)[17]
+    ese_heat_out_18 = _print(records1)[18]
+    ese_heat_out_19 = _print(records1)[19]
+    ese_heat_out_20 = _print(records1)[20]
+    ese_heat_out_21 = _print(records1)[21]
+    ese_heat_out_22 = _print(records1)[22]
+    ese_heat_out_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['ese_heat_out_0', 'ese_heat_out_1', 'ese_heat_out_2', 'ese_heat_out_3', 'ese_heat_out_4',
+         'ese_heat_out_5', 'ese_heat_out_6', 'ese_heat_out_7', 'ese_heat_out_8', 'ese_heat_out_9',
+         'ese_heat_out_10', 'ese_heat_out_11', 'ese_heat_out_12', 'ese_heat_out_13', 'ese_heat_out_14',
+         'ese_heat_out_15', 'ese_heat_out_16', 'ese_heat_out_17', 'ese_heat_out_18', 'ese_heat_out_19',
+         'ese_heat_out_20', 'ese_heat_out_21', 'ese_heat_out_22', 'ese_heat_out_23'],
+        [ese_heat_out_0, ese_heat_out_1, ese_heat_out_2, ese_heat_out_3, ese_heat_out_4,
+         ese_heat_out_5, ese_heat_out_6, ese_heat_out_7, ese_heat_out_8, ese_heat_out_9,
+         ese_heat_out_10, ese_heat_out_11, ese_heat_out_12, ese_heat_out_13, ese_heat_out_14,
+         ese_heat_out_15, ese_heat_out_16, ese_heat_out_17, ese_heat_out_18, ese_heat_out_19,
+         ese_heat_out_20, ese_heat_out_21, ese_heat_out_22, ese_heat_out_23])
+
+
+def write_to_database_lb_hot_water_out_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入溴化锂生活热水功率24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('lb_hot_water_out_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    lb_hot_water_out_0 = _print(records1)[0]
+    lb_hot_water_out_1 = _print(records1)[1]
+    lb_hot_water_out_2 = _print(records1)[2]
+    lb_hot_water_out_3 = _print(records1)[3]
+    lb_hot_water_out_4 = _print(records1)[4]
+    lb_hot_water_out_5 = _print(records1)[5]
+    lb_hot_water_out_6 = _print(records1)[6]
+    lb_hot_water_out_7 = _print(records1)[7]
+    lb_hot_water_out_8 = _print(records1)[8]
+    lb_hot_water_out_9 = _print(records1)[9]
+    lb_hot_water_out_10 = _print(records1)[10]
+    lb_hot_water_out_11 = _print(records1)[11]
+    lb_hot_water_out_12 = _print(records1)[12]
+    lb_hot_water_out_13 = _print(records1)[13]
+    lb_hot_water_out_14 = _print(records1)[14]
+    lb_hot_water_out_15 = _print(records1)[15]
+    lb_hot_water_out_16 = _print(records1)[16]
+    lb_hot_water_out_17 = _print(records1)[17]
+    lb_hot_water_out_18 = _print(records1)[18]
+    lb_hot_water_out_19 = _print(records1)[19]
+    lb_hot_water_out_20 = _print(records1)[20]
+    lb_hot_water_out_21 = _print(records1)[21]
+    lb_hot_water_out_22 = _print(records1)[22]
+    lb_hot_water_out_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['lb_hot_water_out_0', 'lb_hot_water_out_1', 'lb_hot_water_out_2', 'lb_hot_water_out_3', 'lb_hot_water_out_4',
+         'lb_hot_water_out_5', 'lb_hot_water_out_6', 'lb_hot_water_out_7', 'lb_hot_water_out_8', 'lb_hot_water_out_9',
+         'lb_hot_water_out_10', 'lb_hot_water_out_11', 'lb_hot_water_out_12', 'lb_hot_water_out_13', 'lb_hot_water_out_14',
+         'lb_hot_water_out_15', 'lb_hot_water_out_16', 'lb_hot_water_out_17', 'lb_hot_water_out_18', 'lb_hot_water_out_19',
+         'lb_hot_water_out_20', 'lb_hot_water_out_21', 'lb_hot_water_out_22', 'lb_hot_water_out_23'],
+        [lb_hot_water_out_0, lb_hot_water_out_1, lb_hot_water_out_2, lb_hot_water_out_3, lb_hot_water_out_4,
+         lb_hot_water_out_5, lb_hot_water_out_6, lb_hot_water_out_7, lb_hot_water_out_8, lb_hot_water_out_9,
+         lb_hot_water_out_10, lb_hot_water_out_11, lb_hot_water_out_12, lb_hot_water_out_13, lb_hot_water_out_14,
+         lb_hot_water_out_15, lb_hot_water_out_16, lb_hot_water_out_17, lb_hot_water_out_18, lb_hot_water_out_19,
+         lb_hot_water_out_20, lb_hot_water_out_21, lb_hot_water_out_22, lb_hot_water_out_23])
+
+
+def write_to_database_ngb_hot_water_out_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入天然气锅炉生活热水功率24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('ngb_hot_water_out_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    ngb_hot_water_out_0 = _print(records1)[0]
+    ngb_hot_water_out_1 = _print(records1)[1]
+    ngb_hot_water_out_2 = _print(records1)[2]
+    ngb_hot_water_out_3 = _print(records1)[3]
+    ngb_hot_water_out_4 = _print(records1)[4]
+    ngb_hot_water_out_5 = _print(records1)[5]
+    ngb_hot_water_out_6 = _print(records1)[6]
+    ngb_hot_water_out_7 = _print(records1)[7]
+    ngb_hot_water_out_8 = _print(records1)[8]
+    ngb_hot_water_out_9 = _print(records1)[9]
+    ngb_hot_water_out_10 = _print(records1)[10]
+    ngb_hot_water_out_11 = _print(records1)[11]
+    ngb_hot_water_out_12 = _print(records1)[12]
+    ngb_hot_water_out_13 = _print(records1)[13]
+    ngb_hot_water_out_14 = _print(records1)[14]
+    ngb_hot_water_out_15 = _print(records1)[15]
+    ngb_hot_water_out_16 = _print(records1)[16]
+    ngb_hot_water_out_17 = _print(records1)[17]
+    ngb_hot_water_out_18 = _print(records1)[18]
+    ngb_hot_water_out_19 = _print(records1)[19]
+    ngb_hot_water_out_20 = _print(records1)[20]
+    ngb_hot_water_out_21 = _print(records1)[21]
+    ngb_hot_water_out_22 = _print(records1)[22]
+    ngb_hot_water_out_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['ngb_hot_water_out_0', 'ngb_hot_water_out_1', 'ngb_hot_water_out_2', 'ngb_hot_water_out_3', 'ngb_hot_water_out_4',
+         'ngb_hot_water_out_5', 'ngb_hot_water_out_6', 'ngb_hot_water_out_7', 'ngb_hot_water_out_8', 'ngb_hot_water_out_9',
+         'ngb_hot_water_out_10', 'ngb_hot_water_out_11', 'ngb_hot_water_out_12', 'ngb_hot_water_out_13', 'ngb_hot_water_out_14',
+         'ngb_hot_water_out_15', 'ngb_hot_water_out_16', 'ngb_hot_water_out_17', 'ngb_hot_water_out_18', 'ngb_hot_water_out_19',
+         'ngb_hot_water_out_20', 'ngb_hot_water_out_21', 'ngb_hot_water_out_22', 'ngb_hot_water_out_23'],
+        [ngb_hot_water_out_0, ngb_hot_water_out_1, ngb_hot_water_out_2, ngb_hot_water_out_3, ngb_hot_water_out_4,
+         ngb_hot_water_out_5, ngb_hot_water_out_6, ngb_hot_water_out_7, ngb_hot_water_out_8, ngb_hot_water_out_9,
+         ngb_hot_water_out_10, ngb_hot_water_out_11, ngb_hot_water_out_12, ngb_hot_water_out_13, ngb_hot_water_out_14,
+         ngb_hot_water_out_15, ngb_hot_water_out_16, ngb_hot_water_out_17, ngb_hot_water_out_18, ngb_hot_water_out_19,
+         ngb_hot_water_out_20, ngb_hot_water_out_21, ngb_hot_water_out_22, ngb_hot_water_out_23])
+
+
+def write_to_database_reduction_in_carbon_emissions_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入碳排放减少量24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('reduction_in_carbon_emissions',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    reduction_in_carbon_emissions_0 = _print(records1)[0]
+    reduction_in_carbon_emissions_1 = _print(records1)[1]
+    reduction_in_carbon_emissions_2 = _print(records1)[2]
+    reduction_in_carbon_emissions_3 = _print(records1)[3]
+    reduction_in_carbon_emissions_4 = _print(records1)[4]
+    reduction_in_carbon_emissions_5 = _print(records1)[5]
+    reduction_in_carbon_emissions_6 = _print(records1)[6]
+    reduction_in_carbon_emissions_7 = _print(records1)[7]
+    reduction_in_carbon_emissions_8 = _print(records1)[8]
+    reduction_in_carbon_emissions_9 = _print(records1)[9]
+    reduction_in_carbon_emissions_10 = _print(records1)[10]
+    reduction_in_carbon_emissions_11 = _print(records1)[11]
+    reduction_in_carbon_emissions_12 = _print(records1)[12]
+    reduction_in_carbon_emissions_13 = _print(records1)[13]
+    reduction_in_carbon_emissions_14 = _print(records1)[14]
+    reduction_in_carbon_emissions_15 = _print(records1)[15]
+    reduction_in_carbon_emissions_16 = _print(records1)[16]
+    reduction_in_carbon_emissions_17 = _print(records1)[17]
+    reduction_in_carbon_emissions_18 = _print(records1)[18]
+    reduction_in_carbon_emissions_19 = _print(records1)[19]
+    reduction_in_carbon_emissions_20 = _print(records1)[20]
+    reduction_in_carbon_emissions_21 = _print(records1)[21]
+    reduction_in_carbon_emissions_22 = _print(records1)[22]
+    reduction_in_carbon_emissions_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['reduction_in_carbon_emissions_0', 'reduction_in_carbon_emissions_1', 'reduction_in_carbon_emissions_2',
+         'reduction_in_carbon_emissions_3', 'reduction_in_carbon_emissions_4', 'reduction_in_carbon_emissions_5',
+         'reduction_in_carbon_emissions_6', 'reduction_in_carbon_emissions_7', 'reduction_in_carbon_emissions_8',
+         'reduction_in_carbon_emissions_9', 'reduction_in_carbon_emissions_10', 'reduction_in_carbon_emissions_11',
+         'reduction_in_carbon_emissions_12', 'reduction_in_carbon_emissions_13', 'reduction_in_carbon_emissions_14',
+         'reduction_in_carbon_emissions_15', 'reduction_in_carbon_emissions_16', 'reduction_in_carbon_emissions_17',
+         'reduction_in_carbon_emissions_18', 'reduction_in_carbon_emissions_19', 'reduction_in_carbon_emissions_20',
+         'reduction_in_carbon_emissions_21', 'reduction_in_carbon_emissions_22', 'reduction_in_carbon_emissions_23'],
+        [reduction_in_carbon_emissions_0, reduction_in_carbon_emissions_1, reduction_in_carbon_emissions_2,
+         reduction_in_carbon_emissions_3, reduction_in_carbon_emissions_4, reduction_in_carbon_emissions_5,
+         reduction_in_carbon_emissions_6, reduction_in_carbon_emissions_7, reduction_in_carbon_emissions_8,
+         reduction_in_carbon_emissions_9, reduction_in_carbon_emissions_10, reduction_in_carbon_emissions_11,
+         reduction_in_carbon_emissions_12, reduction_in_carbon_emissions_13, reduction_in_carbon_emissions_14,
+         reduction_in_carbon_emissions_15, reduction_in_carbon_emissions_16, reduction_in_carbon_emissions_17,
+         reduction_in_carbon_emissions_18, reduction_in_carbon_emissions_19, reduction_in_carbon_emissions_20,
+         reduction_in_carbon_emissions_21, reduction_in_carbon_emissions_22, reduction_in_carbon_emissions_23])
+
+
+def write_to_database_reduction_in_sulfide_emissions_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入硫化物排放减少量24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('reduction_in_sulfide_emissions',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    reduction_in_sulfide_emissions_0 = _print(records1)[0]
+    reduction_in_sulfide_emissions_1 = _print(records1)[1]
+    reduction_in_sulfide_emissions_2 = _print(records1)[2]
+    reduction_in_sulfide_emissions_3 = _print(records1)[3]
+    reduction_in_sulfide_emissions_4 = _print(records1)[4]
+    reduction_in_sulfide_emissions_5 = _print(records1)[5]
+    reduction_in_sulfide_emissions_6 = _print(records1)[6]
+    reduction_in_sulfide_emissions_7 = _print(records1)[7]
+    reduction_in_sulfide_emissions_8 = _print(records1)[8]
+    reduction_in_sulfide_emissions_9 = _print(records1)[9]
+    reduction_in_sulfide_emissions_10 = _print(records1)[10]
+    reduction_in_sulfide_emissions_11 = _print(records1)[11]
+    reduction_in_sulfide_emissions_12 = _print(records1)[12]
+    reduction_in_sulfide_emissions_13 = _print(records1)[13]
+    reduction_in_sulfide_emissions_14 = _print(records1)[14]
+    reduction_in_sulfide_emissions_15 = _print(records1)[15]
+    reduction_in_sulfide_emissions_16 = _print(records1)[16]
+    reduction_in_sulfide_emissions_17 = _print(records1)[17]
+    reduction_in_sulfide_emissions_18 = _print(records1)[18]
+    reduction_in_sulfide_emissions_19 = _print(records1)[19]
+    reduction_in_sulfide_emissions_20 = _print(records1)[20]
+    reduction_in_sulfide_emissions_21 = _print(records1)[21]
+    reduction_in_sulfide_emissions_22 = _print(records1)[22]
+    reduction_in_sulfide_emissions_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['reduction_in_sulfide_emissions_0', 'reduction_in_sulfide_emissions_1', 'reduction_in_sulfide_emissions_2',
+         'reduction_in_sulfide_emissions_3', 'reduction_in_sulfide_emissions_4', 'reduction_in_sulfide_emissions_5',
+         'reduction_in_sulfide_emissions_6', 'reduction_in_sulfide_emissions_7', 'reduction_in_sulfide_emissions_8',
+         'reduction_in_sulfide_emissions_9', 'reduction_in_sulfide_emissions_10', 'reduction_in_sulfide_emissions_11',
+         'reduction_in_sulfide_emissions_12', 'reduction_in_sulfide_emissions_13', 'reduction_in_sulfide_emissions_14',
+         'reduction_in_sulfide_emissions_15', 'reduction_in_sulfide_emissions_16', 'reduction_in_sulfide_emissions_17',
+         'reduction_in_sulfide_emissions_18', 'reduction_in_sulfide_emissions_19', 'reduction_in_sulfide_emissions_20',
+         'reduction_in_sulfide_emissions_21', 'reduction_in_sulfide_emissions_22', 'reduction_in_sulfide_emissions_23'],
+        [reduction_in_sulfide_emissions_0, reduction_in_sulfide_emissions_1, reduction_in_sulfide_emissions_2,
+         reduction_in_sulfide_emissions_3, reduction_in_sulfide_emissions_4, reduction_in_sulfide_emissions_5,
+         reduction_in_sulfide_emissions_6, reduction_in_sulfide_emissions_7, reduction_in_sulfide_emissions_8,
+         reduction_in_sulfide_emissions_9, reduction_in_sulfide_emissions_10, reduction_in_sulfide_emissions_11,
+         reduction_in_sulfide_emissions_12, reduction_in_sulfide_emissions_13, reduction_in_sulfide_emissions_14,
+         reduction_in_sulfide_emissions_15, reduction_in_sulfide_emissions_16, reduction_in_sulfide_emissions_17,
+         reduction_in_sulfide_emissions_18, reduction_in_sulfide_emissions_19, reduction_in_sulfide_emissions_20,
+         reduction_in_sulfide_emissions_21, reduction_in_sulfide_emissions_22, reduction_in_sulfide_emissions_23])
+
+
+def write_to_database_reduction_in_nitride_emissions_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入氮化物排放减少量24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('reduction_in_nitride_emissions',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    reduction_in_nitride_emissions_0 = _print(records1)[0]
+    reduction_in_nitride_emissions_1 = _print(records1)[1]
+    reduction_in_nitride_emissions_2 = _print(records1)[2]
+    reduction_in_nitride_emissions_3 = _print(records1)[3]
+    reduction_in_nitride_emissions_4 = _print(records1)[4]
+    reduction_in_nitride_emissions_5 = _print(records1)[5]
+    reduction_in_nitride_emissions_6 = _print(records1)[6]
+    reduction_in_nitride_emissions_7 = _print(records1)[7]
+    reduction_in_nitride_emissions_8 = _print(records1)[8]
+    reduction_in_nitride_emissions_9 = _print(records1)[9]
+    reduction_in_nitride_emissions_10 = _print(records1)[10]
+    reduction_in_nitride_emissions_11 = _print(records1)[11]
+    reduction_in_nitride_emissions_12 = _print(records1)[12]
+    reduction_in_nitride_emissions_13 = _print(records1)[13]
+    reduction_in_nitride_emissions_14 = _print(records1)[14]
+    reduction_in_nitride_emissions_15 = _print(records1)[15]
+    reduction_in_nitride_emissions_16 = _print(records1)[16]
+    reduction_in_nitride_emissions_17 = _print(records1)[17]
+    reduction_in_nitride_emissions_18 = _print(records1)[18]
+    reduction_in_nitride_emissions_19 = _print(records1)[19]
+    reduction_in_nitride_emissions_20 = _print(records1)[20]
+    reduction_in_nitride_emissions_21 = _print(records1)[21]
+    reduction_in_nitride_emissions_22 = _print(records1)[22]
+    reduction_in_nitride_emissions_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['reduction_in_nitride_emissions_0', 'reduction_in_nitride_emissions_1', 'reduction_in_nitride_emissions_2',
+         'reduction_in_nitride_emissions_3', 'reduction_in_nitride_emissions_4', 'reduction_in_nitride_emissions_5',
+         'reduction_in_nitride_emissions_6', 'reduction_in_nitride_emissions_7', 'reduction_in_nitride_emissions_8',
+         'reduction_in_nitride_emissions_9', 'reduction_in_nitride_emissions_10', 'reduction_in_nitride_emissions_11',
+         'reduction_in_nitride_emissions_12', 'reduction_in_nitride_emissions_13', 'reduction_in_nitride_emissions_14',
+         'reduction_in_nitride_emissions_15', 'reduction_in_nitride_emissions_16', 'reduction_in_nitride_emissions_17',
+         'reduction_in_nitride_emissions_18', 'reduction_in_nitride_emissions_19', 'reduction_in_nitride_emissions_20',
+         'reduction_in_nitride_emissions_21', 'reduction_in_nitride_emissions_22', 'reduction_in_nitride_emissions_23'],
+        [reduction_in_nitride_emissions_0, reduction_in_nitride_emissions_1, reduction_in_nitride_emissions_2,
+         reduction_in_nitride_emissions_3, reduction_in_nitride_emissions_4, reduction_in_nitride_emissions_5,
+         reduction_in_nitride_emissions_6, reduction_in_nitride_emissions_7, reduction_in_nitride_emissions_8,
+         reduction_in_nitride_emissions_9, reduction_in_nitride_emissions_10, reduction_in_nitride_emissions_11,
+         reduction_in_nitride_emissions_12, reduction_in_nitride_emissions_13, reduction_in_nitride_emissions_14,
+         reduction_in_nitride_emissions_15, reduction_in_nitride_emissions_16, reduction_in_nitride_emissions_17,
+         reduction_in_nitride_emissions_18, reduction_in_nitride_emissions_19, reduction_in_nitride_emissions_20,
+         reduction_in_nitride_emissions_21, reduction_in_nitride_emissions_22, reduction_in_nitride_emissions_23])
+
+
+def write_to_database_reduction_in_dust_emissions_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入粉尘排放减少量24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('reduction_in_dust_emissions',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    reduction_in_dust_emissions_0 = _print(records1)[0]
+    reduction_in_dust_emissions_1 = _print(records1)[1]
+    reduction_in_dust_emissions_2 = _print(records1)[2]
+    reduction_in_dust_emissions_3 = _print(records1)[3]
+    reduction_in_dust_emissions_4 = _print(records1)[4]
+    reduction_in_dust_emissions_5 = _print(records1)[5]
+    reduction_in_dust_emissions_6 = _print(records1)[6]
+    reduction_in_dust_emissions_7 = _print(records1)[7]
+    reduction_in_dust_emissions_8 = _print(records1)[8]
+    reduction_in_dust_emissions_9 = _print(records1)[9]
+    reduction_in_dust_emissions_10 = _print(records1)[10]
+    reduction_in_dust_emissions_11 = _print(records1)[11]
+    reduction_in_dust_emissions_12 = _print(records1)[12]
+    reduction_in_dust_emissions_13 = _print(records1)[13]
+    reduction_in_dust_emissions_14 = _print(records1)[14]
+    reduction_in_dust_emissions_15 = _print(records1)[15]
+    reduction_in_dust_emissions_16 = _print(records1)[16]
+    reduction_in_dust_emissions_17 = _print(records1)[17]
+    reduction_in_dust_emissions_18 = _print(records1)[18]
+    reduction_in_dust_emissions_19 = _print(records1)[19]
+    reduction_in_dust_emissions_20 = _print(records1)[20]
+    reduction_in_dust_emissions_21 = _print(records1)[21]
+    reduction_in_dust_emissions_22 = _print(records1)[22]
+    reduction_in_dust_emissions_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['reduction_in_dust_emissions_0', 'reduction_in_dust_emissions_1', 'reduction_in_dust_emissions_2',
+         'reduction_in_dust_emissions_3', 'reduction_in_dust_emissions_4', 'reduction_in_dust_emissions_5',
+         'reduction_in_dust_emissions_6', 'reduction_in_dust_emissions_7', 'reduction_in_dust_emissions_8',
+         'reduction_in_dust_emissions_9', 'reduction_in_dust_emissions_10', 'reduction_in_dust_emissions_11',
+         'reduction_in_dust_emissions_12', 'reduction_in_dust_emissions_13', 'reduction_in_dust_emissions_14',
+         'reduction_in_dust_emissions_15', 'reduction_in_dust_emissions_16', 'reduction_in_dust_emissions_17',
+         'reduction_in_dust_emissions_18', 'reduction_in_dust_emissions_19', 'reduction_in_dust_emissions_20',
+         'reduction_in_dust_emissions_21', 'reduction_in_dust_emissions_22', 'reduction_in_dust_emissions_23'],
+        [reduction_in_dust_emissions_0, reduction_in_dust_emissions_1, reduction_in_dust_emissions_2,
+         reduction_in_dust_emissions_3, reduction_in_dust_emissions_4, reduction_in_dust_emissions_5,
+         reduction_in_dust_emissions_6, reduction_in_dust_emissions_7, reduction_in_dust_emissions_8,
+         reduction_in_dust_emissions_9, reduction_in_dust_emissions_10, reduction_in_dust_emissions_11,
+         reduction_in_dust_emissions_12, reduction_in_dust_emissions_13, reduction_in_dust_emissions_14,
+         reduction_in_dust_emissions_15, reduction_in_dust_emissions_16, reduction_in_dust_emissions_17,
+         reduction_in_dust_emissions_18, reduction_in_dust_emissions_19, reduction_in_dust_emissions_20,
+         reduction_in_dust_emissions_21, reduction_in_dust_emissions_22, reduction_in_dust_emissions_23])
+
+
+def write_to_database_ice_income_total_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入内燃机发电收入24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('ice_income_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    ice_income_total_0 = _print(records1)[0]
+    ice_income_total_1 = _print(records1)[1]
+    ice_income_total_2 = _print(records1)[2]
+    ice_income_total_3 = _print(records1)[3]
+    ice_income_total_4 = _print(records1)[4]
+    ice_income_total_5 = _print(records1)[5]
+    ice_income_total_6 = _print(records1)[6]
+    ice_income_total_7 = _print(records1)[7]
+    ice_income_total_8 = _print(records1)[8]
+    ice_income_total_9 = _print(records1)[9]
+    ice_income_total_10 = _print(records1)[10]
+    ice_income_total_11 = _print(records1)[11]
+    ice_income_total_12 = _print(records1)[12]
+    ice_income_total_13 = _print(records1)[13]
+    ice_income_total_14 = _print(records1)[14]
+    ice_income_total_15 = _print(records1)[15]
+    ice_income_total_16 = _print(records1)[16]
+    ice_income_total_17 = _print(records1)[17]
+    ice_income_total_18 = _print(records1)[18]
+    ice_income_total_19 = _print(records1)[19]
+    ice_income_total_20 = _print(records1)[20]
+    ice_income_total_21 = _print(records1)[21]
+    ice_income_total_22 = _print(records1)[22]
+    ice_income_total_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['ice_income_total_0', 'ice_income_total_1', 'ice_income_total_2',
+         'ice_income_total_3', 'ice_income_total_4', 'ice_income_total_5',
+         'ice_income_total_6', 'ice_income_total_7', 'ice_income_total_8',
+         'ice_income_total_9', 'ice_income_total_10', 'ice_income_total_11',
+         'ice_income_total_12', 'ice_income_total_13', 'ice_income_total_14',
+         'ice_income_total_15', 'ice_income_total_16', 'ice_income_total_17',
+         'ice_income_total_18', 'ice_income_total_19', 'ice_income_total_20',
+         'ice_income_total_21', 'ice_income_total_22', 'ice_income_total_23'],
+        [ice_income_total_0, ice_income_total_1, ice_income_total_2,
+         ice_income_total_3, ice_income_total_4, ice_income_total_5,
+         ice_income_total_6, ice_income_total_7, ice_income_total_8,
+         ice_income_total_9, ice_income_total_10, ice_income_total_11,
+         ice_income_total_12, ice_income_total_13, ice_income_total_14,
+         ice_income_total_15, ice_income_total_16, ice_income_total_17,
+         ice_income_total_18, ice_income_total_19, ice_income_total_20,
+         ice_income_total_21, ice_income_total_22, ice_income_total_23])
+
+
+def write_to_database_lb_cold_income_total_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入溴化锂制冷收入24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('lb_cold_income_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    lb_cold_income_total_0 = _print(records1)[0]
+    lb_cold_income_total_1 = _print(records1)[1]
+    lb_cold_income_total_2 = _print(records1)[2]
+    lb_cold_income_total_3 = _print(records1)[3]
+    lb_cold_income_total_4 = _print(records1)[4]
+    lb_cold_income_total_5 = _print(records1)[5]
+    lb_cold_income_total_6 = _print(records1)[6]
+    lb_cold_income_total_7 = _print(records1)[7]
+    lb_cold_income_total_8 = _print(records1)[8]
+    lb_cold_income_total_9 = _print(records1)[9]
+    lb_cold_income_total_10 = _print(records1)[10]
+    lb_cold_income_total_11 = _print(records1)[11]
+    lb_cold_income_total_12 = _print(records1)[12]
+    lb_cold_income_total_13 = _print(records1)[13]
+    lb_cold_income_total_14 = _print(records1)[14]
+    lb_cold_income_total_15 = _print(records1)[15]
+    lb_cold_income_total_16 = _print(records1)[16]
+    lb_cold_income_total_17 = _print(records1)[17]
+    lb_cold_income_total_18 = _print(records1)[18]
+    lb_cold_income_total_19 = _print(records1)[19]
+    lb_cold_income_total_20 = _print(records1)[20]
+    lb_cold_income_total_21 = _print(records1)[21]
+    lb_cold_income_total_22 = _print(records1)[22]
+    lb_cold_income_total_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['lb_cold_income_total_0', 'lb_cold_income_total_1', 'lb_cold_income_total_2',
+         'lb_cold_income_total_3', 'lb_cold_income_total_4', 'lb_cold_income_total_5',
+         'lb_cold_income_total_6', 'lb_cold_income_total_7', 'lb_cold_income_total_8',
+         'lb_cold_income_total_9', 'lb_cold_income_total_10', 'lb_cold_income_total_11',
+         'lb_cold_income_total_12', 'lb_cold_income_total_13', 'lb_cold_income_total_14',
+         'lb_cold_income_total_15', 'lb_cold_income_total_16', 'lb_cold_income_total_17',
+         'lb_cold_income_total_18', 'lb_cold_income_total_19', 'lb_cold_income_total_20',
+         'lb_cold_income_total_21', 'lb_cold_income_total_22', 'lb_cold_income_total_23'],
+        [lb_cold_income_total_0, lb_cold_income_total_1, lb_cold_income_total_2,
+         lb_cold_income_total_3, lb_cold_income_total_4, lb_cold_income_total_5,
+         lb_cold_income_total_6, lb_cold_income_total_7, lb_cold_income_total_8,
+         lb_cold_income_total_9, lb_cold_income_total_10, lb_cold_income_total_11,
+         lb_cold_income_total_12, lb_cold_income_total_13, lb_cold_income_total_14,
+         lb_cold_income_total_15, lb_cold_income_total_16, lb_cold_income_total_17,
+         lb_cold_income_total_18, lb_cold_income_total_19, lb_cold_income_total_20,
+         lb_cold_income_total_21, lb_cold_income_total_22, lb_cold_income_total_23])
+
+def write_to_database_lb_heat_income_total_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入溴化锂制热收入24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('lb_heat_income_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    lb_heat_income_total_0 = _print(records1)[0]
+    lb_heat_income_total_1 = _print(records1)[1]
+    lb_heat_income_total_2 = _print(records1)[2]
+    lb_heat_income_total_3 = _print(records1)[3]
+    lb_heat_income_total_4 = _print(records1)[4]
+    lb_heat_income_total_5 = _print(records1)[5]
+    lb_heat_income_total_6 = _print(records1)[6]
+    lb_heat_income_total_7 = _print(records1)[7]
+    lb_heat_income_total_8 = _print(records1)[8]
+    lb_heat_income_total_9 = _print(records1)[9]
+    lb_heat_income_total_10 = _print(records1)[10]
+    lb_heat_income_total_11 = _print(records1)[11]
+    lb_heat_income_total_12 = _print(records1)[12]
+    lb_heat_income_total_13 = _print(records1)[13]
+    lb_heat_income_total_14 = _print(records1)[14]
+    lb_heat_income_total_15 = _print(records1)[15]
+    lb_heat_income_total_16 = _print(records1)[16]
+    lb_heat_income_total_17 = _print(records1)[17]
+    lb_heat_income_total_18 = _print(records1)[18]
+    lb_heat_income_total_19 = _print(records1)[19]
+    lb_heat_income_total_20 = _print(records1)[20]
+    lb_heat_income_total_21 = _print(records1)[21]
+    lb_heat_income_total_22 = _print(records1)[22]
+    lb_heat_income_total_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['lb_heat_income_total_0', 'lb_heat_income_total_1', 'lb_heat_income_total_2',
+         'lb_heat_income_total_3', 'lb_heat_income_total_4', 'lb_heat_income_total_5',
+         'lb_heat_income_total_6', 'lb_heat_income_total_7', 'lb_heat_income_total_8',
+         'lb_heat_income_total_9', 'lb_heat_income_total_10', 'lb_heat_income_total_11',
+         'lb_heat_income_total_12', 'lb_heat_income_total_13', 'lb_heat_income_total_14',
+         'lb_heat_income_total_15', 'lb_heat_income_total_16', 'lb_heat_income_total_17',
+         'lb_heat_income_total_18', 'lb_heat_income_total_19', 'lb_heat_income_total_20',
+         'lb_heat_income_total_21', 'lb_heat_income_total_22', 'lb_heat_income_total_23'],
+        [lb_heat_income_total_0, lb_heat_income_total_1, lb_heat_income_total_2,
+         lb_heat_income_total_3, lb_heat_income_total_4, lb_heat_income_total_5,
+         lb_heat_income_total_6, lb_heat_income_total_7, lb_heat_income_total_8,
+         lb_heat_income_total_9, lb_heat_income_total_10, lb_heat_income_total_11,
+         lb_heat_income_total_12, lb_heat_income_total_13, lb_heat_income_total_14,
+         lb_heat_income_total_15, lb_heat_income_total_16, lb_heat_income_total_17,
+         lb_heat_income_total_18, lb_heat_income_total_19, lb_heat_income_total_20,
+         lb_heat_income_total_21, lb_heat_income_total_22, lb_heat_income_total_23])
+
+
+def write_to_database_lb_hot_water_income_total_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入溴化锂生活热水收入24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('lb_hot_water_income_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    lb_hot_water_income_total_0 = _print(records1)[0]
+    lb_hot_water_income_total_1 = _print(records1)[1]
+    lb_hot_water_income_total_2 = _print(records1)[2]
+    lb_hot_water_income_total_3 = _print(records1)[3]
+    lb_hot_water_income_total_4 = _print(records1)[4]
+    lb_hot_water_income_total_5 = _print(records1)[5]
+    lb_hot_water_income_total_6 = _print(records1)[6]
+    lb_hot_water_income_total_7 = _print(records1)[7]
+    lb_hot_water_income_total_8 = _print(records1)[8]
+    lb_hot_water_income_total_9 = _print(records1)[9]
+    lb_hot_water_income_total_10 = _print(records1)[10]
+    lb_hot_water_income_total_11 = _print(records1)[11]
+    lb_hot_water_income_total_12 = _print(records1)[12]
+    lb_hot_water_income_total_13 = _print(records1)[13]
+    lb_hot_water_income_total_14 = _print(records1)[14]
+    lb_hot_water_income_total_15 = _print(records1)[15]
+    lb_hot_water_income_total_16 = _print(records1)[16]
+    lb_hot_water_income_total_17 = _print(records1)[17]
+    lb_hot_water_income_total_18 = _print(records1)[18]
+    lb_hot_water_income_total_19 = _print(records1)[19]
+    lb_hot_water_income_total_20 = _print(records1)[20]
+    lb_hot_water_income_total_21 = _print(records1)[21]
+    lb_hot_water_income_total_22 = _print(records1)[22]
+    lb_hot_water_income_total_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['lb_hot_water_income_total_0', 'lb_hot_water_income_total_1', 'lb_hot_water_income_total_2',
+         'lb_hot_water_income_total_3', 'lb_hot_water_income_total_4', 'lb_hot_water_income_total_5',
+         'lb_hot_water_income_total_6', 'lb_hot_water_income_total_7', 'lb_hot_water_income_total_8',
+         'lb_hot_water_income_total_9', 'lb_hot_water_income_total_10', 'lb_hot_water_income_total_11',
+         'lb_hot_water_income_total_12', 'lb_hot_water_income_total_13', 'lb_hot_water_income_total_14',
+         'lb_hot_water_income_total_15', 'lb_hot_water_income_total_16', 'lb_hot_water_income_total_17',
+         'lb_hot_water_income_total_18', 'lb_hot_water_income_total_19', 'lb_hot_water_income_total_20',
+         'lb_hot_water_income_total_21', 'lb_hot_water_income_total_22', 'lb_hot_water_income_total_23'],
+        [lb_hot_water_income_total_0, lb_hot_water_income_total_1, lb_hot_water_income_total_2,
+         lb_hot_water_income_total_3, lb_hot_water_income_total_4, lb_hot_water_income_total_5,
+         lb_hot_water_income_total_6, lb_hot_water_income_total_7, lb_hot_water_income_total_8,
+         lb_hot_water_income_total_9, lb_hot_water_income_total_10, lb_hot_water_income_total_11,
+         lb_hot_water_income_total_12, lb_hot_water_income_total_13, lb_hot_water_income_total_14,
+         lb_hot_water_income_total_15, lb_hot_water_income_total_16, lb_hot_water_income_total_17,
+         lb_hot_water_income_total_18, lb_hot_water_income_total_19, lb_hot_water_income_total_20,
+         lb_hot_water_income_total_21, lb_hot_water_income_total_22, lb_hot_water_income_total_23])
+
+
+def write_to_database_cc_cold_income_total_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入离心式冷水机制冷收入24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('cc_cold_income_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    cc_cold_income_total_0 = _print(records1)[0]
+    cc_cold_income_total_1 = _print(records1)[1]
+    cc_cold_income_total_2 = _print(records1)[2]
+    cc_cold_income_total_3 = _print(records1)[3]
+    cc_cold_income_total_4 = _print(records1)[4]
+    cc_cold_income_total_5 = _print(records1)[5]
+    cc_cold_income_total_6 = _print(records1)[6]
+    cc_cold_income_total_7 = _print(records1)[7]
+    cc_cold_income_total_8 = _print(records1)[8]
+    cc_cold_income_total_9 = _print(records1)[9]
+    cc_cold_income_total_10 = _print(records1)[10]
+    cc_cold_income_total_11 = _print(records1)[11]
+    cc_cold_income_total_12 = _print(records1)[12]
+    cc_cold_income_total_13 = _print(records1)[13]
+    cc_cold_income_total_14 = _print(records1)[14]
+    cc_cold_income_total_15 = _print(records1)[15]
+    cc_cold_income_total_16 = _print(records1)[16]
+    cc_cold_income_total_17 = _print(records1)[17]
+    cc_cold_income_total_18 = _print(records1)[18]
+    cc_cold_income_total_19 = _print(records1)[19]
+    cc_cold_income_total_20 = _print(records1)[20]
+    cc_cold_income_total_21 = _print(records1)[21]
+    cc_cold_income_total_22 = _print(records1)[22]
+    cc_cold_income_total_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['cc_cold_income_total_0', 'cc_cold_income_total_1', 'cc_cold_income_total_2',
+         'cc_cold_income_total_3', 'cc_cold_income_total_4', 'cc_cold_income_total_5',
+         'cc_cold_income_total_6', 'cc_cold_income_total_7', 'cc_cold_income_total_8',
+         'cc_cold_income_total_9', 'cc_cold_income_total_10', 'cc_cold_income_total_11',
+         'cc_cold_income_total_12', 'cc_cold_income_total_13', 'cc_cold_income_total_14',
+         'cc_cold_income_total_15', 'cc_cold_income_total_16', 'cc_cold_income_total_17',
+         'cc_cold_income_total_18', 'cc_cold_income_total_19', 'cc_cold_income_total_20',
+         'cc_cold_income_total_21', 'cc_cold_income_total_22', 'cc_cold_income_total_23'],
+        [cc_cold_income_total_0, cc_cold_income_total_1, cc_cold_income_total_2,
+         cc_cold_income_total_3, cc_cold_income_total_4, cc_cold_income_total_5,
+         cc_cold_income_total_6, cc_cold_income_total_7, cc_cold_income_total_8,
+         cc_cold_income_total_9, cc_cold_income_total_10, cc_cold_income_total_11,
+         cc_cold_income_total_12, cc_cold_income_total_13, cc_cold_income_total_14,
+         cc_cold_income_total_15, cc_cold_income_total_16, cc_cold_income_total_17,
+         cc_cold_income_total_18, cc_cold_income_total_19, cc_cold_income_total_20,
+         cc_cold_income_total_21, cc_cold_income_total_22, cc_cold_income_total_23])
+
+
+def write_to_database_chp_cold_income_total_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入离心式热泵制冷收入24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('chp_cold_income_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    chp_cold_income_total_0 = _print(records1)[0]
+    chp_cold_income_total_1 = _print(records1)[1]
+    chp_cold_income_total_2 = _print(records1)[2]
+    chp_cold_income_total_3 = _print(records1)[3]
+    chp_cold_income_total_4 = _print(records1)[4]
+    chp_cold_income_total_5 = _print(records1)[5]
+    chp_cold_income_total_6 = _print(records1)[6]
+    chp_cold_income_total_7 = _print(records1)[7]
+    chp_cold_income_total_8 = _print(records1)[8]
+    chp_cold_income_total_9 = _print(records1)[9]
+    chp_cold_income_total_10 = _print(records1)[10]
+    chp_cold_income_total_11 = _print(records1)[11]
+    chp_cold_income_total_12 = _print(records1)[12]
+    chp_cold_income_total_13 = _print(records1)[13]
+    chp_cold_income_total_14 = _print(records1)[14]
+    chp_cold_income_total_15 = _print(records1)[15]
+    chp_cold_income_total_16 = _print(records1)[16]
+    chp_cold_income_total_17 = _print(records1)[17]
+    chp_cold_income_total_18 = _print(records1)[18]
+    chp_cold_income_total_19 = _print(records1)[19]
+    chp_cold_income_total_20 = _print(records1)[20]
+    chp_cold_income_total_21 = _print(records1)[21]
+    chp_cold_income_total_22 = _print(records1)[22]
+    chp_cold_income_total_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['chp_cold_income_total_0', 'chp_cold_income_total_1', 'chp_cold_income_total_2',
+         'chp_cold_income_total_3', 'chp_cold_income_total_4', 'chp_cold_income_total_5',
+         'chp_cold_income_total_6', 'chp_cold_income_total_7', 'chp_cold_income_total_8',
+         'chp_cold_income_total_9', 'chp_cold_income_total_10', 'chp_cold_income_total_11',
+         'chp_cold_income_total_12', 'chp_cold_income_total_13', 'chp_cold_income_total_14',
+         'chp_cold_income_total_15', 'chp_cold_income_total_16', 'chp_cold_income_total_17',
+         'chp_cold_income_total_18', 'chp_cold_income_total_19', 'chp_cold_income_total_20',
+         'chp_cold_income_total_21', 'chp_cold_income_total_22', 'chp_cold_income_total_23'],
+        [chp_cold_income_total_0, chp_cold_income_total_1, chp_cold_income_total_2,
+         chp_cold_income_total_3, chp_cold_income_total_4, chp_cold_income_total_5,
+         chp_cold_income_total_6, chp_cold_income_total_7, chp_cold_income_total_8,
+         chp_cold_income_total_9, chp_cold_income_total_10, chp_cold_income_total_11,
+         chp_cold_income_total_12, chp_cold_income_total_13, chp_cold_income_total_14,
+         chp_cold_income_total_15, chp_cold_income_total_16, chp_cold_income_total_17,
+         chp_cold_income_total_18, chp_cold_income_total_19, chp_cold_income_total_20,
+         chp_cold_income_total_21, chp_cold_income_total_22, chp_cold_income_total_23])
+
+
+def write_to_database_chp_heat_income_total_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入离心式热泵制热收入24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('chp_heat_income_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    chp_heat_income_total_0 = _print(records1)[0]
+    chp_heat_income_total_1 = _print(records1)[1]
+    chp_heat_income_total_2 = _print(records1)[2]
+    chp_heat_income_total_3 = _print(records1)[3]
+    chp_heat_income_total_4 = _print(records1)[4]
+    chp_heat_income_total_5 = _print(records1)[5]
+    chp_heat_income_total_6 = _print(records1)[6]
+    chp_heat_income_total_7 = _print(records1)[7]
+    chp_heat_income_total_8 = _print(records1)[8]
+    chp_heat_income_total_9 = _print(records1)[9]
+    chp_heat_income_total_10 = _print(records1)[10]
+    chp_heat_income_total_11 = _print(records1)[11]
+    chp_heat_income_total_12 = _print(records1)[12]
+    chp_heat_income_total_13 = _print(records1)[13]
+    chp_heat_income_total_14 = _print(records1)[14]
+    chp_heat_income_total_15 = _print(records1)[15]
+    chp_heat_income_total_16 = _print(records1)[16]
+    chp_heat_income_total_17 = _print(records1)[17]
+    chp_heat_income_total_18 = _print(records1)[18]
+    chp_heat_income_total_19 = _print(records1)[19]
+    chp_heat_income_total_20 = _print(records1)[20]
+    chp_heat_income_total_21 = _print(records1)[21]
+    chp_heat_income_total_22 = _print(records1)[22]
+    chp_heat_income_total_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['chp_heat_income_total_0', 'chp_heat_income_total_1', 'chp_heat_income_total_2',
+         'chp_heat_income_total_3', 'chp_heat_income_total_4', 'chp_heat_income_total_5',
+         'chp_heat_income_total_6', 'chp_heat_income_total_7', 'chp_heat_income_total_8',
+         'chp_heat_income_total_9', 'chp_heat_income_total_10', 'chp_heat_income_total_11',
+         'chp_heat_income_total_12', 'chp_heat_income_total_13', 'chp_heat_income_total_14',
+         'chp_heat_income_total_15', 'chp_heat_income_total_16', 'chp_heat_income_total_17',
+         'chp_heat_income_total_18', 'chp_heat_income_total_19', 'chp_heat_income_total_20',
+         'chp_heat_income_total_21', 'chp_heat_income_total_22', 'chp_heat_income_total_23'],
+        [chp_heat_income_total_0, chp_heat_income_total_1, chp_heat_income_total_2,
+         chp_heat_income_total_3, chp_heat_income_total_4, chp_heat_income_total_5,
+         chp_heat_income_total_6, chp_heat_income_total_7, chp_heat_income_total_8,
+         chp_heat_income_total_9, chp_heat_income_total_10, chp_heat_income_total_11,
+         chp_heat_income_total_12, chp_heat_income_total_13, chp_heat_income_total_14,
+         chp_heat_income_total_15, chp_heat_income_total_16, chp_heat_income_total_17,
+         chp_heat_income_total_18, chp_heat_income_total_19, chp_heat_income_total_20,
+         chp_heat_income_total_21, chp_heat_income_total_22, chp_heat_income_total_23])
+
+
+def write_to_database_ashp_cold_income_total_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入空气源热泵制冷收入24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('ashp_cold_income_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    ashp_cold_income_total_0 = _print(records1)[0]
+    ashp_cold_income_total_1 = _print(records1)[1]
+    ashp_cold_income_total_2 = _print(records1)[2]
+    ashp_cold_income_total_3 = _print(records1)[3]
+    ashp_cold_income_total_4 = _print(records1)[4]
+    ashp_cold_income_total_5 = _print(records1)[5]
+    ashp_cold_income_total_6 = _print(records1)[6]
+    ashp_cold_income_total_7 = _print(records1)[7]
+    ashp_cold_income_total_8 = _print(records1)[8]
+    ashp_cold_income_total_9 = _print(records1)[9]
+    ashp_cold_income_total_10 = _print(records1)[10]
+    ashp_cold_income_total_11 = _print(records1)[11]
+    ashp_cold_income_total_12 = _print(records1)[12]
+    ashp_cold_income_total_13 = _print(records1)[13]
+    ashp_cold_income_total_14 = _print(records1)[14]
+    ashp_cold_income_total_15 = _print(records1)[15]
+    ashp_cold_income_total_16 = _print(records1)[16]
+    ashp_cold_income_total_17 = _print(records1)[17]
+    ashp_cold_income_total_18 = _print(records1)[18]
+    ashp_cold_income_total_19 = _print(records1)[19]
+    ashp_cold_income_total_20 = _print(records1)[20]
+    ashp_cold_income_total_21 = _print(records1)[21]
+    ashp_cold_income_total_22 = _print(records1)[22]
+    ashp_cold_income_total_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['ashp_cold_income_total_0', 'ashp_cold_income_total_1', 'ashp_cold_income_total_2',
+         'ashp_cold_income_total_3', 'ashp_cold_income_total_4', 'ashp_cold_income_total_5',
+         'ashp_cold_income_total_6', 'ashp_cold_income_total_7', 'ashp_cold_income_total_8',
+         'ashp_cold_income_total_9', 'ashp_cold_income_total_10', 'ashp_cold_income_total_11',
+         'ashp_cold_income_total_12', 'ashp_cold_income_total_13', 'ashp_cold_income_total_14',
+         'ashp_cold_income_total_15', 'ashp_cold_income_total_16', 'ashp_cold_income_total_17',
+         'ashp_cold_income_total_18', 'ashp_cold_income_total_19', 'ashp_cold_income_total_20',
+         'ashp_cold_income_total_21', 'ashp_cold_income_total_22', 'ashp_cold_income_total_23'],
+        [ashp_cold_income_total_0, ashp_cold_income_total_1, ashp_cold_income_total_2,
+         ashp_cold_income_total_3, ashp_cold_income_total_4, ashp_cold_income_total_5,
+         ashp_cold_income_total_6, ashp_cold_income_total_7, ashp_cold_income_total_8,
+         ashp_cold_income_total_9, ashp_cold_income_total_10, ashp_cold_income_total_11,
+         ashp_cold_income_total_12, ashp_cold_income_total_13, ashp_cold_income_total_14,
+         ashp_cold_income_total_15, ashp_cold_income_total_16, ashp_cold_income_total_17,
+         ashp_cold_income_total_18, ashp_cold_income_total_19, ashp_cold_income_total_20,
+         ashp_cold_income_total_21, ashp_cold_income_total_22, ashp_cold_income_total_23])
+
+
+def write_to_database_ngb_hot_water_income_total_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入天然气锅炉生活热水收入24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('ngb_hot_water_income_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    ngb_hot_water_income_total_0 = _print(records1)[0]
+    ngb_hot_water_income_total_1 = _print(records1)[1]
+    ngb_hot_water_income_total_2 = _print(records1)[2]
+    ngb_hot_water_income_total_3 = _print(records1)[3]
+    ngb_hot_water_income_total_4 = _print(records1)[4]
+    ngb_hot_water_income_total_5 = _print(records1)[5]
+    ngb_hot_water_income_total_6 = _print(records1)[6]
+    ngb_hot_water_income_total_7 = _print(records1)[7]
+    ngb_hot_water_income_total_8 = _print(records1)[8]
+    ngb_hot_water_income_total_9 = _print(records1)[9]
+    ngb_hot_water_income_total_10 = _print(records1)[10]
+    ngb_hot_water_income_total_11 = _print(records1)[11]
+    ngb_hot_water_income_total_12 = _print(records1)[12]
+    ngb_hot_water_income_total_13 = _print(records1)[13]
+    ngb_hot_water_income_total_14 = _print(records1)[14]
+    ngb_hot_water_income_total_15 = _print(records1)[15]
+    ngb_hot_water_income_total_16 = _print(records1)[16]
+    ngb_hot_water_income_total_17 = _print(records1)[17]
+    ngb_hot_water_income_total_18 = _print(records1)[18]
+    ngb_hot_water_income_total_19 = _print(records1)[19]
+    ngb_hot_water_income_total_20 = _print(records1)[20]
+    ngb_hot_water_income_total_21 = _print(records1)[21]
+    ngb_hot_water_income_total_22 = _print(records1)[22]
+    ngb_hot_water_income_total_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['ngb_hot_water_income_total_0', 'ngb_hot_water_income_total_1', 'ngb_hot_water_income_total_2',
+         'ngb_hot_water_income_total_3', 'ngb_hot_water_income_total_4', 'ngb_hot_water_income_total_5',
+         'ngb_hot_water_income_total_6', 'ngb_hot_water_income_total_7', 'ngb_hot_water_income_total_8',
+         'ngb_hot_water_income_total_9', 'ngb_hot_water_income_total_10', 'ngb_hot_water_income_total_11',
+         'ngb_hot_water_income_total_12', 'ngb_hot_water_income_total_13', 'ngb_hot_water_income_total_14',
+         'ngb_hot_water_income_total_15', 'ngb_hot_water_income_total_16', 'ngb_hot_water_income_total_17',
+         'ngb_hot_water_income_total_18', 'ngb_hot_water_income_total_19', 'ngb_hot_water_income_total_20',
+         'ngb_hot_water_income_total_21', 'ngb_hot_water_income_total_22', 'ngb_hot_water_income_total_23'],
+        [ngb_hot_water_income_total_0, ngb_hot_water_income_total_1, ngb_hot_water_income_total_2,
+         ngb_hot_water_income_total_3, ngb_hot_water_income_total_4, ngb_hot_water_income_total_5,
+         ngb_hot_water_income_total_6, ngb_hot_water_income_total_7, ngb_hot_water_income_total_8,
+         ngb_hot_water_income_total_9, ngb_hot_water_income_total_10, ngb_hot_water_income_total_11,
+         ngb_hot_water_income_total_12, ngb_hot_water_income_total_13, ngb_hot_water_income_total_14,
+         ngb_hot_water_income_total_15, ngb_hot_water_income_total_16, ngb_hot_water_income_total_17,
+         ngb_hot_water_income_total_18, ngb_hot_water_income_total_19, ngb_hot_water_income_total_20,
+         ngb_hot_water_income_total_21, ngb_hot_water_income_total_22, ngb_hot_water_income_total_23])
+
+
+def write_to_database_photovoltaic_income_total_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入光伏发电收入24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('photovoltaic_income_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    photovoltaic_income_total_0 = _print(records1)[0]
+    photovoltaic_income_total_1 = _print(records1)[1]
+    photovoltaic_income_total_2 = _print(records1)[2]
+    photovoltaic_income_total_3 = _print(records1)[3]
+    photovoltaic_income_total_4 = _print(records1)[4]
+    photovoltaic_income_total_5 = _print(records1)[5]
+    photovoltaic_income_total_6 = _print(records1)[6]
+    photovoltaic_income_total_7 = _print(records1)[7]
+    photovoltaic_income_total_8 = _print(records1)[8]
+    photovoltaic_income_total_9 = _print(records1)[9]
+    photovoltaic_income_total_10 = _print(records1)[10]
+    photovoltaic_income_total_11 = _print(records1)[11]
+    photovoltaic_income_total_12 = _print(records1)[12]
+    photovoltaic_income_total_13 = _print(records1)[13]
+    photovoltaic_income_total_14 = _print(records1)[14]
+    photovoltaic_income_total_15 = _print(records1)[15]
+    photovoltaic_income_total_16 = _print(records1)[16]
+    photovoltaic_income_total_17 = _print(records1)[17]
+    photovoltaic_income_total_18 = _print(records1)[18]
+    photovoltaic_income_total_19 = _print(records1)[19]
+    photovoltaic_income_total_20 = _print(records1)[20]
+    photovoltaic_income_total_21 = _print(records1)[21]
+    photovoltaic_income_total_22 = _print(records1)[22]
+    photovoltaic_income_total_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['photovoltaic_income_total_0', 'photovoltaic_income_total_1', 'photovoltaic_income_total_2',
+         'photovoltaic_income_total_3', 'photovoltaic_income_total_4', 'photovoltaic_income_total_5',
+         'photovoltaic_income_total_6', 'photovoltaic_income_total_7', 'photovoltaic_income_total_8',
+         'photovoltaic_income_total_9', 'photovoltaic_income_total_10', 'photovoltaic_income_total_11',
+         'photovoltaic_income_total_12', 'photovoltaic_income_total_13', 'photovoltaic_income_total_14',
+         'photovoltaic_income_total_15', 'photovoltaic_income_total_16', 'photovoltaic_income_total_17',
+         'photovoltaic_income_total_18', 'photovoltaic_income_total_19', 'photovoltaic_income_total_20',
+         'photovoltaic_income_total_21', 'photovoltaic_income_total_22', 'photovoltaic_income_total_23'],
+        [photovoltaic_income_total_0, photovoltaic_income_total_1, photovoltaic_income_total_2,
+         photovoltaic_income_total_3, photovoltaic_income_total_4, photovoltaic_income_total_5,
+         photovoltaic_income_total_6, photovoltaic_income_total_7, photovoltaic_income_total_8,
+         photovoltaic_income_total_9, photovoltaic_income_total_10, photovoltaic_income_total_11,
+         photovoltaic_income_total_12, photovoltaic_income_total_13, photovoltaic_income_total_14,
+         photovoltaic_income_total_15, photovoltaic_income_total_16, photovoltaic_income_total_17,
+         photovoltaic_income_total_18, photovoltaic_income_total_19, photovoltaic_income_total_20,
+         photovoltaic_income_total_21, photovoltaic_income_total_22, photovoltaic_income_total_23])
+
+
+def write_to_database_wind_income_total_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入风力发电收入24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('wind_income_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    wind_income_total_0 = _print(records1)[0]
+    wind_income_total_1 = _print(records1)[1]
+    wind_income_total_2 = _print(records1)[2]
+    wind_income_total_3 = _print(records1)[3]
+    wind_income_total_4 = _print(records1)[4]
+    wind_income_total_5 = _print(records1)[5]
+    wind_income_total_6 = _print(records1)[6]
+    wind_income_total_7 = _print(records1)[7]
+    wind_income_total_8 = _print(records1)[8]
+    wind_income_total_9 = _print(records1)[9]
+    wind_income_total_10 = _print(records1)[10]
+    wind_income_total_11 = _print(records1)[11]
+    wind_income_total_12 = _print(records1)[12]
+    wind_income_total_13 = _print(records1)[13]
+    wind_income_total_14 = _print(records1)[14]
+    wind_income_total_15 = _print(records1)[15]
+    wind_income_total_16 = _print(records1)[16]
+    wind_income_total_17 = _print(records1)[17]
+    wind_income_total_18 = _print(records1)[18]
+    wind_income_total_19 = _print(records1)[19]
+    wind_income_total_20 = _print(records1)[20]
+    wind_income_total_21 = _print(records1)[21]
+    wind_income_total_22 = _print(records1)[22]
+    wind_income_total_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['wind_income_total_0', 'wind_income_total_1', 'wind_income_total_2',
+         'wind_income_total_3', 'wind_income_total_4', 'wind_income_total_5',
+         'wind_income_total_6', 'wind_income_total_7', 'wind_income_total_8',
+         'wind_income_total_9', 'wind_income_total_10', 'wind_income_total_11',
+         'wind_income_total_12', 'wind_income_total_13', 'wind_income_total_14',
+         'wind_income_total_15', 'wind_income_total_16', 'wind_income_total_17',
+         'wind_income_total_18', 'wind_income_total_19', 'wind_income_total_20',
+         'wind_income_total_21', 'wind_income_total_22', 'wind_income_total_23'],
+        [wind_income_total_0, wind_income_total_1, wind_income_total_2,
+         wind_income_total_3, wind_income_total_4, wind_income_total_5,
+         wind_income_total_6, wind_income_total_7, wind_income_total_8,
+         wind_income_total_9, wind_income_total_10, wind_income_total_11,
+         wind_income_total_12, wind_income_total_13, wind_income_total_14,
+         wind_income_total_15, wind_income_total_16, wind_income_total_17,
+         wind_income_total_18, wind_income_total_19, wind_income_total_20,
+         wind_income_total_21, wind_income_total_22, wind_income_total_23])
+
+
+def write_to_database_ice_cost_total_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入内燃机发电成本24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('ice_cost_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    ice_cost_total_0 = _print(records1)[0]
+    ice_cost_total_1 = _print(records1)[1]
+    ice_cost_total_2 = _print(records1)[2]
+    ice_cost_total_3 = _print(records1)[3]
+    ice_cost_total_4 = _print(records1)[4]
+    ice_cost_total_5 = _print(records1)[5]
+    ice_cost_total_6 = _print(records1)[6]
+    ice_cost_total_7 = _print(records1)[7]
+    ice_cost_total_8 = _print(records1)[8]
+    ice_cost_total_9 = _print(records1)[9]
+    ice_cost_total_10 = _print(records1)[10]
+    ice_cost_total_11 = _print(records1)[11]
+    ice_cost_total_12 = _print(records1)[12]
+    ice_cost_total_13 = _print(records1)[13]
+    ice_cost_total_14 = _print(records1)[14]
+    ice_cost_total_15 = _print(records1)[15]
+    ice_cost_total_16 = _print(records1)[16]
+    ice_cost_total_17 = _print(records1)[17]
+    ice_cost_total_18 = _print(records1)[18]
+    ice_cost_total_19 = _print(records1)[19]
+    ice_cost_total_20 = _print(records1)[20]
+    ice_cost_total_21 = _print(records1)[21]
+    ice_cost_total_22 = _print(records1)[22]
+    ice_cost_total_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['ice_cost_total_0', 'ice_cost_total_1', 'ice_cost_total_2',
+         'ice_cost_total_3', 'ice_cost_total_4', 'ice_cost_total_5',
+         'ice_cost_total_6', 'ice_cost_total_7', 'ice_cost_total_8',
+         'ice_cost_total_9', 'ice_cost_total_10', 'ice_cost_total_11',
+         'ice_cost_total_12', 'ice_cost_total_13', 'ice_cost_total_14',
+         'ice_cost_total_15', 'ice_cost_total_16', 'ice_cost_total_17',
+         'ice_cost_total_18', 'ice_cost_total_19', 'ice_cost_total_20',
+         'ice_cost_total_21', 'ice_cost_total_22', 'ice_cost_total_23'],
+        [ice_cost_total_0, ice_cost_total_1, ice_cost_total_2,
+         ice_cost_total_3, ice_cost_total_4, ice_cost_total_5,
+         ice_cost_total_6, ice_cost_total_7, ice_cost_total_8,
+         ice_cost_total_9, ice_cost_total_10, ice_cost_total_11,
+         ice_cost_total_12, ice_cost_total_13, ice_cost_total_14,
+         ice_cost_total_15, ice_cost_total_16, ice_cost_total_17,
+         ice_cost_total_18, ice_cost_total_19, ice_cost_total_20,
+         ice_cost_total_21, ice_cost_total_22, ice_cost_total_23])
+
+
+def write_to_database_lb_cold_cost_total_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入溴化锂制冷成本24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('lb_cold_cost_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    lb_cold_cost_total_0 = _print(records1)[0]
+    lb_cold_cost_total_1 = _print(records1)[1]
+    lb_cold_cost_total_2 = _print(records1)[2]
+    lb_cold_cost_total_3 = _print(records1)[3]
+    lb_cold_cost_total_4 = _print(records1)[4]
+    lb_cold_cost_total_5 = _print(records1)[5]
+    lb_cold_cost_total_6 = _print(records1)[6]
+    lb_cold_cost_total_7 = _print(records1)[7]
+    lb_cold_cost_total_8 = _print(records1)[8]
+    lb_cold_cost_total_9 = _print(records1)[9]
+    lb_cold_cost_total_10 = _print(records1)[10]
+    lb_cold_cost_total_11 = _print(records1)[11]
+    lb_cold_cost_total_12 = _print(records1)[12]
+    lb_cold_cost_total_13 = _print(records1)[13]
+    lb_cold_cost_total_14 = _print(records1)[14]
+    lb_cold_cost_total_15 = _print(records1)[15]
+    lb_cold_cost_total_16 = _print(records1)[16]
+    lb_cold_cost_total_17 = _print(records1)[17]
+    lb_cold_cost_total_18 = _print(records1)[18]
+    lb_cold_cost_total_19 = _print(records1)[19]
+    lb_cold_cost_total_20 = _print(records1)[20]
+    lb_cold_cost_total_21 = _print(records1)[21]
+    lb_cold_cost_total_22 = _print(records1)[22]
+    lb_cold_cost_total_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['lb_cold_cost_total_0', 'lb_cold_cost_total_1', 'lb_cold_cost_total_2',
+         'lb_cold_cost_total_3', 'lb_cold_cost_total_4', 'lb_cold_cost_total_5',
+         'lb_cold_cost_total_6', 'lb_cold_cost_total_7', 'lb_cold_cost_total_8',
+         'lb_cold_cost_total_9', 'lb_cold_cost_total_10', 'lb_cold_cost_total_11',
+         'lb_cold_cost_total_12', 'lb_cold_cost_total_13', 'lb_cold_cost_total_14',
+         'lb_cold_cost_total_15', 'lb_cold_cost_total_16', 'lb_cold_cost_total_17',
+         'lb_cold_cost_total_18', 'lb_cold_cost_total_19', 'lb_cold_cost_total_20',
+         'lb_cold_cost_total_21', 'lb_cold_cost_total_22', 'lb_cold_cost_total_23'],
+        [lb_cold_cost_total_0, lb_cold_cost_total_1, lb_cold_cost_total_2,
+         lb_cold_cost_total_3, lb_cold_cost_total_4, lb_cold_cost_total_5,
+         lb_cold_cost_total_6, lb_cold_cost_total_7, lb_cold_cost_total_8,
+         lb_cold_cost_total_9, lb_cold_cost_total_10, lb_cold_cost_total_11,
+         lb_cold_cost_total_12, lb_cold_cost_total_13, lb_cold_cost_total_14,
+         lb_cold_cost_total_15, lb_cold_cost_total_16, lb_cold_cost_total_17,
+         lb_cold_cost_total_18, lb_cold_cost_total_19, lb_cold_cost_total_20,
+         lb_cold_cost_total_21, lb_cold_cost_total_22, lb_cold_cost_total_23])
+
+def write_to_database_lb_heat_cost_total_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入溴化锂制热成本24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('lb_heat_cost_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    lb_heat_cost_total_0 = _print(records1)[0]
+    lb_heat_cost_total_1 = _print(records1)[1]
+    lb_heat_cost_total_2 = _print(records1)[2]
+    lb_heat_cost_total_3 = _print(records1)[3]
+    lb_heat_cost_total_4 = _print(records1)[4]
+    lb_heat_cost_total_5 = _print(records1)[5]
+    lb_heat_cost_total_6 = _print(records1)[6]
+    lb_heat_cost_total_7 = _print(records1)[7]
+    lb_heat_cost_total_8 = _print(records1)[8]
+    lb_heat_cost_total_9 = _print(records1)[9]
+    lb_heat_cost_total_10 = _print(records1)[10]
+    lb_heat_cost_total_11 = _print(records1)[11]
+    lb_heat_cost_total_12 = _print(records1)[12]
+    lb_heat_cost_total_13 = _print(records1)[13]
+    lb_heat_cost_total_14 = _print(records1)[14]
+    lb_heat_cost_total_15 = _print(records1)[15]
+    lb_heat_cost_total_16 = _print(records1)[16]
+    lb_heat_cost_total_17 = _print(records1)[17]
+    lb_heat_cost_total_18 = _print(records1)[18]
+    lb_heat_cost_total_19 = _print(records1)[19]
+    lb_heat_cost_total_20 = _print(records1)[20]
+    lb_heat_cost_total_21 = _print(records1)[21]
+    lb_heat_cost_total_22 = _print(records1)[22]
+    lb_heat_cost_total_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['lb_heat_cost_total_0', 'lb_heat_cost_total_1', 'lb_heat_cost_total_2',
+         'lb_heat_cost_total_3', 'lb_heat_cost_total_4', 'lb_heat_cost_total_5',
+         'lb_heat_cost_total_6', 'lb_heat_cost_total_7', 'lb_heat_cost_total_8',
+         'lb_heat_cost_total_9', 'lb_heat_cost_total_10', 'lb_heat_cost_total_11',
+         'lb_heat_cost_total_12', 'lb_heat_cost_total_13', 'lb_heat_cost_total_14',
+         'lb_heat_cost_total_15', 'lb_heat_cost_total_16', 'lb_heat_cost_total_17',
+         'lb_heat_cost_total_18', 'lb_heat_cost_total_19', 'lb_heat_cost_total_20',
+         'lb_heat_cost_total_21', 'lb_heat_cost_total_22', 'lb_heat_cost_total_23'],
+        [lb_heat_cost_total_0, lb_heat_cost_total_1, lb_heat_cost_total_2,
+         lb_heat_cost_total_3, lb_heat_cost_total_4, lb_heat_cost_total_5,
+         lb_heat_cost_total_6, lb_heat_cost_total_7, lb_heat_cost_total_8,
+         lb_heat_cost_total_9, lb_heat_cost_total_10, lb_heat_cost_total_11,
+         lb_heat_cost_total_12, lb_heat_cost_total_13, lb_heat_cost_total_14,
+         lb_heat_cost_total_15, lb_heat_cost_total_16, lb_heat_cost_total_17,
+         lb_heat_cost_total_18, lb_heat_cost_total_19, lb_heat_cost_total_20,
+         lb_heat_cost_total_21, lb_heat_cost_total_22, lb_heat_cost_total_23])
+
+
+def write_to_database_lb_hot_water_cost_total_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入溴化锂生活热水成本24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('lb_hot_water_cost_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    lb_hot_water_cost_total_0 = _print(records1)[0]
+    lb_hot_water_cost_total_1 = _print(records1)[1]
+    lb_hot_water_cost_total_2 = _print(records1)[2]
+    lb_hot_water_cost_total_3 = _print(records1)[3]
+    lb_hot_water_cost_total_4 = _print(records1)[4]
+    lb_hot_water_cost_total_5 = _print(records1)[5]
+    lb_hot_water_cost_total_6 = _print(records1)[6]
+    lb_hot_water_cost_total_7 = _print(records1)[7]
+    lb_hot_water_cost_total_8 = _print(records1)[8]
+    lb_hot_water_cost_total_9 = _print(records1)[9]
+    lb_hot_water_cost_total_10 = _print(records1)[10]
+    lb_hot_water_cost_total_11 = _print(records1)[11]
+    lb_hot_water_cost_total_12 = _print(records1)[12]
+    lb_hot_water_cost_total_13 = _print(records1)[13]
+    lb_hot_water_cost_total_14 = _print(records1)[14]
+    lb_hot_water_cost_total_15 = _print(records1)[15]
+    lb_hot_water_cost_total_16 = _print(records1)[16]
+    lb_hot_water_cost_total_17 = _print(records1)[17]
+    lb_hot_water_cost_total_18 = _print(records1)[18]
+    lb_hot_water_cost_total_19 = _print(records1)[19]
+    lb_hot_water_cost_total_20 = _print(records1)[20]
+    lb_hot_water_cost_total_21 = _print(records1)[21]
+    lb_hot_water_cost_total_22 = _print(records1)[22]
+    lb_hot_water_cost_total_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['lb_hot_water_cost_total_0', 'lb_hot_water_cost_total_1', 'lb_hot_water_cost_total_2',
+         'lb_hot_water_cost_total_3', 'lb_hot_water_cost_total_4', 'lb_hot_water_cost_total_5',
+         'lb_hot_water_cost_total_6', 'lb_hot_water_cost_total_7', 'lb_hot_water_cost_total_8',
+         'lb_hot_water_cost_total_9', 'lb_hot_water_cost_total_10', 'lb_hot_water_cost_total_11',
+         'lb_hot_water_cost_total_12', 'lb_hot_water_cost_total_13', 'lb_hot_water_cost_total_14',
+         'lb_hot_water_cost_total_15', 'lb_hot_water_cost_total_16', 'lb_hot_water_cost_total_17',
+         'lb_hot_water_cost_total_18', 'lb_hot_water_cost_total_19', 'lb_hot_water_cost_total_20',
+         'lb_hot_water_cost_total_21', 'lb_hot_water_cost_total_22', 'lb_hot_water_cost_total_23'],
+        [lb_hot_water_cost_total_0, lb_hot_water_cost_total_1, lb_hot_water_cost_total_2,
+         lb_hot_water_cost_total_3, lb_hot_water_cost_total_4, lb_hot_water_cost_total_5,
+         lb_hot_water_cost_total_6, lb_hot_water_cost_total_7, lb_hot_water_cost_total_8,
+         lb_hot_water_cost_total_9, lb_hot_water_cost_total_10, lb_hot_water_cost_total_11,
+         lb_hot_water_cost_total_12, lb_hot_water_cost_total_13, lb_hot_water_cost_total_14,
+         lb_hot_water_cost_total_15, lb_hot_water_cost_total_16, lb_hot_water_cost_total_17,
+         lb_hot_water_cost_total_18, lb_hot_water_cost_total_19, lb_hot_water_cost_total_20,
+         lb_hot_water_cost_total_21, lb_hot_water_cost_total_22, lb_hot_water_cost_total_23])
+
+
+def write_to_database_cc_cold_cost_total_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入离心式冷水机制冷成本24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('cc_cold_cost_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    cc_cold_cost_total_0 = _print(records1)[0]
+    cc_cold_cost_total_1 = _print(records1)[1]
+    cc_cold_cost_total_2 = _print(records1)[2]
+    cc_cold_cost_total_3 = _print(records1)[3]
+    cc_cold_cost_total_4 = _print(records1)[4]
+    cc_cold_cost_total_5 = _print(records1)[5]
+    cc_cold_cost_total_6 = _print(records1)[6]
+    cc_cold_cost_total_7 = _print(records1)[7]
+    cc_cold_cost_total_8 = _print(records1)[8]
+    cc_cold_cost_total_9 = _print(records1)[9]
+    cc_cold_cost_total_10 = _print(records1)[10]
+    cc_cold_cost_total_11 = _print(records1)[11]
+    cc_cold_cost_total_12 = _print(records1)[12]
+    cc_cold_cost_total_13 = _print(records1)[13]
+    cc_cold_cost_total_14 = _print(records1)[14]
+    cc_cold_cost_total_15 = _print(records1)[15]
+    cc_cold_cost_total_16 = _print(records1)[16]
+    cc_cold_cost_total_17 = _print(records1)[17]
+    cc_cold_cost_total_18 = _print(records1)[18]
+    cc_cold_cost_total_19 = _print(records1)[19]
+    cc_cold_cost_total_20 = _print(records1)[20]
+    cc_cold_cost_total_21 = _print(records1)[21]
+    cc_cold_cost_total_22 = _print(records1)[22]
+    cc_cold_cost_total_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['cc_cold_cost_total_0', 'cc_cold_cost_total_1', 'cc_cold_cost_total_2',
+         'cc_cold_cost_total_3', 'cc_cold_cost_total_4', 'cc_cold_cost_total_5',
+         'cc_cold_cost_total_6', 'cc_cold_cost_total_7', 'cc_cold_cost_total_8',
+         'cc_cold_cost_total_9', 'cc_cold_cost_total_10', 'cc_cold_cost_total_11',
+         'cc_cold_cost_total_12', 'cc_cold_cost_total_13', 'cc_cold_cost_total_14',
+         'cc_cold_cost_total_15', 'cc_cold_cost_total_16', 'cc_cold_cost_total_17',
+         'cc_cold_cost_total_18', 'cc_cold_cost_total_19', 'cc_cold_cost_total_20',
+         'cc_cold_cost_total_21', 'cc_cold_cost_total_22', 'cc_cold_cost_total_23'],
+        [cc_cold_cost_total_0, cc_cold_cost_total_1, cc_cold_cost_total_2,
+         cc_cold_cost_total_3, cc_cold_cost_total_4, cc_cold_cost_total_5,
+         cc_cold_cost_total_6, cc_cold_cost_total_7, cc_cold_cost_total_8,
+         cc_cold_cost_total_9, cc_cold_cost_total_10, cc_cold_cost_total_11,
+         cc_cold_cost_total_12, cc_cold_cost_total_13, cc_cold_cost_total_14,
+         cc_cold_cost_total_15, cc_cold_cost_total_16, cc_cold_cost_total_17,
+         cc_cold_cost_total_18, cc_cold_cost_total_19, cc_cold_cost_total_20,
+         cc_cold_cost_total_21, cc_cold_cost_total_22, cc_cold_cost_total_23])
+
+
+def write_to_database_chp_cold_cost_total_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入离心式热泵制冷成本24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('chp_cold_cost_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    chp_cold_cost_total_0 = _print(records1)[0]
+    chp_cold_cost_total_1 = _print(records1)[1]
+    chp_cold_cost_total_2 = _print(records1)[2]
+    chp_cold_cost_total_3 = _print(records1)[3]
+    chp_cold_cost_total_4 = _print(records1)[4]
+    chp_cold_cost_total_5 = _print(records1)[5]
+    chp_cold_cost_total_6 = _print(records1)[6]
+    chp_cold_cost_total_7 = _print(records1)[7]
+    chp_cold_cost_total_8 = _print(records1)[8]
+    chp_cold_cost_total_9 = _print(records1)[9]
+    chp_cold_cost_total_10 = _print(records1)[10]
+    chp_cold_cost_total_11 = _print(records1)[11]
+    chp_cold_cost_total_12 = _print(records1)[12]
+    chp_cold_cost_total_13 = _print(records1)[13]
+    chp_cold_cost_total_14 = _print(records1)[14]
+    chp_cold_cost_total_15 = _print(records1)[15]
+    chp_cold_cost_total_16 = _print(records1)[16]
+    chp_cold_cost_total_17 = _print(records1)[17]
+    chp_cold_cost_total_18 = _print(records1)[18]
+    chp_cold_cost_total_19 = _print(records1)[19]
+    chp_cold_cost_total_20 = _print(records1)[20]
+    chp_cold_cost_total_21 = _print(records1)[21]
+    chp_cold_cost_total_22 = _print(records1)[22]
+    chp_cold_cost_total_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['chp_cold_cost_total_0', 'chp_cold_cost_total_1', 'chp_cold_cost_total_2',
+         'chp_cold_cost_total_3', 'chp_cold_cost_total_4', 'chp_cold_cost_total_5',
+         'chp_cold_cost_total_6', 'chp_cold_cost_total_7', 'chp_cold_cost_total_8',
+         'chp_cold_cost_total_9', 'chp_cold_cost_total_10', 'chp_cold_cost_total_11',
+         'chp_cold_cost_total_12', 'chp_cold_cost_total_13', 'chp_cold_cost_total_14',
+         'chp_cold_cost_total_15', 'chp_cold_cost_total_16', 'chp_cold_cost_total_17',
+         'chp_cold_cost_total_18', 'chp_cold_cost_total_19', 'chp_cold_cost_total_20',
+         'chp_cold_cost_total_21', 'chp_cold_cost_total_22', 'chp_cold_cost_total_23'],
+        [chp_cold_cost_total_0, chp_cold_cost_total_1, chp_cold_cost_total_2,
+         chp_cold_cost_total_3, chp_cold_cost_total_4, chp_cold_cost_total_5,
+         chp_cold_cost_total_6, chp_cold_cost_total_7, chp_cold_cost_total_8,
+         chp_cold_cost_total_9, chp_cold_cost_total_10, chp_cold_cost_total_11,
+         chp_cold_cost_total_12, chp_cold_cost_total_13, chp_cold_cost_total_14,
+         chp_cold_cost_total_15, chp_cold_cost_total_16, chp_cold_cost_total_17,
+         chp_cold_cost_total_18, chp_cold_cost_total_19, chp_cold_cost_total_20,
+         chp_cold_cost_total_21, chp_cold_cost_total_22, chp_cold_cost_total_23])
+
+
+def write_to_database_chp_heat_cost_total_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入离心式热泵制热成本24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('chp_heat_cost_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    chp_heat_cost_total_0 = _print(records1)[0]
+    chp_heat_cost_total_1 = _print(records1)[1]
+    chp_heat_cost_total_2 = _print(records1)[2]
+    chp_heat_cost_total_3 = _print(records1)[3]
+    chp_heat_cost_total_4 = _print(records1)[4]
+    chp_heat_cost_total_5 = _print(records1)[5]
+    chp_heat_cost_total_6 = _print(records1)[6]
+    chp_heat_cost_total_7 = _print(records1)[7]
+    chp_heat_cost_total_8 = _print(records1)[8]
+    chp_heat_cost_total_9 = _print(records1)[9]
+    chp_heat_cost_total_10 = _print(records1)[10]
+    chp_heat_cost_total_11 = _print(records1)[11]
+    chp_heat_cost_total_12 = _print(records1)[12]
+    chp_heat_cost_total_13 = _print(records1)[13]
+    chp_heat_cost_total_14 = _print(records1)[14]
+    chp_heat_cost_total_15 = _print(records1)[15]
+    chp_heat_cost_total_16 = _print(records1)[16]
+    chp_heat_cost_total_17 = _print(records1)[17]
+    chp_heat_cost_total_18 = _print(records1)[18]
+    chp_heat_cost_total_19 = _print(records1)[19]
+    chp_heat_cost_total_20 = _print(records1)[20]
+    chp_heat_cost_total_21 = _print(records1)[21]
+    chp_heat_cost_total_22 = _print(records1)[22]
+    chp_heat_cost_total_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['chp_heat_cost_total_0', 'chp_heat_cost_total_1', 'chp_heat_cost_total_2',
+         'chp_heat_cost_total_3', 'chp_heat_cost_total_4', 'chp_heat_cost_total_5',
+         'chp_heat_cost_total_6', 'chp_heat_cost_total_7', 'chp_heat_cost_total_8',
+         'chp_heat_cost_total_9', 'chp_heat_cost_total_10', 'chp_heat_cost_total_11',
+         'chp_heat_cost_total_12', 'chp_heat_cost_total_13', 'chp_heat_cost_total_14',
+         'chp_heat_cost_total_15', 'chp_heat_cost_total_16', 'chp_heat_cost_total_17',
+         'chp_heat_cost_total_18', 'chp_heat_cost_total_19', 'chp_heat_cost_total_20',
+         'chp_heat_cost_total_21', 'chp_heat_cost_total_22', 'chp_heat_cost_total_23'],
+        [chp_heat_cost_total_0, chp_heat_cost_total_1, chp_heat_cost_total_2,
+         chp_heat_cost_total_3, chp_heat_cost_total_4, chp_heat_cost_total_5,
+         chp_heat_cost_total_6, chp_heat_cost_total_7, chp_heat_cost_total_8,
+         chp_heat_cost_total_9, chp_heat_cost_total_10, chp_heat_cost_total_11,
+         chp_heat_cost_total_12, chp_heat_cost_total_13, chp_heat_cost_total_14,
+         chp_heat_cost_total_15, chp_heat_cost_total_16, chp_heat_cost_total_17,
+         chp_heat_cost_total_18, chp_heat_cost_total_19, chp_heat_cost_total_20,
+         chp_heat_cost_total_21, chp_heat_cost_total_22, chp_heat_cost_total_23])
+
+
+def write_to_database_ashp_cold_cost_total_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入空气源热泵制冷成本24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('ashp_cold_cost_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    ashp_cold_cost_total_0 = _print(records1)[0]
+    ashp_cold_cost_total_1 = _print(records1)[1]
+    ashp_cold_cost_total_2 = _print(records1)[2]
+    ashp_cold_cost_total_3 = _print(records1)[3]
+    ashp_cold_cost_total_4 = _print(records1)[4]
+    ashp_cold_cost_total_5 = _print(records1)[5]
+    ashp_cold_cost_total_6 = _print(records1)[6]
+    ashp_cold_cost_total_7 = _print(records1)[7]
+    ashp_cold_cost_total_8 = _print(records1)[8]
+    ashp_cold_cost_total_9 = _print(records1)[9]
+    ashp_cold_cost_total_10 = _print(records1)[10]
+    ashp_cold_cost_total_11 = _print(records1)[11]
+    ashp_cold_cost_total_12 = _print(records1)[12]
+    ashp_cold_cost_total_13 = _print(records1)[13]
+    ashp_cold_cost_total_14 = _print(records1)[14]
+    ashp_cold_cost_total_15 = _print(records1)[15]
+    ashp_cold_cost_total_16 = _print(records1)[16]
+    ashp_cold_cost_total_17 = _print(records1)[17]
+    ashp_cold_cost_total_18 = _print(records1)[18]
+    ashp_cold_cost_total_19 = _print(records1)[19]
+    ashp_cold_cost_total_20 = _print(records1)[20]
+    ashp_cold_cost_total_21 = _print(records1)[21]
+    ashp_cold_cost_total_22 = _print(records1)[22]
+    ashp_cold_cost_total_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['ashp_cold_cost_total_0', 'ashp_cold_cost_total_1', 'ashp_cold_cost_total_2',
+         'ashp_cold_cost_total_3', 'ashp_cold_cost_total_4', 'ashp_cold_cost_total_5',
+         'ashp_cold_cost_total_6', 'ashp_cold_cost_total_7', 'ashp_cold_cost_total_8',
+         'ashp_cold_cost_total_9', 'ashp_cold_cost_total_10', 'ashp_cold_cost_total_11',
+         'ashp_cold_cost_total_12', 'ashp_cold_cost_total_13', 'ashp_cold_cost_total_14',
+         'ashp_cold_cost_total_15', 'ashp_cold_cost_total_16', 'ashp_cold_cost_total_17',
+         'ashp_cold_cost_total_18', 'ashp_cold_cost_total_19', 'ashp_cold_cost_total_20',
+         'ashp_cold_cost_total_21', 'ashp_cold_cost_total_22', 'ashp_cold_cost_total_23'],
+        [ashp_cold_cost_total_0, ashp_cold_cost_total_1, ashp_cold_cost_total_2,
+         ashp_cold_cost_total_3, ashp_cold_cost_total_4, ashp_cold_cost_total_5,
+         ashp_cold_cost_total_6, ashp_cold_cost_total_7, ashp_cold_cost_total_8,
+         ashp_cold_cost_total_9, ashp_cold_cost_total_10, ashp_cold_cost_total_11,
+         ashp_cold_cost_total_12, ashp_cold_cost_total_13, ashp_cold_cost_total_14,
+         ashp_cold_cost_total_15, ashp_cold_cost_total_16, ashp_cold_cost_total_17,
+         ashp_cold_cost_total_18, ashp_cold_cost_total_19, ashp_cold_cost_total_20,
+         ashp_cold_cost_total_21, ashp_cold_cost_total_22, ashp_cold_cost_total_23])
+
+
+def write_to_database_ashp_heat_cost_total_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入空气源热泵制热成本24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('ashp_heat_cost_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    ashp_heat_cost_total_0 = _print(records1)[0]
+    ashp_heat_cost_total_1 = _print(records1)[1]
+    ashp_heat_cost_total_2 = _print(records1)[2]
+    ashp_heat_cost_total_3 = _print(records1)[3]
+    ashp_heat_cost_total_4 = _print(records1)[4]
+    ashp_heat_cost_total_5 = _print(records1)[5]
+    ashp_heat_cost_total_6 = _print(records1)[6]
+    ashp_heat_cost_total_7 = _print(records1)[7]
+    ashp_heat_cost_total_8 = _print(records1)[8]
+    ashp_heat_cost_total_9 = _print(records1)[9]
+    ashp_heat_cost_total_10 = _print(records1)[10]
+    ashp_heat_cost_total_11 = _print(records1)[11]
+    ashp_heat_cost_total_12 = _print(records1)[12]
+    ashp_heat_cost_total_13 = _print(records1)[13]
+    ashp_heat_cost_total_14 = _print(records1)[14]
+    ashp_heat_cost_total_15 = _print(records1)[15]
+    ashp_heat_cost_total_16 = _print(records1)[16]
+    ashp_heat_cost_total_17 = _print(records1)[17]
+    ashp_heat_cost_total_18 = _print(records1)[18]
+    ashp_heat_cost_total_19 = _print(records1)[19]
+    ashp_heat_cost_total_20 = _print(records1)[20]
+    ashp_heat_cost_total_21 = _print(records1)[21]
+    ashp_heat_cost_total_22 = _print(records1)[22]
+    ashp_heat_cost_total_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['ashp_heat_cost_total_0', 'ashp_heat_cost_total_1', 'ashp_heat_cost_total_2',
+         'ashp_heat_cost_total_3', 'ashp_heat_cost_total_4', 'ashp_heat_cost_total_5',
+         'ashp_heat_cost_total_6', 'ashp_heat_cost_total_7', 'ashp_heat_cost_total_8',
+         'ashp_heat_cost_total_9', 'ashp_heat_cost_total_10', 'ashp_heat_cost_total_11',
+         'ashp_heat_cost_total_12', 'ashp_heat_cost_total_13', 'ashp_heat_cost_total_14',
+         'ashp_heat_cost_total_15', 'ashp_heat_cost_total_16', 'ashp_heat_cost_total_17',
+         'ashp_heat_cost_total_18', 'ashp_heat_cost_total_19', 'ashp_heat_cost_total_20',
+         'ashp_heat_cost_total_21', 'ashp_heat_cost_total_22', 'ashp_heat_cost_total_23'],
+        [ashp_heat_cost_total_0, ashp_heat_cost_total_1, ashp_heat_cost_total_2,
+         ashp_heat_cost_total_3, ashp_heat_cost_total_4, ashp_heat_cost_total_5,
+         ashp_heat_cost_total_6, ashp_heat_cost_total_7, ashp_heat_cost_total_8,
+         ashp_heat_cost_total_9, ashp_heat_cost_total_10, ashp_heat_cost_total_11,
+         ashp_heat_cost_total_12, ashp_heat_cost_total_13, ashp_heat_cost_total_14,
+         ashp_heat_cost_total_15, ashp_heat_cost_total_16, ashp_heat_cost_total_17,
+         ashp_heat_cost_total_18, ashp_heat_cost_total_19, ashp_heat_cost_total_20,
+         ashp_heat_cost_total_21, ashp_heat_cost_total_22, ashp_heat_cost_total_23])
+
+
+def write_to_database_ngb_hot_water_cost_total_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入天然气锅炉生活热水成本24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('ngb_hot_water_cost_total',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    ngb_hot_water_cost_total_0 = _print(records1)[0]
+    ngb_hot_water_cost_total_1 = _print(records1)[1]
+    ngb_hot_water_cost_total_2 = _print(records1)[2]
+    ngb_hot_water_cost_total_3 = _print(records1)[3]
+    ngb_hot_water_cost_total_4 = _print(records1)[4]
+    ngb_hot_water_cost_total_5 = _print(records1)[5]
+    ngb_hot_water_cost_total_6 = _print(records1)[6]
+    ngb_hot_water_cost_total_7 = _print(records1)[7]
+    ngb_hot_water_cost_total_8 = _print(records1)[8]
+    ngb_hot_water_cost_total_9 = _print(records1)[9]
+    ngb_hot_water_cost_total_10 = _print(records1)[10]
+    ngb_hot_water_cost_total_11 = _print(records1)[11]
+    ngb_hot_water_cost_total_12 = _print(records1)[12]
+    ngb_hot_water_cost_total_13 = _print(records1)[13]
+    ngb_hot_water_cost_total_14 = _print(records1)[14]
+    ngb_hot_water_cost_total_15 = _print(records1)[15]
+    ngb_hot_water_cost_total_16 = _print(records1)[16]
+    ngb_hot_water_cost_total_17 = _print(records1)[17]
+    ngb_hot_water_cost_total_18 = _print(records1)[18]
+    ngb_hot_water_cost_total_19 = _print(records1)[19]
+    ngb_hot_water_cost_total_20 = _print(records1)[20]
+    ngb_hot_water_cost_total_21 = _print(records1)[21]
+    ngb_hot_water_cost_total_22 = _print(records1)[22]
+    ngb_hot_water_cost_total_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['ngb_hot_water_cost_total_0', 'ngb_hot_water_cost_total_1', 'ngb_hot_water_cost_total_2',
+         'ngb_hot_water_cost_total_3', 'ngb_hot_water_cost_total_4', 'ngb_hot_water_cost_total_5',
+         'ngb_hot_water_cost_total_6', 'ngb_hot_water_cost_total_7', 'ngb_hot_water_cost_total_8',
+         'ngb_hot_water_cost_total_9', 'ngb_hot_water_cost_total_10', 'ngb_hot_water_cost_total_11',
+         'ngb_hot_water_cost_total_12', 'ngb_hot_water_cost_total_13', 'ngb_hot_water_cost_total_14',
+         'ngb_hot_water_cost_total_15', 'ngb_hot_water_cost_total_16', 'ngb_hot_water_cost_total_17',
+         'ngb_hot_water_cost_total_18', 'ngb_hot_water_cost_total_19', 'ngb_hot_water_cost_total_20',
+         'ngb_hot_water_cost_total_21', 'ngb_hot_water_cost_total_22', 'ngb_hot_water_cost_total_23'],
+        [ngb_hot_water_cost_total_0, ngb_hot_water_cost_total_1, ngb_hot_water_cost_total_2,
+         ngb_hot_water_cost_total_3, ngb_hot_water_cost_total_4, ngb_hot_water_cost_total_5,
+         ngb_hot_water_cost_total_6, ngb_hot_water_cost_total_7, ngb_hot_water_cost_total_8,
+         ngb_hot_water_cost_total_9, ngb_hot_water_cost_total_10, ngb_hot_water_cost_total_11,
+         ngb_hot_water_cost_total_12, ngb_hot_water_cost_total_13, ngb_hot_water_cost_total_14,
+         ngb_hot_water_cost_total_15, ngb_hot_water_cost_total_16, ngb_hot_water_cost_total_17,
+         ngb_hot_water_cost_total_18, ngb_hot_water_cost_total_19, ngb_hot_water_cost_total_20,
+         ngb_hot_water_cost_total_21, ngb_hot_water_cost_total_22, ngb_hot_water_cost_total_23])
+
+def write_to_database_ice_electrical_efficiency_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入内燃机发电效率24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('ice_electrical_efficiency',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    ice_electrical_efficiency_0 = _print(records1)[0]
+    ice_electrical_efficiency_1 = _print(records1)[1]
+    ice_electrical_efficiency_2 = _print(records1)[2]
+    ice_electrical_efficiency_3 = _print(records1)[3]
+    ice_electrical_efficiency_4 = _print(records1)[4]
+    ice_electrical_efficiency_5 = _print(records1)[5]
+    ice_electrical_efficiency_6 = _print(records1)[6]
+    ice_electrical_efficiency_7 = _print(records1)[7]
+    ice_electrical_efficiency_8 = _print(records1)[8]
+    ice_electrical_efficiency_9 = _print(records1)[9]
+    ice_electrical_efficiency_10 = _print(records1)[10]
+    ice_electrical_efficiency_11 = _print(records1)[11]
+    ice_electrical_efficiency_12 = _print(records1)[12]
+    ice_electrical_efficiency_13 = _print(records1)[13]
+    ice_electrical_efficiency_14 = _print(records1)[14]
+    ice_electrical_efficiency_15 = _print(records1)[15]
+    ice_electrical_efficiency_16 = _print(records1)[16]
+    ice_electrical_efficiency_17 = _print(records1)[17]
+    ice_electrical_efficiency_18 = _print(records1)[18]
+    ice_electrical_efficiency_19 = _print(records1)[19]
+    ice_electrical_efficiency_20 = _print(records1)[20]
+    ice_electrical_efficiency_21 = _print(records1)[21]
+    ice_electrical_efficiency_22 = _print(records1)[22]
+    ice_electrical_efficiency_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['ice_electrical_efficiency_0', 'ice_electrical_efficiency_1', 'ice_electrical_efficiency_2',
+         'ice_electrical_efficiency_3', 'ice_electrical_efficiency_4', 'ice_electrical_efficiency_5',
+         'ice_electrical_efficiency_6', 'ice_electrical_efficiency_7', 'ice_electrical_efficiency_8',
+         'ice_electrical_efficiency_9', 'ice_electrical_efficiency_10', 'ice_electrical_efficiency_11',
+         'ice_electrical_efficiency_12', 'ice_electrical_efficiency_13', 'ice_electrical_efficiency_14',
+         'ice_electrical_efficiency_15', 'ice_electrical_efficiency_16', 'ice_electrical_efficiency_17',
+         'ice_electrical_efficiency_18', 'ice_electrical_efficiency_19', 'ice_electrical_efficiency_20',
+         'ice_electrical_efficiency_21', 'ice_electrical_efficiency_22', 'ice_electrical_efficiency_23'],
+        [ice_electrical_efficiency_0, ice_electrical_efficiency_1, ice_electrical_efficiency_2,
+         ice_electrical_efficiency_3, ice_electrical_efficiency_4, ice_electrical_efficiency_5,
+         ice_electrical_efficiency_6, ice_electrical_efficiency_7, ice_electrical_efficiency_8,
+         ice_electrical_efficiency_9, ice_electrical_efficiency_10, ice_electrical_efficiency_11,
+         ice_electrical_efficiency_12, ice_electrical_efficiency_13, ice_electrical_efficiency_14,
+         ice_electrical_efficiency_15, ice_electrical_efficiency_16, ice_electrical_efficiency_17,
+         ice_electrical_efficiency_18, ice_electrical_efficiency_19, ice_electrical_efficiency_20,
+         ice_electrical_efficiency_21, ice_electrical_efficiency_22, ice_electrical_efficiency_23])
+
+
+def write_to_database_lb_cold_efficiency_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入溴化锂制冷效率24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('lb_cold_efficiency',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    lb_cold_efficiency_0 = _print(records1)[0]
+    lb_cold_efficiency_1 = _print(records1)[1]
+    lb_cold_efficiency_2 = _print(records1)[2]
+    lb_cold_efficiency_3 = _print(records1)[3]
+    lb_cold_efficiency_4 = _print(records1)[4]
+    lb_cold_efficiency_5 = _print(records1)[5]
+    lb_cold_efficiency_6 = _print(records1)[6]
+    lb_cold_efficiency_7 = _print(records1)[7]
+    lb_cold_efficiency_8 = _print(records1)[8]
+    lb_cold_efficiency_9 = _print(records1)[9]
+    lb_cold_efficiency_10 = _print(records1)[10]
+    lb_cold_efficiency_11 = _print(records1)[11]
+    lb_cold_efficiency_12 = _print(records1)[12]
+    lb_cold_efficiency_13 = _print(records1)[13]
+    lb_cold_efficiency_14 = _print(records1)[14]
+    lb_cold_efficiency_15 = _print(records1)[15]
+    lb_cold_efficiency_16 = _print(records1)[16]
+    lb_cold_efficiency_17 = _print(records1)[17]
+    lb_cold_efficiency_18 = _print(records1)[18]
+    lb_cold_efficiency_19 = _print(records1)[19]
+    lb_cold_efficiency_20 = _print(records1)[20]
+    lb_cold_efficiency_21 = _print(records1)[21]
+    lb_cold_efficiency_22 = _print(records1)[22]
+    lb_cold_efficiency_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['lb_cold_efficiency_0', 'lb_cold_efficiency_1', 'lb_cold_efficiency_2',
+         'lb_cold_efficiency_3', 'lb_cold_efficiency_4', 'lb_cold_efficiency_5',
+         'lb_cold_efficiency_6', 'lb_cold_efficiency_7', 'lb_cold_efficiency_8',
+         'lb_cold_efficiency_9', 'lb_cold_efficiency_10', 'lb_cold_efficiency_11',
+         'lb_cold_efficiency_12', 'lb_cold_efficiency_13', 'lb_cold_efficiency_14',
+         'lb_cold_efficiency_15', 'lb_cold_efficiency_16', 'lb_cold_efficiency_17',
+         'lb_cold_efficiency_18', 'lb_cold_efficiency_19', 'lb_cold_efficiency_20',
+         'lb_cold_efficiency_21', 'lb_cold_efficiency_22', 'lb_cold_efficiency_23'],
+        [lb_cold_efficiency_0, lb_cold_efficiency_1, lb_cold_efficiency_2,
+         lb_cold_efficiency_3, lb_cold_efficiency_4, lb_cold_efficiency_5,
+         lb_cold_efficiency_6, lb_cold_efficiency_7, lb_cold_efficiency_8,
+         lb_cold_efficiency_9, lb_cold_efficiency_10, lb_cold_efficiency_11,
+         lb_cold_efficiency_12, lb_cold_efficiency_13, lb_cold_efficiency_14,
+         lb_cold_efficiency_15, lb_cold_efficiency_16, lb_cold_efficiency_17,
+         lb_cold_efficiency_18, lb_cold_efficiency_19, lb_cold_efficiency_20,
+         lb_cold_efficiency_21, lb_cold_efficiency_22, lb_cold_efficiency_23])
+
+def write_to_database_lb_heat_efficiency_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入溴化锂制热效率24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('lb_heat_efficiency',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    lb_heat_efficiency_0 = _print(records1)[0]
+    lb_heat_efficiency_1 = _print(records1)[1]
+    lb_heat_efficiency_2 = _print(records1)[2]
+    lb_heat_efficiency_3 = _print(records1)[3]
+    lb_heat_efficiency_4 = _print(records1)[4]
+    lb_heat_efficiency_5 = _print(records1)[5]
+    lb_heat_efficiency_6 = _print(records1)[6]
+    lb_heat_efficiency_7 = _print(records1)[7]
+    lb_heat_efficiency_8 = _print(records1)[8]
+    lb_heat_efficiency_9 = _print(records1)[9]
+    lb_heat_efficiency_10 = _print(records1)[10]
+    lb_heat_efficiency_11 = _print(records1)[11]
+    lb_heat_efficiency_12 = _print(records1)[12]
+    lb_heat_efficiency_13 = _print(records1)[13]
+    lb_heat_efficiency_14 = _print(records1)[14]
+    lb_heat_efficiency_15 = _print(records1)[15]
+    lb_heat_efficiency_16 = _print(records1)[16]
+    lb_heat_efficiency_17 = _print(records1)[17]
+    lb_heat_efficiency_18 = _print(records1)[18]
+    lb_heat_efficiency_19 = _print(records1)[19]
+    lb_heat_efficiency_20 = _print(records1)[20]
+    lb_heat_efficiency_21 = _print(records1)[21]
+    lb_heat_efficiency_22 = _print(records1)[22]
+    lb_heat_efficiency_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['lb_heat_efficiency_0', 'lb_heat_efficiency_1', 'lb_heat_efficiency_2',
+         'lb_heat_efficiency_3', 'lb_heat_efficiency_4', 'lb_heat_efficiency_5',
+         'lb_heat_efficiency_6', 'lb_heat_efficiency_7', 'lb_heat_efficiency_8',
+         'lb_heat_efficiency_9', 'lb_heat_efficiency_10', 'lb_heat_efficiency_11',
+         'lb_heat_efficiency_12', 'lb_heat_efficiency_13', 'lb_heat_efficiency_14',
+         'lb_heat_efficiency_15', 'lb_heat_efficiency_16', 'lb_heat_efficiency_17',
+         'lb_heat_efficiency_18', 'lb_heat_efficiency_19', 'lb_heat_efficiency_20',
+         'lb_heat_efficiency_21', 'lb_heat_efficiency_22', 'lb_heat_efficiency_23'],
+        [lb_heat_efficiency_0, lb_heat_efficiency_1, lb_heat_efficiency_2,
+         lb_heat_efficiency_3, lb_heat_efficiency_4, lb_heat_efficiency_5,
+         lb_heat_efficiency_6, lb_heat_efficiency_7, lb_heat_efficiency_8,
+         lb_heat_efficiency_9, lb_heat_efficiency_10, lb_heat_efficiency_11,
+         lb_heat_efficiency_12, lb_heat_efficiency_13, lb_heat_efficiency_14,
+         lb_heat_efficiency_15, lb_heat_efficiency_16, lb_heat_efficiency_17,
+         lb_heat_efficiency_18, lb_heat_efficiency_19, lb_heat_efficiency_20,
+         lb_heat_efficiency_21, lb_heat_efficiency_22, lb_heat_efficiency_23])
+
+
+def write_to_database_lb_hot_water_efficiency_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入溴化锂生活热水效率24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('lb_hot_water_efficiency',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    lb_hot_water_efficiency_0 = _print(records1)[0]
+    lb_hot_water_efficiency_1 = _print(records1)[1]
+    lb_hot_water_efficiency_2 = _print(records1)[2]
+    lb_hot_water_efficiency_3 = _print(records1)[3]
+    lb_hot_water_efficiency_4 = _print(records1)[4]
+    lb_hot_water_efficiency_5 = _print(records1)[5]
+    lb_hot_water_efficiency_6 = _print(records1)[6]
+    lb_hot_water_efficiency_7 = _print(records1)[7]
+    lb_hot_water_efficiency_8 = _print(records1)[8]
+    lb_hot_water_efficiency_9 = _print(records1)[9]
+    lb_hot_water_efficiency_10 = _print(records1)[10]
+    lb_hot_water_efficiency_11 = _print(records1)[11]
+    lb_hot_water_efficiency_12 = _print(records1)[12]
+    lb_hot_water_efficiency_13 = _print(records1)[13]
+    lb_hot_water_efficiency_14 = _print(records1)[14]
+    lb_hot_water_efficiency_15 = _print(records1)[15]
+    lb_hot_water_efficiency_16 = _print(records1)[16]
+    lb_hot_water_efficiency_17 = _print(records1)[17]
+    lb_hot_water_efficiency_18 = _print(records1)[18]
+    lb_hot_water_efficiency_19 = _print(records1)[19]
+    lb_hot_water_efficiency_20 = _print(records1)[20]
+    lb_hot_water_efficiency_21 = _print(records1)[21]
+    lb_hot_water_efficiency_22 = _print(records1)[22]
+    lb_hot_water_efficiency_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['lb_hot_water_efficiency_0', 'lb_hot_water_efficiency_1', 'lb_hot_water_efficiency_2',
+         'lb_hot_water_efficiency_3', 'lb_hot_water_efficiency_4', 'lb_hot_water_efficiency_5',
+         'lb_hot_water_efficiency_6', 'lb_hot_water_efficiency_7', 'lb_hot_water_efficiency_8',
+         'lb_hot_water_efficiency_9', 'lb_hot_water_efficiency_10', 'lb_hot_water_efficiency_11',
+         'lb_hot_water_efficiency_12', 'lb_hot_water_efficiency_13', 'lb_hot_water_efficiency_14',
+         'lb_hot_water_efficiency_15', 'lb_hot_water_efficiency_16', 'lb_hot_water_efficiency_17',
+         'lb_hot_water_efficiency_18', 'lb_hot_water_efficiency_19', 'lb_hot_water_efficiency_20',
+         'lb_hot_water_efficiency_21', 'lb_hot_water_efficiency_22', 'lb_hot_water_efficiency_23'],
+        [lb_hot_water_efficiency_0, lb_hot_water_efficiency_1, lb_hot_water_efficiency_2,
+         lb_hot_water_efficiency_3, lb_hot_water_efficiency_4, lb_hot_water_efficiency_5,
+         lb_hot_water_efficiency_6, lb_hot_water_efficiency_7, lb_hot_water_efficiency_8,
+         lb_hot_water_efficiency_9, lb_hot_water_efficiency_10, lb_hot_water_efficiency_11,
+         lb_hot_water_efficiency_12, lb_hot_water_efficiency_13, lb_hot_water_efficiency_14,
+         lb_hot_water_efficiency_15, lb_hot_water_efficiency_16, lb_hot_water_efficiency_17,
+         lb_hot_water_efficiency_18, lb_hot_water_efficiency_19, lb_hot_water_efficiency_20,
+         lb_hot_water_efficiency_21, lb_hot_water_efficiency_22, lb_hot_water_efficiency_23])
+
+
+def write_to_database_cc_cold_cop_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入离心式冷水机制冷效率24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('cc_cold_cop',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    cc_cold_cop_0 = _print(records1)[0]
+    cc_cold_cop_1 = _print(records1)[1]
+    cc_cold_cop_2 = _print(records1)[2]
+    cc_cold_cop_3 = _print(records1)[3]
+    cc_cold_cop_4 = _print(records1)[4]
+    cc_cold_cop_5 = _print(records1)[5]
+    cc_cold_cop_6 = _print(records1)[6]
+    cc_cold_cop_7 = _print(records1)[7]
+    cc_cold_cop_8 = _print(records1)[8]
+    cc_cold_cop_9 = _print(records1)[9]
+    cc_cold_cop_10 = _print(records1)[10]
+    cc_cold_cop_11 = _print(records1)[11]
+    cc_cold_cop_12 = _print(records1)[12]
+    cc_cold_cop_13 = _print(records1)[13]
+    cc_cold_cop_14 = _print(records1)[14]
+    cc_cold_cop_15 = _print(records1)[15]
+    cc_cold_cop_16 = _print(records1)[16]
+    cc_cold_cop_17 = _print(records1)[17]
+    cc_cold_cop_18 = _print(records1)[18]
+    cc_cold_cop_19 = _print(records1)[19]
+    cc_cold_cop_20 = _print(records1)[20]
+    cc_cold_cop_21 = _print(records1)[21]
+    cc_cold_cop_22 = _print(records1)[22]
+    cc_cold_cop_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['cc_cold_cop_0', 'cc_cold_cop_1', 'cc_cold_cop_2',
+         'cc_cold_cop_3', 'cc_cold_cop_4', 'cc_cold_cop_5',
+         'cc_cold_cop_6', 'cc_cold_cop_7', 'cc_cold_cop_8',
+         'cc_cold_cop_9', 'cc_cold_cop_10', 'cc_cold_cop_11',
+         'cc_cold_cop_12', 'cc_cold_cop_13', 'cc_cold_cop_14',
+         'cc_cold_cop_15', 'cc_cold_cop_16', 'cc_cold_cop_17',
+         'cc_cold_cop_18', 'cc_cold_cop_19', 'cc_cold_cop_20',
+         'cc_cold_cop_21', 'cc_cold_cop_22', 'cc_cold_cop_23'],
+        [cc_cold_cop_0, cc_cold_cop_1, cc_cold_cop_2,
+         cc_cold_cop_3, cc_cold_cop_4, cc_cold_cop_5,
+         cc_cold_cop_6, cc_cold_cop_7, cc_cold_cop_8,
+         cc_cold_cop_9, cc_cold_cop_10, cc_cold_cop_11,
+         cc_cold_cop_12, cc_cold_cop_13, cc_cold_cop_14,
+         cc_cold_cop_15, cc_cold_cop_16, cc_cold_cop_17,
+         cc_cold_cop_18, cc_cold_cop_19, cc_cold_cop_20,
+         cc_cold_cop_21, cc_cold_cop_22, cc_cold_cop_23])
+
+
+def write_to_database_chp_cold_cop_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入离心式热泵制冷效率24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('chp_cold_cop',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    chp_cold_cop_0 = _print(records1)[0]
+    chp_cold_cop_1 = _print(records1)[1]
+    chp_cold_cop_2 = _print(records1)[2]
+    chp_cold_cop_3 = _print(records1)[3]
+    chp_cold_cop_4 = _print(records1)[4]
+    chp_cold_cop_5 = _print(records1)[5]
+    chp_cold_cop_6 = _print(records1)[6]
+    chp_cold_cop_7 = _print(records1)[7]
+    chp_cold_cop_8 = _print(records1)[8]
+    chp_cold_cop_9 = _print(records1)[9]
+    chp_cold_cop_10 = _print(records1)[10]
+    chp_cold_cop_11 = _print(records1)[11]
+    chp_cold_cop_12 = _print(records1)[12]
+    chp_cold_cop_13 = _print(records1)[13]
+    chp_cold_cop_14 = _print(records1)[14]
+    chp_cold_cop_15 = _print(records1)[15]
+    chp_cold_cop_16 = _print(records1)[16]
+    chp_cold_cop_17 = _print(records1)[17]
+    chp_cold_cop_18 = _print(records1)[18]
+    chp_cold_cop_19 = _print(records1)[19]
+    chp_cold_cop_20 = _print(records1)[20]
+    chp_cold_cop_21 = _print(records1)[21]
+    chp_cold_cop_22 = _print(records1)[22]
+    chp_cold_cop_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['chp_cold_cop_0', 'chp_cold_cop_1', 'chp_cold_cop_2',
+         'chp_cold_cop_3', 'chp_cold_cop_4', 'chp_cold_cop_5',
+         'chp_cold_cop_6', 'chp_cold_cop_7', 'chp_cold_cop_8',
+         'chp_cold_cop_9', 'chp_cold_cop_10', 'chp_cold_cop_11',
+         'chp_cold_cop_12', 'chp_cold_cop_13', 'chp_cold_cop_14',
+         'chp_cold_cop_15', 'chp_cold_cop_16', 'chp_cold_cop_17',
+         'chp_cold_cop_18', 'chp_cold_cop_19', 'chp_cold_cop_20',
+         'chp_cold_cop_21', 'chp_cold_cop_22', 'chp_cold_cop_23'],
+        [chp_cold_cop_0, chp_cold_cop_1, chp_cold_cop_2,
+         chp_cold_cop_3, chp_cold_cop_4, chp_cold_cop_5,
+         chp_cold_cop_6, chp_cold_cop_7, chp_cold_cop_8,
+         chp_cold_cop_9, chp_cold_cop_10, chp_cold_cop_11,
+         chp_cold_cop_12, chp_cold_cop_13, chp_cold_cop_14,
+         chp_cold_cop_15, chp_cold_cop_16, chp_cold_cop_17,
+         chp_cold_cop_18, chp_cold_cop_19, chp_cold_cop_20,
+         chp_cold_cop_21, chp_cold_cop_22, chp_cold_cop_23])
+
+
+def write_to_database_chp_heat_cop_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入离心式热泵制热效率24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('chp_heat_cop',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    chp_heat_cop_0 = _print(records1)[0]
+    chp_heat_cop_1 = _print(records1)[1]
+    chp_heat_cop_2 = _print(records1)[2]
+    chp_heat_cop_3 = _print(records1)[3]
+    chp_heat_cop_4 = _print(records1)[4]
+    chp_heat_cop_5 = _print(records1)[5]
+    chp_heat_cop_6 = _print(records1)[6]
+    chp_heat_cop_7 = _print(records1)[7]
+    chp_heat_cop_8 = _print(records1)[8]
+    chp_heat_cop_9 = _print(records1)[9]
+    chp_heat_cop_10 = _print(records1)[10]
+    chp_heat_cop_11 = _print(records1)[11]
+    chp_heat_cop_12 = _print(records1)[12]
+    chp_heat_cop_13 = _print(records1)[13]
+    chp_heat_cop_14 = _print(records1)[14]
+    chp_heat_cop_15 = _print(records1)[15]
+    chp_heat_cop_16 = _print(records1)[16]
+    chp_heat_cop_17 = _print(records1)[17]
+    chp_heat_cop_18 = _print(records1)[18]
+    chp_heat_cop_19 = _print(records1)[19]
+    chp_heat_cop_20 = _print(records1)[20]
+    chp_heat_cop_21 = _print(records1)[21]
+    chp_heat_cop_22 = _print(records1)[22]
+    chp_heat_cop_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['chp_heat_cop_0', 'chp_heat_cop_1', 'chp_heat_cop_2',
+         'chp_heat_cop_3', 'chp_heat_cop_4', 'chp_heat_cop_5',
+         'chp_heat_cop_6', 'chp_heat_cop_7', 'chp_heat_cop_8',
+         'chp_heat_cop_9', 'chp_heat_cop_10', 'chp_heat_cop_11',
+         'chp_heat_cop_12', 'chp_heat_cop_13', 'chp_heat_cop_14',
+         'chp_heat_cop_15', 'chp_heat_cop_16', 'chp_heat_cop_17',
+         'chp_heat_cop_18', 'chp_heat_cop_19', 'chp_heat_cop_20',
+         'chp_heat_cop_21', 'chp_heat_cop_22', 'chp_heat_cop_23'],
+        [chp_heat_cop_0, chp_heat_cop_1, chp_heat_cop_2,
+         chp_heat_cop_3, chp_heat_cop_4, chp_heat_cop_5,
+         chp_heat_cop_6, chp_heat_cop_7, chp_heat_cop_8,
+         chp_heat_cop_9, chp_heat_cop_10, chp_heat_cop_11,
+         chp_heat_cop_12, chp_heat_cop_13, chp_heat_cop_14,
+         chp_heat_cop_15, chp_heat_cop_16, chp_heat_cop_17,
+         chp_heat_cop_18, chp_heat_cop_19, chp_heat_cop_20,
+         chp_heat_cop_21, chp_heat_cop_22, chp_heat_cop_23])
+
+
+def write_to_database_ashp_cold_cop_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入空气源热泵制冷效率24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('ashp_cold_cop',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    ashp_cold_cop_0 = _print(records1)[0]
+    ashp_cold_cop_1 = _print(records1)[1]
+    ashp_cold_cop_2 = _print(records1)[2]
+    ashp_cold_cop_3 = _print(records1)[3]
+    ashp_cold_cop_4 = _print(records1)[4]
+    ashp_cold_cop_5 = _print(records1)[5]
+    ashp_cold_cop_6 = _print(records1)[6]
+    ashp_cold_cop_7 = _print(records1)[7]
+    ashp_cold_cop_8 = _print(records1)[8]
+    ashp_cold_cop_9 = _print(records1)[9]
+    ashp_cold_cop_10 = _print(records1)[10]
+    ashp_cold_cop_11 = _print(records1)[11]
+    ashp_cold_cop_12 = _print(records1)[12]
+    ashp_cold_cop_13 = _print(records1)[13]
+    ashp_cold_cop_14 = _print(records1)[14]
+    ashp_cold_cop_15 = _print(records1)[15]
+    ashp_cold_cop_16 = _print(records1)[16]
+    ashp_cold_cop_17 = _print(records1)[17]
+    ashp_cold_cop_18 = _print(records1)[18]
+    ashp_cold_cop_19 = _print(records1)[19]
+    ashp_cold_cop_20 = _print(records1)[20]
+    ashp_cold_cop_21 = _print(records1)[21]
+    ashp_cold_cop_22 = _print(records1)[22]
+    ashp_cold_cop_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['ashp_cold_cop_0', 'ashp_cold_cop_1', 'ashp_cold_cop_2',
+         'ashp_cold_cop_3', 'ashp_cold_cop_4', 'ashp_cold_cop_5',
+         'ashp_cold_cop_6', 'ashp_cold_cop_7', 'ashp_cold_cop_8',
+         'ashp_cold_cop_9', 'ashp_cold_cop_10', 'ashp_cold_cop_11',
+         'ashp_cold_cop_12', 'ashp_cold_cop_13', 'ashp_cold_cop_14',
+         'ashp_cold_cop_15', 'ashp_cold_cop_16', 'ashp_cold_cop_17',
+         'ashp_cold_cop_18', 'ashp_cold_cop_19', 'ashp_cold_cop_20',
+         'ashp_cold_cop_21', 'ashp_cold_cop_22', 'ashp_cold_cop_23'],
+        [ashp_cold_cop_0, ashp_cold_cop_1, ashp_cold_cop_2,
+         ashp_cold_cop_3, ashp_cold_cop_4, ashp_cold_cop_5,
+         ashp_cold_cop_6, ashp_cold_cop_7, ashp_cold_cop_8,
+         ashp_cold_cop_9, ashp_cold_cop_10, ashp_cold_cop_11,
+         ashp_cold_cop_12, ashp_cold_cop_13, ashp_cold_cop_14,
+         ashp_cold_cop_15, ashp_cold_cop_16, ashp_cold_cop_17,
+         ashp_cold_cop_18, ashp_cold_cop_19, ashp_cold_cop_20,
+         ashp_cold_cop_21, ashp_cold_cop_22, ashp_cold_cop_23])
+
+
+def write_to_database_ashp_heat_cop_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入空气源热泵制热效率24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('ashp_heat_cop',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    ashp_heat_cop_0 = _print(records1)[0]
+    ashp_heat_cop_1 = _print(records1)[1]
+    ashp_heat_cop_2 = _print(records1)[2]
+    ashp_heat_cop_3 = _print(records1)[3]
+    ashp_heat_cop_4 = _print(records1)[4]
+    ashp_heat_cop_5 = _print(records1)[5]
+    ashp_heat_cop_6 = _print(records1)[6]
+    ashp_heat_cop_7 = _print(records1)[7]
+    ashp_heat_cop_8 = _print(records1)[8]
+    ashp_heat_cop_9 = _print(records1)[9]
+    ashp_heat_cop_10 = _print(records1)[10]
+    ashp_heat_cop_11 = _print(records1)[11]
+    ashp_heat_cop_12 = _print(records1)[12]
+    ashp_heat_cop_13 = _print(records1)[13]
+    ashp_heat_cop_14 = _print(records1)[14]
+    ashp_heat_cop_15 = _print(records1)[15]
+    ashp_heat_cop_16 = _print(records1)[16]
+    ashp_heat_cop_17 = _print(records1)[17]
+    ashp_heat_cop_18 = _print(records1)[18]
+    ashp_heat_cop_19 = _print(records1)[19]
+    ashp_heat_cop_20 = _print(records1)[20]
+    ashp_heat_cop_21 = _print(records1)[21]
+    ashp_heat_cop_22 = _print(records1)[22]
+    ashp_heat_cop_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['ashp_heat_cop_0', 'ashp_heat_cop_1', 'ashp_heat_cop_2',
+         'ashp_heat_cop_3', 'ashp_heat_cop_4', 'ashp_heat_cop_5',
+         'ashp_heat_cop_6', 'ashp_heat_cop_7', 'ashp_heat_cop_8',
+         'ashp_heat_cop_9', 'ashp_heat_cop_10', 'ashp_heat_cop_11',
+         'ashp_heat_cop_12', 'ashp_heat_cop_13', 'ashp_heat_cop_14',
+         'ashp_heat_cop_15', 'ashp_heat_cop_16', 'ashp_heat_cop_17',
+         'ashp_heat_cop_18', 'ashp_heat_cop_19', 'ashp_heat_cop_20',
+         'ashp_heat_cop_21', 'ashp_heat_cop_22', 'ashp_heat_cop_23'],
+        [ashp_heat_cop_0, ashp_heat_cop_1, ashp_heat_cop_2,
+         ashp_heat_cop_3, ashp_heat_cop_4, ashp_heat_cop_5,
+         ashp_heat_cop_6, ashp_heat_cop_7, ashp_heat_cop_8,
+         ashp_heat_cop_9, ashp_heat_cop_10, ashp_heat_cop_11,
+         ashp_heat_cop_12, ashp_heat_cop_13, ashp_heat_cop_14,
+         ashp_heat_cop_15, ashp_heat_cop_16, ashp_heat_cop_17,
+         ashp_heat_cop_18, ashp_heat_cop_19, ashp_heat_cop_20,
+         ashp_heat_cop_21, ashp_heat_cop_22, ashp_heat_cop_23])
+
+
+def write_to_database_ngb_hot_water_efficiency_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入天然气锅炉生活热水效率24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('ngb_hot_water_efficiency',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    ngb_hot_water_efficiency_0 = _print(records1)[0]
+    ngb_hot_water_efficiency_1 = _print(records1)[1]
+    ngb_hot_water_efficiency_2 = _print(records1)[2]
+    ngb_hot_water_efficiency_3 = _print(records1)[3]
+    ngb_hot_water_efficiency_4 = _print(records1)[4]
+    ngb_hot_water_efficiency_5 = _print(records1)[5]
+    ngb_hot_water_efficiency_6 = _print(records1)[6]
+    ngb_hot_water_efficiency_7 = _print(records1)[7]
+    ngb_hot_water_efficiency_8 = _print(records1)[8]
+    ngb_hot_water_efficiency_9 = _print(records1)[9]
+    ngb_hot_water_efficiency_10 = _print(records1)[10]
+    ngb_hot_water_efficiency_11 = _print(records1)[11]
+    ngb_hot_water_efficiency_12 = _print(records1)[12]
+    ngb_hot_water_efficiency_13 = _print(records1)[13]
+    ngb_hot_water_efficiency_14 = _print(records1)[14]
+    ngb_hot_water_efficiency_15 = _print(records1)[15]
+    ngb_hot_water_efficiency_16 = _print(records1)[16]
+    ngb_hot_water_efficiency_17 = _print(records1)[17]
+    ngb_hot_water_efficiency_18 = _print(records1)[18]
+    ngb_hot_water_efficiency_19 = _print(records1)[19]
+    ngb_hot_water_efficiency_20 = _print(records1)[20]
+    ngb_hot_water_efficiency_21 = _print(records1)[21]
+    ngb_hot_water_efficiency_22 = _print(records1)[22]
+    ngb_hot_water_efficiency_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['ngb_hot_water_efficiency_0', 'ngb_hot_water_efficiency_1', 'ngb_hot_water_efficiency_2',
+         'ngb_hot_water_efficiency_3', 'ngb_hot_water_efficiency_4', 'ngb_hot_water_efficiency_5',
+         'ngb_hot_water_efficiency_6', 'ngb_hot_water_efficiency_7', 'ngb_hot_water_efficiency_8',
+         'ngb_hot_water_efficiency_9', 'ngb_hot_water_efficiency_10', 'ngb_hot_water_efficiency_11',
+         'ngb_hot_water_efficiency_12', 'ngb_hot_water_efficiency_13', 'ngb_hot_water_efficiency_14',
+         'ngb_hot_water_efficiency_15', 'ngb_hot_water_efficiency_16', 'ngb_hot_water_efficiency_17',
+         'ngb_hot_water_efficiency_18', 'ngb_hot_water_efficiency_19', 'ngb_hot_water_efficiency_20',
+         'ngb_hot_water_efficiency_21', 'ngb_hot_water_efficiency_22', 'ngb_hot_water_efficiency_23'],
+        [ngb_hot_water_efficiency_0, ngb_hot_water_efficiency_1, ngb_hot_water_efficiency_2,
+         ngb_hot_water_efficiency_3, ngb_hot_water_efficiency_4, ngb_hot_water_efficiency_5,
+         ngb_hot_water_efficiency_6, ngb_hot_water_efficiency_7, ngb_hot_water_efficiency_8,
+         ngb_hot_water_efficiency_9, ngb_hot_water_efficiency_10, ngb_hot_water_efficiency_11,
+         ngb_hot_water_efficiency_12, ngb_hot_water_efficiency_13, ngb_hot_water_efficiency_14,
+         ngb_hot_water_efficiency_15, ngb_hot_water_efficiency_16, ngb_hot_water_efficiency_17,
+         ngb_hot_water_efficiency_18, ngb_hot_water_efficiency_19, ngb_hot_water_efficiency_20,
+         ngb_hot_water_efficiency_21, ngb_hot_water_efficiency_22, ngb_hot_water_efficiency_23])
+
+
+def write_to_database_photovoltaic_electrical_efficiency_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入光伏发电效率24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('photovoltaic_electrical_efficiency',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    photovoltaic_electrical_efficiency_0 = _print(records1)[0]
+    photovoltaic_electrical_efficiency_1 = _print(records1)[1]
+    photovoltaic_electrical_efficiency_2 = _print(records1)[2]
+    photovoltaic_electrical_efficiency_3 = _print(records1)[3]
+    photovoltaic_electrical_efficiency_4 = _print(records1)[4]
+    photovoltaic_electrical_efficiency_5 = _print(records1)[5]
+    photovoltaic_electrical_efficiency_6 = _print(records1)[6]
+    photovoltaic_electrical_efficiency_7 = _print(records1)[7]
+    photovoltaic_electrical_efficiency_8 = _print(records1)[8]
+    photovoltaic_electrical_efficiency_9 = _print(records1)[9]
+    photovoltaic_electrical_efficiency_10 = _print(records1)[10]
+    photovoltaic_electrical_efficiency_11 = _print(records1)[11]
+    photovoltaic_electrical_efficiency_12 = _print(records1)[12]
+    photovoltaic_electrical_efficiency_13 = _print(records1)[13]
+    photovoltaic_electrical_efficiency_14 = _print(records1)[14]
+    photovoltaic_electrical_efficiency_15 = _print(records1)[15]
+    photovoltaic_electrical_efficiency_16 = _print(records1)[16]
+    photovoltaic_electrical_efficiency_17 = _print(records1)[17]
+    photovoltaic_electrical_efficiency_18 = _print(records1)[18]
+    photovoltaic_electrical_efficiency_19 = _print(records1)[19]
+    photovoltaic_electrical_efficiency_20 = _print(records1)[20]
+    photovoltaic_electrical_efficiency_21 = _print(records1)[21]
+    photovoltaic_electrical_efficiency_22 = _print(records1)[22]
+    photovoltaic_electrical_efficiency_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['photovoltaic_electrical_efficiency_0', 'photovoltaic_electrical_efficiency_1', 'photovoltaic_electrical_efficiency_2',
+         'photovoltaic_electrical_efficiency_3', 'photovoltaic_electrical_efficiency_4', 'photovoltaic_electrical_efficiency_5',
+         'photovoltaic_electrical_efficiency_6', 'photovoltaic_electrical_efficiency_7', 'photovoltaic_electrical_efficiency_8',
+         'photovoltaic_electrical_efficiency_9', 'photovoltaic_electrical_efficiency_10', 'photovoltaic_electrical_efficiency_11',
+         'photovoltaic_electrical_efficiency_12', 'photovoltaic_electrical_efficiency_13', 'photovoltaic_electrical_efficiency_14',
+         'photovoltaic_electrical_efficiency_15', 'photovoltaic_electrical_efficiency_16', 'photovoltaic_electrical_efficiency_17',
+         'photovoltaic_electrical_efficiency_18', 'photovoltaic_electrical_efficiency_19', 'photovoltaic_electrical_efficiency_20',
+         'photovoltaic_electrical_efficiency_21', 'photovoltaic_electrical_efficiency_22', 'photovoltaic_electrical_efficiency_23'],
+        [photovoltaic_electrical_efficiency_0, photovoltaic_electrical_efficiency_1, photovoltaic_electrical_efficiency_2,
+         photovoltaic_electrical_efficiency_3, photovoltaic_electrical_efficiency_4, photovoltaic_electrical_efficiency_5,
+         photovoltaic_electrical_efficiency_6, photovoltaic_electrical_efficiency_7, photovoltaic_electrical_efficiency_8,
+         photovoltaic_electrical_efficiency_9, photovoltaic_electrical_efficiency_10, photovoltaic_electrical_efficiency_11,
+         photovoltaic_electrical_efficiency_12, photovoltaic_electrical_efficiency_13, photovoltaic_electrical_efficiency_14,
+         photovoltaic_electrical_efficiency_15, photovoltaic_electrical_efficiency_16, photovoltaic_electrical_efficiency_17,
+         photovoltaic_electrical_efficiency_18, photovoltaic_electrical_efficiency_19, photovoltaic_electrical_efficiency_20,
+         photovoltaic_electrical_efficiency_21, photovoltaic_electrical_efficiency_22, photovoltaic_electrical_efficiency_23])
+
+
+def write_to_database_wind_electrical_efficiency_24(syncbase, now, period):
+    """利用SyncBASE，向数据库中写入数据"""
+    # 写入风力发电效率24小时的值
+    # 获取当前的时间
+    now_year = now.year  # 当前的年
+    now_month = now.month  # 当前的月
+    now_day = now.day  # 当前的日
+    now_hour = now.hour  # 当前的小时
+    now_minute = now.minute  # 当前的分钟
+    now_second = now.second  # 当前的秒
+
+    # 从数据库读取历史数据
+    state1, records1 = syncbase.get_history_data_by_name('wind_electrical_efficiency',
+                                                         dt(now_year, now_month, now_day, 0, 0, 0),
+                                                         dt(now_year, now_month, now_day, now_hour, now_minute, now_second),
+                                                         period)
+
+    wind_electrical_efficiency_0 = _print(records1)[0]
+    wind_electrical_efficiency_1 = _print(records1)[1]
+    wind_electrical_efficiency_2 = _print(records1)[2]
+    wind_electrical_efficiency_3 = _print(records1)[3]
+    wind_electrical_efficiency_4 = _print(records1)[4]
+    wind_electrical_efficiency_5 = _print(records1)[5]
+    wind_electrical_efficiency_6 = _print(records1)[6]
+    wind_electrical_efficiency_7 = _print(records1)[7]
+    wind_electrical_efficiency_8 = _print(records1)[8]
+    wind_electrical_efficiency_9 = _print(records1)[9]
+    wind_electrical_efficiency_10 = _print(records1)[10]
+    wind_electrical_efficiency_11 = _print(records1)[11]
+    wind_electrical_efficiency_12 = _print(records1)[12]
+    wind_electrical_efficiency_13 = _print(records1)[13]
+    wind_electrical_efficiency_14 = _print(records1)[14]
+    wind_electrical_efficiency_15 = _print(records1)[15]
+    wind_electrical_efficiency_16 = _print(records1)[16]
+    wind_electrical_efficiency_17 = _print(records1)[17]
+    wind_electrical_efficiency_18 = _print(records1)[18]
+    wind_electrical_efficiency_19 = _print(records1)[19]
+    wind_electrical_efficiency_20 = _print(records1)[20]
+    wind_electrical_efficiency_21 = _print(records1)[21]
+    wind_electrical_efficiency_22 = _print(records1)[22]
+    wind_electrical_efficiency_23 = _print(records1)[23]
+
+    # 向数据库写入批量数据
+    state2 = syncbase.write_batch_realtime_data_by_name(
+        ['wind_electrical_efficiency_0', 'wind_electrical_efficiency_1', 'wind_electrical_efficiency_2',
+         'wind_electrical_efficiency_3', 'wind_electrical_efficiency_4', 'wind_electrical_efficiency_5',
+         'wind_electrical_efficiency_6', 'wind_electrical_efficiency_7', 'wind_electrical_efficiency_8',
+         'wind_electrical_efficiency_9', 'wind_electrical_efficiency_10', 'wind_electrical_efficiency_11',
+         'wind_electrical_efficiency_12', 'wind_electrical_efficiency_13', 'wind_electrical_efficiency_14',
+         'wind_electrical_efficiency_15', 'wind_electrical_efficiency_16', 'wind_electrical_efficiency_17',
+         'wind_electrical_efficiency_18', 'wind_electrical_efficiency_19', 'wind_electrical_efficiency_20',
+         'wind_electrical_efficiency_21', 'wind_electrical_efficiency_22', 'wind_electrical_efficiency_23'],
+        [wind_electrical_efficiency_0, wind_electrical_efficiency_1, wind_electrical_efficiency_2,
+         wind_electrical_efficiency_3, wind_electrical_efficiency_4, wind_electrical_efficiency_5,
+         wind_electrical_efficiency_6, wind_electrical_efficiency_7, wind_electrical_efficiency_8,
+         wind_electrical_efficiency_9, wind_electrical_efficiency_10, wind_electrical_efficiency_11,
+         wind_electrical_efficiency_12, wind_electrical_efficiency_13, wind_electrical_efficiency_14,
+         wind_electrical_efficiency_15, wind_electrical_efficiency_16, wind_electrical_efficiency_17,
+         wind_electrical_efficiency_18, wind_electrical_efficiency_19, wind_electrical_efficiency_20,
+         wind_electrical_efficiency_21, wind_electrical_efficiency_22, wind_electrical_efficiency_23])

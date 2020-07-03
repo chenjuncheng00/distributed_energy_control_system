@@ -2,6 +2,8 @@ import tensorflow as tf
 
 class Global_Constant():
     def __init__(self):
+        # 设置历史数据读取间隔（单位秒）
+        self.period = 1 * 60
         # 环境温度
         self.environment_temperature = 30
         # 整个项目的建筑面积
