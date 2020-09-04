@@ -2,7 +2,6 @@ import math
 from equipment import Lithium_Bromide_Transition
 from triple_supply_function import triple_supply_transition_function as tstf, triple_supply_in_out_transition as tsiot, lithium_bromide_transition_function as lbtf
 from natural_gas_boiler_funtion import natural_gas_boiler_in_out_hot_water as ngbiohw, natural_gas_boiler_heat_cost as ngbhc
-import write_to_database as wtd
 
 def transition_season_function(hot_water_load, electricity_load, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water, ngb_hot_water, gc):
     """过渡季计算"""
@@ -230,7 +229,7 @@ def transition_season_function(hot_water_load, electricity_load, ice1, ice2, lb1
     return profits, income, cost, station_electricity_out_all, ice1_load_ratio_result, ice2_load_ratio_result, lb_hot_water_result, ngb_hw_hot_water_result
 
 
-def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water, ngb_hot_water, gc, syncbase):
+def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water, ngb_hot_water, gc):
     """将过渡季计算结果打印出来"""
     # 能源站总利润最大值
     profitis_max = max(ans[0])
@@ -274,10 +273,8 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
         ice1_power_consumption = ice1.auxiliary_equipment_power_consumption(ice1_load_ratio)
         ice1_electrical_income = ice1_electrical_power * gc.sale_electricity_price
         ice1_electrical_cost = ice1_natural_gas_consumption * gc.natural_gas_price + ice1_power_consumption * gc.buy_electricity_price
-        wtd.write_to_database_ice1(syncbase, True, False, False, 0, 0, 0, ice1_electrical_efficiency,
-                                   ice1_residual_heat_efficiency, ice1_electrical_power, ice1_residual_heat_power,
-                                   ice1_natural_gas_consumption, ice1_power_consumption, ice1_electrical_income,
-                                   ice1_electrical_cost)
+        # 写入数据库
+
         # 溴化锂1
         lb1_transition = Lithium_Bromide_Transition(ice1_residual_heat_power, lb1_wp_hot_water, 0.5, gc)
         lb1_cold_heat_out = 0
@@ -314,16 +311,7 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
         lb1_stop_state = False
         lb1_fault_state = False
         # 写入数据库
-        wtd.write_to_database_lb1(syncbase, True, False, lb1_wp_heat_chilled_water_frequency,
-                                  lb1_wp_cooling_water_frequency,
-                                  lb1_cold_heat_out, lb1_power_consumption, lb1_chilled_heat_water_flow,
-                                  lb1_cooling_water_flow,
-                                  lb1_wp_chilled_heat_water_power_consumption, lb1_wp_cooling_water_power_consumption,
-                                  lb1_fan_power_consumption,
-                                  lb1_cold_cop, lb1_heat_cop, lb1_hot_water_cop, lb1_hot_water_out, lb1_cold_cost,
-                                  lb1_heat_cost,
-                                  lb1_hot_water_cost, lb1_wp_hot_water_power_consumption, lb1_hot_water_flow,
-                                  lb1_cold_income, lb1_heat_income, lb1_hot_water_income)
+
 
     else:
         ice1_electrical_efficiency = 0
@@ -357,8 +345,7 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
         lb1_stop_state = True
         lb1_fault_state = False
         # 写入数据库
-        wtd.write_to_database_ice1(syncbase, False, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-        wtd.write_to_database_lb1(syncbase, False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
 
     # 内燃机2
     if ice2_load_ratio > 0:
@@ -371,10 +358,7 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
         ice2_power_consumption = ice2.auxiliary_equipment_power_consumption(ice2_load_ratio)
         ice2_electrical_income = ice2_electrical_power * gc.sale_electricity_price
         ice2_electrical_cost = ice2_natural_gas_consumption * gc.natural_gas_price + ice2_power_consumption * gc.buy_electricity_price
-        wtd.write_to_database_ice2(syncbase, True, False, False, 0, 0, 0, ice2_electrical_efficiency,
-                                   ice2_residual_heat_efficiency, ice2_electrical_power, ice2_residual_heat_power,
-                                   ice2_natural_gas_consumption, ice2_power_consumption, ice2_electrical_income,
-                                   ice2_electrical_cost)
+
         # 溴化锂2
         lb2_transition = Lithium_Bromide_Transition(ice2_residual_heat_power, lb2_wp_hot_water, 0.5, gc)
         lb2_cold_heat_out = 0
@@ -411,16 +395,7 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
         lb2_stop_state = False
         lb2_fault_state = False
         # 写入数据库
-        wtd.write_to_database_lb2(syncbase, True, False, lb2_wp_heat_chilled_water_frequency,
-                                  lb2_wp_cooling_water_frequency,
-                                  lb2_cold_heat_out, lb2_power_consumption, lb2_chilled_heat_water_flow,
-                                  lb2_cooling_water_flow,
-                                  lb2_wp_chilled_heat_water_power_consumption, lb2_wp_cooling_water_power_consumption,
-                                  lb2_fan_power_consumption,
-                                  lb2_cold_cop, lb2_heat_cop, lb2_hot_water_cop, lb2_hot_water_out, lb2_cold_cost,
-                                  lb2_heat_cost,
-                                  lb2_hot_water_cost, lb2_wp_hot_water_power_consumption, lb2_hot_water_flow,
-                                  lb2_cold_income, lb2_heat_income, lb2_hot_water_income)
+
 
     else:
         ice2_electrical_efficiency = 0
@@ -454,8 +429,7 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
         lb2_stop_state = True
         lb2_fault_state = False
         # 写入数据库
-        wtd.write_to_database_ice2(syncbase, False, True, False, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-        wtd.write_to_database_lb2(syncbase, False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
 
     # 天然气生活热水锅炉
     if ngb_hw_hot_water > 0:
@@ -474,10 +448,7 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
         ngb_stop_state = False
         ngb_fault_state = False
         # 写入数据库
-        wtd.write_to_database_ngb3(syncbase, True, False, ngb3_wp_hot_water_frequency,
-                                   ngb3_hot_water_out, ngb3_power_consumption, ngb3_hot_water_flow,
-                                   ngb3_wp_hot_water_power_consumption,
-                                   ngb3_efficiency, ngb3_income, ngb3_cost, ngb3_natural_gas_consumption)
+
     else:
         ngb3_efficiency = 0
         ngb3_natural_gas_consumption = 0
@@ -491,7 +462,7 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
         ngb_stop_state = True
         ngb_fault_state = False
         # 写入数据库
-        wtd.write_to_database_ngb3(syncbase, False, True, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
 
     # 写入系统共用数据结果
     cost_total = station_cost_min
@@ -513,12 +484,7 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
     reduction_in_nitride_emissions = 0
     reduction_in_dust_emissions = 0
     proportion_of_renewable_energy_power = 0
-    wtd.write_to_database_system_utility(syncbase, cost_total, income_total, profit_total, electricity_out_total,
-                                         cold_heat_out_total, hot_water_out_total,
-                                         natural_gas_consume_total, electricity_consume_total,
-                                         comprehensive_energy_utilization, proportion_of_renewable_energy_power,
-                                         cop_real_time, reduction_in_carbon_emissions, reduction_in_sulfide_emissions,
-                                         reduction_in_nitride_emissions, reduction_in_dust_emissions)
+
 
     # 写入能源站冷热电的输入输出功率数据
     photovoltaic_electricity_out_total = 0
@@ -540,10 +506,7 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
     cold_out_total = lb_cold_out_total + cc_cold_out_total + chp_cold_out_total + ashp_cold_out_total + ese_cold_out_total
     heat_out_total = lb_heat_out_total + chp_heat_out_total + ese_heat_out_total
     # 写入数据库
-    wtd.write_to_database_station_in_out(syncbase, cold_out_total, heat_out_total, electricity_generation_total, lb_cold_out_total, lb_heat_out_total, lb_hot_water_out_total,
-                                     cc_cold_out_total, chp_cold_out_total, chp_heat_out_total, ashp_cold_out_total, ese_cold_out_total, ese_heat_out_total,
-                                     ice_electricity_out_total, photovoltaic_electricity_out_total, wind_electricity_out_total, accumulator_electricity_out_total,
-                                     buy_electricity_total, ngb_hot_water_out_total)
+
 
     # 写入能源站冷热电的收入成本数据
     ice_income_total = ice1_electrical_income + ice2_electrical_income
@@ -568,11 +531,7 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
     ashp_heat_cost_total = 0
     ngb_hot_water_cost_total = ngb3_cost
     # 写入数据库
-    wtd.write_to_database_income_cost(syncbase, ice_income_total, lb_cold_income_total, lb_heat_income_total, lb_hot_water_income_total, cc_cold_income_total,
-                                  chp_cold_income_total, chp_heat_income_total, ashp_cold_income_total, ngb_hot_water_income_total,
-                                  photovoltaic_income_total, wind_income_total, ice_cost_total, lb_cold_cost_total, lb_heat_cost_total,
-                                  lb_hot_water_cost_total, cc_cold_cost_total, chp_cold_cost_total, chp_heat_cost_total,
-                                  ashp_cold_cost_total, ashp_heat_cost_total, ngb_hot_water_cost_total)
+
 
     # 写入设备效率数据
     ice_electrical_efficiency = max(ice1_electrical_efficiency, ice2_electrical_efficiency)
@@ -588,9 +547,7 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
     photovoltaic_electrical_efficiency = 0
     wind_electrical_efficiency = 0
     # 写入数据库
-    wtd.write_to_database_equipment_efficiency(syncbase, ice_electrical_efficiency, lb_cold_efficiency, lb_heat_efficiency, lb_hot_water_efficiency,
-                                           cc_cold_cop, chp_cold_cop, chp_heat_cop, ashp_cold_cop, ashp_heat_cop,
-                                           ngb_hot_water_efficiency, photovoltaic_electrical_efficiency, wind_electrical_efficiency)
+
 
     # 写入设备冷冻水出水温度和冷水生活热水总流量数据
     chilled_water_supply_flow_total = 0
@@ -628,14 +585,7 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
     ashp4_water_supply_temperature = 0
     ese_water_supply_temperature = 0
     # 写入数据库
-    wtd.write_to_database_temperature_flow(syncbase, chilled_water_supply_flow_total, chilled_water_supply_temperature, chilled_water_return_temperature,
-                                       heat_water_supply_flow_total, heat_water_supply_temperature, heat_water_return_temperature,
-                                       hot_water_supply_flow_total, hot_water_supply_temperature, hot_water_return_temperature,
-                                       lb1_heat_chilled_water_supply_temperature, lb1_hot_water_supply_temperature, lb2_heat_chilled_water_supply_temperature,
-                                       lb2_hot_water_supply_temperature, ngb3_hot_water_supply_temperature, cc1_chilled_water_supply_temperature,
-                                       cc2_chilled_water_supply_temperature, cc3_chilled_water_supply_temperature, cc4_chilled_water_supply_temperature,
-                                       chp1_heat_water_supply_temperature, chp2_heat_water_supply_temperature, ashp1_water_supply_temperature,
-                                       ashp2_water_supply_temperature, ashp3_water_supply_temperature, ashp4_water_supply_temperature, ese_water_supply_temperature)
+
 
     # 写入设备运行状态
     cc1_cold_state = False
@@ -691,15 +641,3 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
     lamp_stop_state = True
     lamp_fault_state = False
     # 写入数据库
-    wtd.write_to_database_equipment_state(syncbase, ice1_start_state, ice1_stop_state, ice1_fault_state, ice2_start_state, ice2_stop_state, ice2_fault_state,
-                                      lb1_cold_state, lb1_heat_state, lb1_hot_water_state, lb1_stop_state, lb1_fault_state, lb2_cold_state,
-                                      lb2_heat_state, lb2_hot_water_state, lb2_stop_state, lb2_fault_state, cc1_cold_state, cc1_stop_state, cc1_fault_state,
-                                      cc2_cold_state, cc2_stop_state, cc2_fault_state, chp1_cold_state, chp1_heat_state, chp1_stop_state, chp1_fault_state,
-                                      chp2_cold_state, chp2_heat_state, chp2_stop_state, chp2_fault_state, ashp1_cold_state, ashp1_heat_state, ashp1_stop_state,
-                                      ashp1_fault_state, ashp2_cold_state, ashp2_heat_state, ashp2_stop_state, ashp2_fault_state, ashp3_cold_state,
-                                      ashp3_heat_state, ashp3_stop_state, ashp3_fault_state, ashp4_cold_state, ashp4_heat_state, ashp4_stop_state, ashp4_fault_state,
-                                      ese_cold_out_state, ese_heat_out_state, ese_cold_in_state, ese_heat_in_state, ese_stop_state, ese_fault_state,
-                                      ngb_hot_water_state, ngb_stop_state, ngb_fault_state, photovoltaic_start_state, photovoltaic_stop_state, photovoltaic_fault_state,
-                                      wind_start_state, wind_stop_state, wind_fault_state, cdz_start_state, cdz_stop_state, cdz_fault_state,
-                                      accumulator_electricity_out_state, accumulator_electricity_in_state, accumulator_stop_state, accumulator_fault_state,
-                                      lamp_start_state, lamp_stop_state, lamp_fault_state)

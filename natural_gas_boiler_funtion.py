@@ -1,7 +1,4 @@
 import math
-from equipment import Water_Pump, Natural_Gas_Boiler_heat
-from global_constant import Global_Constant
-
 
 def natural_gas_boiler_heat_funtion(heat_load, ngbh1, ngbh2, gc):
     """天然气采暖锅炉计算方程"""

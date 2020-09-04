@@ -2,7 +2,6 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 import datetime
-import write_to_database as wtd
 from global_constant import Global_Constant
 
 def load_predict():
@@ -37,7 +36,7 @@ def load_predict():
     cold_heat_prediction = max(cold_load_result, heat_load_result)
     hot_water_prediction = hot_water_load_result
     electricity_prediction = electricity_load_result
-    wtd.write_to_database_prediction(cold_heat_prediction, hot_water_prediction, electricity_prediction)
+    # 写入数据库
 
 
 def cold_load(gc):
