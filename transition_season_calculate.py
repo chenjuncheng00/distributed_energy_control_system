@@ -231,28 +231,39 @@ def transition_season_function(hot_water_load, electricity_load, ice1, ice2, lb1
 
 def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water, ngb_hot_water, gc):
     """将过渡季计算结果打印出来"""
-    # 能源站总利润最大值
-    profitis_max = max(ans[0])
-    # 能源站成本最小值
-    cost_min = min(ans[2])
-    # 记录列表索引
-    # 利润最大索引
-    profitis_max_index = ans[0].index(profitis_max)
-    # 成本最小索引
-    cost_min_index = ans[2].index(cost_min)
-    # 采用的索引（利润最大的结果）
-    transition_season_index = profitis_max_index
-
-    # 读取对应索引下的参数
-    station_profitis_max = ans[0][transition_season_index]
-    station_cost_min = ans[2][transition_season_index]
-    station_electricity_out_all = ans[3][transition_season_index]
-    ice1_load_ratio = ans[4][transition_season_index]
-    ice2_load_ratio = ans[5][transition_season_index]
-    # 溴化锂制生活热水量
-    lb_hot_water = ans[6][transition_season_index]
-    # 天然气锅炉制生活热水量
-    ngb_hw_hot_water = ans[7][transition_season_index]
+    try:
+        # 能源站总利润最大值
+        profitis_max = max(ans[0])
+        # 能源站成本最小值
+        cost_min = min(ans[2])
+        # 记录列表索引
+        # 利润最大索引
+        profitis_max_index = ans[0].index(profitis_max)
+        # 成本最小索引
+        cost_min_index = ans[2].index(cost_min)
+        # 采用的索引（利润最大的结果）
+        transition_season_index = profitis_max_index
+        # 读取对应索引下的参数
+        station_profitis_max = ans[0][transition_season_index]
+        station_cost_min = ans[2][transition_season_index]
+        station_electricity_out_all = ans[3][transition_season_index]
+        ice1_load_ratio = ans[4][transition_season_index]
+        ice2_load_ratio = ans[5][transition_season_index]
+        # 溴化锂制生活热水量
+        lb_hot_water = ans[6][transition_season_index]
+        # 天然气锅炉制生活热水量
+        ngb_hw_hot_water = ans[7][transition_season_index]
+    except:
+        # 读取对应索引下的参数
+        station_profitis_max = 0
+        station_cost_min = 0
+        station_electricity_out_all = 0
+        ice1_load_ratio = 0
+        ice2_load_ratio = 0
+        # 溴化锂制生活热水量
+        lb_hot_water = 0
+        # 天然气锅炉制生活热水量
+        ngb_hw_hot_water = 0
 
     # 打印出结果
     print("能源站利润最大值为： " + str(station_profitis_max) + "\n" + "能源站成本最小值为： " + str(station_cost_min) + "\n"

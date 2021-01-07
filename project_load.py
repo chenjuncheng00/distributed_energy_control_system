@@ -2,13 +2,9 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 import datetime
-from global_constant import Global_Constant
 
-def load_predict():
+def load_predict_function(env_temperature, env_humidity, sun, personnel, cold_1, cold_24, heat_1, heat_24, gc):
     """冷热电负荷预测，并写入数据库"""
-
-    # 实例化一个全局常量类
-    gc = Global_Constant()
 
     # 设置时间格式
     format_pattern = "%m-%d"
@@ -24,11 +20,11 @@ def load_predict():
     heating_season_start_date = datetime.datetime.strptime(gc.heating_season_start_date, format_pattern)
     heating_season_end_date = datetime.datetime.strptime(gc.heating_season_end_date, format_pattern)
     if now >= cooling_season_start_date and now <= cooling_season_end_date:
-        cold_load_result = cold_load(gc)
+        cold_load_result = cold_load(env_temperature, env_humidity, sun, personnel, cold_1, cold_24, gc)
         heat_load_result = 0
     elif now >= heating_season_start_date or now <= heating_season_end_date:
         cold_load_result = 0
-        heat_load_result = heat_load(gc)
+        heat_load_result = heat_load(env_temperature, env_humidity, sun, personnel, heat_1, heat_24, gc)
     else:
         cold_load_result = 0
         heat_load_result = 0
@@ -36,53 +32,54 @@ def load_predict():
     cold_heat_prediction = max(cold_load_result, heat_load_result)
     hot_water_prediction = hot_water_load_result
     electricity_prediction = electricity_load_result
-    # 写入数据库
+
+    return cold_heat_prediction, cold_load_result, heat_load_result, hot_water_prediction, electricity_prediction
 
 
-def cold_load(gc):
+def cold_load(env_temperature, env_humidity, sun, personnel, cold_1, cold_24, gc):
     # 项目冷负荷
     # 载入神经网络模型
     cold_load_model = gc.cold_load_model
     # 神经网络模型输入参数，归一化处理
     # 室外干球温度
-    environment_temperature = (35-10.8)/(38.6-10.8)
+    environment_temperature = (env_temperature - 10.8) / (38.6 - 10.8)
     # 室外环境湿度
-    environment_humidity = (25-7.43)/(29.6-7.43)
+    environment_humidity = (env_humidity - 7.43) / (29.6 - 7.43)
     # 太阳辐射强度
-    sun_radiation = (600-0)/(1261.37-0)
+    sun_radiation = (sun - 0) / (1261.37 - 0)
     # 人员密度
-    personnel_density = 0.35
+    personnel_density = personnel
     # 上一个时刻的冷负荷(w/㎡)
-    cold_load_1 = (63-0)/(148-0)
+    cold_load_1 = (cold_1 - 0) / (148 - 0)
     # 24个时刻之前的冷负荷
-    cold_load_24 = (33-0)/(148-0)
+    cold_load_24 = (cold_24 - 0) / (148 - 0)
     # 神经网络输入矩阵
     X_cold_load_model = np.mat([environment_temperature, environment_humidity, sun_radiation, personnel_density, cold_load_1, cold_load_24])
     # 预测输入结果
-    Y_cold_load_model = (cold_load_model.predict(X_cold_load_model))*(148-0) + 0
+    Y_cold_load_model = (cold_load_model.predict(X_cold_load_model)) * (148 - 0) + 0
     # 最终结果（单位kW）
-    cold_load_result = gc.area * Y_cold_load_model/1000
+    cold_load_result = gc.area * Y_cold_load_model / 1000
     # 返回结果
     return cold_load_result[0][0]
 
 
-def heat_load(gc):
+def heat_load(env_temperature, env_humidity, sun, personnel, heat_1, heat_24, gc):
     # 项目热负荷
     # 载入神经网络模型
     heat_load_model = gc.heat_load_model
     # 神经网络模型输入参数，归一化处理
     # 室外干球温度
-    environment_temperature = (10 - (-4.3)) / (29.4 - (-4.3))
+    environment_temperature = (env_temperature - (-4.3)) / (29.4 - (-4.3))
     # 室外环境湿度
-    environment_humidity = (10 - 1.55) / (15.57 - 1.55)
+    environment_humidity = (env_humidity - 1.55) / (15.57 - 1.55)
     # 太阳辐射强度
-    sun_radiation = (600 - 0) / (1007.33 - 0)
+    sun_radiation = (sun - 0) / (1007.33 - 0)
     # 人员密度
-    personnel_density = 0.55
+    personnel_density = personnel
     # 上一个时刻的热负荷(w/㎡)
-    heat_load_1 = (22.81 - 0) / (61.345 - 0)
+    heat_load_1 = (heat_1 - 0) / (61.345 - 0)
     # 24个时刻之前的热负荷
-    heat_load_24 = (8.89 - 0) / (61.345 - 0)
+    heat_load_24 = (heat_24 - 0) / (61.345 - 0)
     # 神经网络输入矩阵
     X_heat_load_model = np.mat([environment_temperature, environment_humidity, sun_radiation, personnel_density, heat_load_1, heat_load_24])
     # 预测输入结果
@@ -100,7 +97,6 @@ def hot_water_load(gc):
 def electricity_load(gc):
     # 项目电负荷
     return 3000
-
 
 def load_data_load_forecast_model(file_name):
     """神经网络负荷预测模型数据读取，冷热负荷"""
@@ -198,8 +194,3 @@ def load_forecast_model_predict():
     plt.show()
 
     # print(ans)
-
-
-# 执行程序
-if __name__ == '__main__':
-    load_predict()

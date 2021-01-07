@@ -381,34 +381,50 @@ def energy_storage_equipment_cold_load_ratio_correction(esec, cold_load_a, load_
 
 def energy_storage_equipment_cold_result(ans_esec, esec1, esec2, esec3):
     """选择出最合适的蓄冷水罐（实际上是水泵）的计算结果"""
-    # 总成本最小值
-    cost_min = min(ans_esec[0])
-    # 记录总成本最小值的列表索引
-    cost_min_index = ans_esec[0].index(cost_min)
+    try:
+        # 总成本最小值
+        cost_min = min(ans_esec[0])
+        # 记录总成本最小值的列表索引
+        cost_min_index = ans_esec[0].index(cost_min)
+        # 读取对应索引下的设备负荷率
+        esec1_ratio = ans_esec[1][cost_min_index]
+        esec2_ratio = ans_esec[2][cost_min_index]
+        esec3_ratio = ans_esec[3][cost_min_index]
+        power_consumption_total = ans_esec[4][cost_min_index]
+        water_supply_total = ans_esec[5][cost_min_index]
+    except:
+        # 读取对应索引下的设备负荷率
+        esec1_ratio = 0
+        esec2_ratio = 0
+        esec3_ratio = 0
+        power_consumption_total = 0
+        water_supply_total = 0
 
-    # 读取对应索引下的设备负荷率
-    esec1_ratio = ans_esec[1][cost_min_index]
-    esec2_ratio = ans_esec[2][cost_min_index]
-    esec3_ratio = ans_esec[3][cost_min_index]
     # 单位为kW，不用考虑每小时计算几次的问题
     cold_load_out = esec1_ratio * esec1.cooling_power_rated + esec2_ratio * esec2.cooling_power_rated + esec3_ratio * esec3.cooling_power_rated
-    power_consumption_total = ans_esec[4][cost_min_index]
-    water_supply_total = ans_esec[5][cost_min_index]
 
     return esec1_ratio, esec2_ratio, esec3_ratio, cold_load_out, power_consumption_total, water_supply_total
 
 
 def print_energy_storage_equipment_cold(ans_esec, esec1, esec2, esec3):
     """打印出最合适的蓄冷水罐（实际上是水泵）的计算结果"""
-    # 总成本最小值
-    cost_min = min(ans_esec[0])
-    # 记录总成本最小值的列表索引
-    cost_min_index = ans_esec[0].index(cost_min)
+    try:
+        # 总成本最小值
+        cost_min = min(ans_esec[0])
+        # 记录总成本最小值的列表索引
+        cost_min_index = ans_esec[0].index(cost_min)
+        # 读取对应索引下的设备负荷率
+        esec1_ratio = ans_esec[1][cost_min_index]
+        esec2_ratio = ans_esec[2][cost_min_index]
+        esec3_ratio = ans_esec[3][cost_min_index]
+    except:
+        # 总成本最小值
+        cost_min = 0
+        # 读取对应索引下的设备负荷率
+        esec1_ratio = 0
+        esec2_ratio = 0
+        esec3_ratio = 0
 
-    # 读取对应索引下的设备负荷率
-    esec1_ratio = ans_esec[1][cost_min_index]
-    esec2_ratio = ans_esec[2][cost_min_index]
-    esec3_ratio = ans_esec[3][cost_min_index]
     # 单位为kW，不用考虑每小时计算几次的问题
     cold_load_out = esec1_ratio * esec1.cooling_power_rated + esec2_ratio * esec2.cooling_power_rated + esec3_ratio * esec3.cooling_power_rated
 

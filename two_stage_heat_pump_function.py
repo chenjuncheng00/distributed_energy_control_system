@@ -1,13 +1,20 @@
-from equipment import Centrifugal_Heat_Pump_Heat, Air_Source_Heat_Pump_Heat, Water_Pump
 from centrifugal_heat_pump_heat_function import centrifugal_heat_pump_function_heat as chphfh, centrifugal_heat_pump_result_heat as chphrh
 from air_source_heat_pump_heat_function import air_source_heat_pump_function_heat as ashpfh, air_source_heat_pump_result_heat as ashprh
-from global_constant import Global_Constant
 
-def two_stage_heat_pump_function(heat_load, chph1, chph2, chph3, chph4, ashph1, ashph2, ashph3, ashph4, gc):
+def two_stage_heat_pump_function(heat_load_a, chph1, chph2, chph3, chph4, ashph1, ashph2, ashph3, ashph4,
+                   environment_temperature, heating_water_temperature, ashp_heat_source_water_temperature, gc):
     """两级热泵制热计算"""
+
+    # heat_load_a:热负荷初始值，如果初始值大于热水机的总制热率，则修正初始值
+    # 对heat_load_a进行判断
+    if heat_load_a >= chph1.heating_power_rated + chph2.heating_power_rated + chph3.heating_power_rated + chph4.heating_power_rated:
+        heat_load = chph1.heating_power_rated + chph2.heating_power_rated + chph3.heating_power_rated + chph4.heating_power_rated
+    else:
+        heat_load = heat_load_a
+
     # 在采暖季制热时，空气源热泵作为一级低温热源，离心式热泵作为二级热源，向外供热
     # 使用计算出离心式热泵的运行模式，将heat_load带入相关模块进行计算
-    ans_chph = chphfh(heat_load, chph1, chph2, chph3, chph4, gc)
+    ans_chph = chphfh(heat_load, chph1, chph2, chph3, chph4, heating_water_temperature, gc)
     # 选择最佳结果
     chph1_load_ratio = chphrh(ans_chph, chph1, chph2, chph3, chph4)[0]
     chph2_load_ratio = chphrh(ans_chph, chph1, chph2, chph3, chph4)[1]
@@ -34,7 +41,7 @@ def two_stage_heat_pump_function(heat_load, chph1, chph2, chph3, chph4, ashph1, 
     # 计算此时一级低温热源总热功率
     ashp_heat_power = chph1_heat_source + chph2_heat_source + chph3_heat_source + chph4_heat_source
     # 计算此时空气源热泵的运行策略
-    ans_ashp = ashpfh(ashp_heat_power, ashph1, ashph2, ashph3, ashph4, gc)
+    ans_ashp = ashpfh(ashp_heat_power, ashph1, ashph2, ashph3, ashph4, environment_temperature, ashp_heat_source_water_temperature, gc)
     # 选择空气源热泵最优运行策略
     ashph1_load_ratio = ashprh(ans_ashp, ashph1, ashph2, ashph3, ashph4)[0]
     ashph2_load_ratio = ashprh(ans_ashp, ashph1, ashph2, ashph3, ashph4)[1]
@@ -79,37 +86,3 @@ def print_two_stage_heat_pump_function(ans):
         ashph2_load_ratio) + "\n" + "风冷螺杆热泵3负荷率为： " + str(ashph3_load_ratio) + "\n" + "风冷螺杆热泵4负荷率为： " + str(
         ashph4_load_ratio) + "\n" + "风冷螺杆热泵最低总耗电功率为： " + str(ashph_power_consumption_total) + "\n" + "风冷螺杆热泵热泵总补水量为： " + str(
         ashph_water_supply_total) + "\n")
-
-
-def test_two_stage_heat_pump_function():
-    """测试双级热泵制热"""
-    gc = Global_Constant()
-    heat_load = 6500
-    # 离心式热泵
-    chph1_wp_heating_water = Water_Pump(330, True, 35, gc)
-    chph2_wp_heating_water = Water_Pump(330, True, 35, gc)
-    chph3_wp_heating_water = Water_Pump(0, True, 0, gc)
-    chph4_wp_heating_water = Water_Pump(0, True, 0, gc)
-    chph1_wp_heat_source_water = Water_Pump(550, True, 35, gc)
-    chph2_wp_heat_source_water = Water_Pump(550, True, 35, gc)
-    chph3_wp_heat_source_water = Water_Pump(0, True, 0, gc)
-    chph4_wp_heat_source_water = Water_Pump(0, True, 0, gc)
-    chph1 = Centrifugal_Heat_Pump_Heat(3500, 0.2, False, chph1_wp_heating_water, chph1_wp_heat_source_water, gc)
-    chph2 = Centrifugal_Heat_Pump_Heat(3500, 0.2, False, chph2_wp_heating_water, chph2_wp_heat_source_water, gc)
-    chph3 = Centrifugal_Heat_Pump_Heat(0, 0.2, False, chph3_wp_heating_water, chph3_wp_heat_source_water, gc)
-    chph4 = Centrifugal_Heat_Pump_Heat(0, 0.2, False, chph4_wp_heating_water, chph4_wp_heat_source_water, gc)
-    # 空气源热泵
-    ashph1_wp_heating_water = Water_Pump(330, True, 35, gc)
-    ashph2_wp_heating_water = Water_Pump(330, True, 35, gc)
-    ashph3_wp_heating_water = Water_Pump(330, True, 35, gc)
-    ashph4_wp_heating_water = Water_Pump(330, True, 35, gc)
-    ashph1 = Air_Source_Heat_Pump_Heat(1640, 0.2, True, ashph1_wp_heating_water, gc)
-    ashph2 = Air_Source_Heat_Pump_Heat(1640, 0.2, True, ashph2_wp_heating_water, gc)
-    ashph3 = Air_Source_Heat_Pump_Heat(1640, 0.2, True, ashph3_wp_heating_water, gc)
-    ashph4 = Air_Source_Heat_Pump_Heat(1640, 0.2, True, ashph4_wp_heating_water, gc)
-    # 测试结果
-    ans = two_stage_heat_pump_function(heat_load, chph1, chph2, chph3, chph4, ashph1, ashph2, ashph3, ashph4, gc)
-    print_two_stage_heat_pump_function(ans)
-
-# test_two_stage_heat_pump_function()
-

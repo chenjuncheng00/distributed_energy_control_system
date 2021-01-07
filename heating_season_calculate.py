@@ -10,7 +10,9 @@ from energy_storage_equipment_heat_function import energy_storage_equipment_heat
 from two_stage_heat_pump_function import two_stage_heat_pump_function as tshpf
 
 def heating_season_function(heat_load, hot_water_load, electricity_load, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_water, lb1_wp_hot_water, lb2_wp_hot_water,
-                            chph1, chph2, chph3, chph4, ashph1, ashph2, ashph3, ashph4, eseh1, eseh2, eseh3, ngb_hot_water, gc):
+                            chph1, chph2, chph3, chph4, ashph1, ashph2, ashph3, ashph4, eseh1, eseh2, eseh3, ngb_hot_water, environment_temperature,
+                            heating_water_temperature, ashp_heat_source_water_temperature, gc):
+
     """采暖季计算"""
 
     print("正在进行采暖季计算.........")
@@ -343,7 +345,8 @@ def heating_season_function(heat_load, hot_water_load, electricity_load, ice1, i
                     # ngbh_calculate = True
                 if heat_load_chph >= 0 and tshp_calculate == True:
                     # 计算双级热泵的运行策略
-                    ans_tshp = tshpf(heat_load_chph, chph1, chph2, chph3, chph4, ashph1, ashph2, ashph3, ashph4, gc)
+                    ans_tshp = tshpf(heat_load_chph, chph1, chph2, chph3, chph4, ashph1, ashph2, ashph3, ashph4,
+                                     environment_temperature, heating_water_temperature, ashp_heat_source_water_temperature, gc)
                     # 读取计算结果
                     chph_heat_out_total = ans_tshp[1]
                     tshp_power_consumption_total = ans_tshp[2]
@@ -519,49 +522,80 @@ def heating_season_function(heat_load, hot_water_load, electricity_load, ice1, i
 
 
 def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_water, lb1_wp_hot_water, lb2_wp_hot_water, chph1, chph2,
-                         ashph1, ashph2, ashph3, ashph4, eseh1, eseh2, eseh3, ngb_hot_water, gc):
+                         ashph1, ashph2, ashph3, ashph4, eseh1, eseh2, eseh3, ngb_hot_water, environment_temperature,
+                         heating_water_temperature, ashp_heat_source_water_temperature, gc):
     """将制热季计算结果打印出来"""
-    # 能源站总利润最大值
-    profitis_max = max(ans[0])
-    # 能源站成本最小值
-    cost_min = min(ans[2])
-    # 记录列表索引
-    # 利润最大索引
-    profitis_max_index = ans[0].index(profitis_max)
-    # 成本最小索引
-    cost_min_index = ans[2].index(cost_min)
-    # 采用的索引（利润最大的结果）
-    heating_season_index = profitis_max_index
-
-    # 读取对应索引下的参数
-    station_profitis_max = ans[0][heating_season_index]
-    station_cost_min = ans[2][heating_season_index]
-    station_heat_out_all = ans[3][heating_season_index]
-    station_electricity_out_all = ans[4][heating_season_index]
-    ice1_load_ratio = ans[5][heating_season_index]
-    ice2_load_ratio = ans[6][heating_season_index]
-    # ngbh1_load_ratio = ans[7][heating_season_index]
-    # ngbh2_load_ratio = ans[8][heating_season_index]
-    # 溴化锂制热量，制生活热水量
-    lb_heat_load = ans[7][heating_season_index]
-    lb_hot_water = ans[8][heating_season_index]
-    # 天然气锅炉制生活热水量
-    ngb_hw_hot_water = ans[9][heating_season_index]
-    # 离心式热泵和风冷螺杆式热泵计算结果
-    chph1_load_ratio = ans[10][heating_season_index]
-    chph2_load_ratio = ans[11][heating_season_index]
-    chph3_load_ratio = ans[12][heating_season_index]
-    chph4_load_ratio = ans[13][heating_season_index]
-    ashph1_load_ratio = ans[14][heating_season_index]
-    ashph2_load_ratio = ans[15][heating_season_index]
-    ashph3_load_ratio = ans[16][heating_season_index]
-    ashph4_load_ratio = ans[17][heating_season_index]
-    # 蓄能水罐水泵负荷率
-    eseh1_load_ratio = ans[18]
-    eseh2_load_ratio = ans[19]
-    eseh3_load_ratio = ans[20]
-    # 蓄能水罐制热量
-    eseh_heat_load_out = ans[21]
+    try:
+        # 能源站总利润最大值
+        profitis_max = max(ans[0])
+        # 能源站成本最小值
+        cost_min = min(ans[2])
+        # 记录列表索引
+        # 利润最大索引
+        profitis_max_index = ans[0].index(profitis_max)
+        # 成本最小索引
+        cost_min_index = ans[2].index(cost_min)
+        # 采用的索引（利润最大的结果）
+        heating_season_index = profitis_max_index
+        # 读取对应索引下的参数
+        station_profitis_max = ans[0][heating_season_index]
+        station_cost_min = ans[2][heating_season_index]
+        station_heat_out_all = ans[3][heating_season_index]
+        station_electricity_out_all = ans[4][heating_season_index]
+        ice1_load_ratio = ans[5][heating_season_index]
+        ice2_load_ratio = ans[6][heating_season_index]
+        # ngbh1_load_ratio = ans[7][heating_season_index]
+        # ngbh2_load_ratio = ans[8][heating_season_index]
+        # 溴化锂制热量，制生活热水量
+        lb_heat_load = ans[7][heating_season_index]
+        lb_hot_water = ans[8][heating_season_index]
+        # 天然气锅炉制生活热水量
+        ngb_hw_hot_water = ans[9][heating_season_index]
+        # 离心式热泵和风冷螺杆式热泵计算结果
+        chph1_load_ratio = ans[10][heating_season_index]
+        chph2_load_ratio = ans[11][heating_season_index]
+        chph3_load_ratio = ans[12][heating_season_index]
+        chph4_load_ratio = ans[13][heating_season_index]
+        ashph1_load_ratio = ans[14][heating_season_index]
+        ashph2_load_ratio = ans[15][heating_season_index]
+        ashph3_load_ratio = ans[16][heating_season_index]
+        ashph4_load_ratio = ans[17][heating_season_index]
+        # 蓄能水罐水泵负荷率
+        eseh1_load_ratio = ans[18]
+        eseh2_load_ratio = ans[19]
+        eseh3_load_ratio = ans[20]
+        # 蓄能水罐制热量
+        eseh_heat_load_out = ans[21]
+    except:
+        # 读取对应索引下的参数
+        station_profitis_max = 0
+        station_cost_min = 0
+        station_heat_out_all = 0
+        station_electricity_out_all = 0
+        ice1_load_ratio = 0
+        ice2_load_ratio = 0
+        # ngbh1_load_ratio = 0
+        # ngbh2_load_ratio = 0
+        # 溴化锂制热量，制生活热水量
+        lb_heat_load = 0
+        lb_hot_water = 0
+        # 天然气锅炉制生活热水量
+        ngb_hw_hot_water = 0
+        # 离心式热泵和风冷螺杆式热泵计算结果
+        chph1_load_ratio = 0
+        chph2_load_ratio = 0
+        chph3_load_ratio = 0
+        chph4_load_ratio = 0
+        ashph1_load_ratio = 0
+        ashph2_load_ratio = 0
+        ashph3_load_ratio = 0
+        ashph4_load_ratio = 0
+        # 蓄能水罐水泵负荷率
+        eseh1_load_ratio = 0
+        eseh2_load_ratio = 0
+        eseh3_load_ratio = 0
+        # 蓄能水罐制热量
+        eseh_heat_load_out = 0
 
     # 打印出结果
     print("能源站利润最大值为： " + str(station_profitis_max) + "\n" + "能源站成本最小值为： " + str(
@@ -744,20 +778,19 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
 
     # 离心式热泵1（制热）
     if chph1_load_ratio > 0:
-        chp1_power_consumption_total = chpch(chph1, gc, chph1_load_ratio)[1] # 设备本体+辅机总耗电
-        chph1_heating_water_temperature = gc.heating_water_temperature
+        chp1_power_consumption_total = chpch(chph1, gc, chph1_load_ratio, heating_water_temperature)[1] # 设备本体+辅机总耗电
         chph1_heat_source_water_temperature = chph1.heat_source_water_temperature(chph1_load_ratio)
-        chp1_wp_heat_water_frequency = chpch(chph1, gc, chph1_load_ratio)[6]
-        chp1_wp_source_water_frequency = chpch(chph1, gc, chph1_load_ratio)[7]
+        chp1_wp_heat_water_frequency = chpch(chph1, gc, chph1_load_ratio, heating_water_temperature)[6]
+        chp1_wp_source_water_frequency = chpch(chph1, gc, chph1_load_ratio, heating_water_temperature)[7]
         chp1_heat_out = chph1.heating_power_rated * chph1_load_ratio
-        chp1_power_consumption = chpch(chph1, gc, chph1_load_ratio)[3] # 仅设备本身耗电
-        chp1_heat_water_flow = chpch(chph1, gc, chph1_load_ratio)[4]
-        chp1_source_water_flow = chpch(chph1, gc, chph1_load_ratio)[5]
+        chp1_power_consumption = chpch(chph1, gc, chph1_load_ratio, heating_water_temperature)[3] # 仅设备本身耗电
+        chp1_heat_water_flow = chpch(chph1, gc, chph1_load_ratio, heating_water_temperature)[4]
+        chp1_source_water_flow = chpch(chph1, gc, chph1_load_ratio, heating_water_temperature)[5]
         chp1_wp_heat_water_power_consumption = chph1.wp_heating_water.pump_performance_data(chp1_heat_water_flow, chp1_wp_heat_water_frequency)[1]
         chp1_wp_source_water_power_consumption = chph1.wp_heat_source_water.pump_performance_data(chp1_source_water_flow, chp1_wp_source_water_frequency)[1]
-        chp1_cop = chph1.centrifugal_heat_pump_cop(chph1_load_ratio, chph1_heating_water_temperature, chph1_heat_source_water_temperature)
+        chp1_cop = chph1.centrifugal_heat_pump_cop(chph1_load_ratio, heating_water_temperature, chph1_heat_source_water_temperature)
         chp1_income = chp1_heat_out * gc.heating_price
-        chp1_cost = chpch(chph1, gc, chph1_load_ratio)[0]
+        chp1_cost = chpch(chph1, gc, chph1_load_ratio, heating_water_temperature)[0]
         # #1离心式热泵制热
         chp1_cold_state = False
         chp1_heat_state = True
@@ -782,20 +815,19 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
 
     # 离心式热泵2（制热）
     if chph2_load_ratio > 0:
-        chp2_power_consumption_total = chpch(chph2, gc, chph2_load_ratio)[1]  # 设备本体+辅机总耗电
-        chph2_heating_water_temperature = gc.heating_water_temperature
+        chp2_power_consumption_total = chpch(chph2, gc, chph2_load_ratio, heating_water_temperature)[1]  # 设备本体+辅机总耗电
         chph2_heat_source_water_temperature = chph2.heat_source_water_temperature(chph2_load_ratio)
-        chp2_wp_heat_water_frequency = chpch(chph2, gc, chph2_load_ratio)[6]
-        chp2_wp_source_water_frequency = chpch(chph2, gc, chph2_load_ratio)[7]
+        chp2_wp_heat_water_frequency = chpch(chph2, gc, chph2_load_ratio, heating_water_temperature)[6]
+        chp2_wp_source_water_frequency = chpch(chph2, gc, chph2_load_ratio, heating_water_temperature)[7]
         chp2_heat_out = chph2.heating_power_rated * chph2_load_ratio
-        chp2_power_consumption = chpch(chph2, gc, chph2_load_ratio)[3] # 仅设备本身耗电
-        chp2_heat_water_flow = chpch(chph2, gc, chph2_load_ratio)[4]
-        chp2_source_water_flow = chpch(chph2, gc, chph2_load_ratio)[5]
+        chp2_power_consumption = chpch(chph2, gc, chph2_load_ratio, heating_water_temperature)[3] # 仅设备本身耗电
+        chp2_heat_water_flow = chpch(chph2, gc, chph2_load_ratio, heating_water_temperature)[4]
+        chp2_source_water_flow = chpch(chph2, gc, chph2_load_ratio, heating_water_temperature)[5]
         chp2_wp_heat_water_power_consumption = chph2.wp_heating_water.pump_performance_data(chp2_heat_water_flow, chp2_wp_heat_water_frequency)[1]
         chp2_wp_source_water_power_consumption = chph2.wp_heat_source_water.pump_performance_data(chp2_source_water_flow, chp2_wp_source_water_frequency)[1]
-        chp2_cop = chph2.centrifugal_heat_pump_cop(chph2_load_ratio, chph2_heating_water_temperature, chph2_heat_source_water_temperature)
+        chp2_cop = chph2.centrifugal_heat_pump_cop(chph2_load_ratio, heating_water_temperature, chph2_heat_source_water_temperature)
         chp2_income = chp2_heat_out * gc.heating_price
-        chp2_cost = chpch(chph2, gc, chph2_load_ratio)[0]
+        chp2_cost = chpch(chph2, gc, chph2_load_ratio, heating_water_temperature)[0]
         # #2离心式热泵制热
         chp2_cold_state = False
         chp2_heat_state = True
@@ -820,20 +852,18 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
 
     # 空气源热泵1（制热）
     if ashph1_load_ratio > 0:
-        ashp1_power_consumption_total = ashpch(ashph1, gc, ashph1_load_ratio)[1]  # 设备本体+辅机总耗电
-        environment_temperature = gc.environment_temperature
-        ashp1_heat_source_water_temperature = gc.ashp_heat_source_water_temperature
-        ashp1_wp_water_frequency = ashpch(ashph1, gc, ashph1_load_ratio)[5]
+        ashp1_power_consumption_total = ashpch(ashph1, gc, ashph1_load_ratio, environment_temperature, ashp_heat_source_water_temperature)[1]  # 设备本体+辅机总耗电
+        ashp1_wp_water_frequency = ashpch(ashph1, gc, ashph1_load_ratio, environment_temperature, ashp_heat_source_water_temperature)[5]
         ashp1_heat_out = ashph1.heating_power_rated * ashph1_load_ratio
-        ashp1_power_consumption = ashpch(ashph1, gc, ashph1_load_ratio)[3] # 仅设备本身耗电
-        ashp1_chilled_heat_water_flow = ashpch(ashph1, gc, ashph1_load_ratio)[4]
+        ashp1_power_consumption = ashpch(ashph1, gc, ashph1_load_ratio, environment_temperature, ashp_heat_source_water_temperature)[3] # 仅设备本身耗电
+        ashp1_chilled_heat_water_flow = ashpch(ashph1, gc, ashph1_load_ratio, environment_temperature, ashp_heat_source_water_temperature)[4]
         ashp1_wp_power_consumption = ashph1.wp_heating_water.pump_performance_data(ashp1_chilled_heat_water_flow, ashp1_wp_water_frequency)[1]
         ashp1_fan_power_consumption = 20
         ashp1_cold_cop = 0
-        ashp1_heat_cop = ashph1.air_source_heat_pump_heat_cop(chph1_load_ratio, ashp1_heat_source_water_temperature, environment_temperature)
+        ashp1_heat_cop = ashph1.air_source_heat_pump_heat_cop(chph1_load_ratio, ashp_heat_source_water_temperature, environment_temperature)
         ashp1_cold_income = 0
         ashp1_cold_cost = 0
-        ashp1_heat_cost = ashpch(ashph1, gc, ashph1_load_ratio)[0]
+        ashp1_heat_cost = ashpch(ashph1, gc, ashph1_load_ratio, environment_temperature, ashp_heat_source_water_temperature)[0]
         # #1空气源热泵运行状态
         ashp1_cold_state = False
         ashp1_heat_state = True
@@ -860,20 +890,18 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
 
     # 空气源热泵2（制热）
     if ashph2_load_ratio > 0:
-        ashp2_power_consumption_total = ashpch(ashph2, gc, ashph2_load_ratio)[1]  # 设备本体+辅机总耗电
-        environment_temperature = gc.environment_temperature
-        ashp2_heat_source_water_temperature = gc.ashp_heat_source_water_temperature
-        ashp2_wp_water_frequency = ashpch(ashph2, gc, ashph2_load_ratio)[5]
+        ashp2_power_consumption_total = ashpch(ashph2, gc, ashph2_load_ratio, environment_temperature, ashp_heat_source_water_temperature)[1]  # 设备本体+辅机总耗电
+        ashp2_wp_water_frequency = ashpch(ashph2, gc, ashph2_load_ratio, environment_temperature, ashp_heat_source_water_temperature)[5]
         ashp2_heat_out = ashph2.heating_power_rated * ashph2_load_ratio
-        ashp2_power_consumption = ashpch(ashph2, gc, ashph2_load_ratio)[3] # 仅设备本身耗电
-        ashp2_chilled_heat_water_flow = ashpch(ashph2, gc, ashph2_load_ratio)[4]
+        ashp2_power_consumption = ashpch(ashph2, gc, ashph2_load_ratio, environment_temperature, ashp_heat_source_water_temperature)[3] # 仅设备本身耗电
+        ashp2_chilled_heat_water_flow = ashpch(ashph2, gc, ashph2_load_ratio, environment_temperature, ashp_heat_source_water_temperature)[4]
         ashp2_wp_power_consumption = ashph2.wp_heating_water.pump_performance_data(ashp2_chilled_heat_water_flow, ashp2_wp_water_frequency)[1]
         ashp2_fan_power_consumption = 20
         ashp2_cold_cop = 0
-        ashp2_heat_cop = ashph2.air_source_heat_pump_heat_cop(chph1_load_ratio, ashp2_heat_source_water_temperature, environment_temperature)
+        ashp2_heat_cop = ashph2.air_source_heat_pump_heat_cop(chph1_load_ratio, ashp_heat_source_water_temperature, environment_temperature)
         ashp2_cold_income = 0
         ashp2_cold_cost = 0
-        ashp2_heat_cost = ashpch(ashph2, gc, ashph2_load_ratio)[0]
+        ashp2_heat_cost = ashpch(ashph2, gc, ashph2_load_ratio, environment_temperature, ashp_heat_source_water_temperature)[0]
         # #2空气源热泵运行状态
         ashp2_cold_state = False
         ashp2_heat_state = True
@@ -900,20 +928,18 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
 
     # 空气源热泵3（制热）
     if ashph3_load_ratio > 0:
-        ashp3_power_consumption_total = ashpch(ashph3, gc, ashph3_load_ratio)[1]  # 设备本体+辅机总耗电
-        environment_temperature = gc.environment_temperature
-        ashp3_heat_source_water_temperature = gc.ashp_heat_source_water_temperature
-        ashp3_wp_water_frequency = ashpch(ashph3, gc, ashph3_load_ratio)[5]
+        ashp3_power_consumption_total = ashpch(ashph3, gc, ashph3_load_ratio, environment_temperature, ashp_heat_source_water_temperature)[1]  # 设备本体+辅机总耗电
+        ashp3_wp_water_frequency = ashpch(ashph3, gc, ashph3_load_ratio, environment_temperature, ashp_heat_source_water_temperature)[5]
         ashp3_heat_out = ashph3.heating_power_rated * ashph3_load_ratio
-        ashp3_power_consumption = ashpch(ashph3, gc, ashph3_load_ratio)[3] # 仅设备本身耗电
-        ashp3_chilled_heat_water_flow = ashpch(ashph3, gc, ashph3_load_ratio)[4]
+        ashp3_power_consumption = ashpch(ashph3, gc, ashph3_load_ratio, environment_temperature, ashp_heat_source_water_temperature)[3] # 仅设备本身耗电
+        ashp3_chilled_heat_water_flow = ashpch(ashph3, gc, ashph3_load_ratio, environment_temperature, ashp_heat_source_water_temperature)[4]
         ashp3_wp_power_consumption = ashph3.wp_heating_water.pump_performance_data(ashp3_chilled_heat_water_flow, ashp3_wp_water_frequency)[1]
         ashp3_fan_power_consumption = 20
         ashp3_cold_cop = 0
-        ashp3_heat_cop = ashph3.air_source_heat_pump_heat_cop(chph1_load_ratio, ashp3_heat_source_water_temperature, environment_temperature)
+        ashp3_heat_cop = ashph3.air_source_heat_pump_heat_cop(chph1_load_ratio, ashp_heat_source_water_temperature, environment_temperature)
         ashp3_cold_income = 0
         ashp3_cold_cost = 0
-        ashp3_heat_cost = ashpch(ashph3, gc, ashph3_load_ratio)[0]
+        ashp3_heat_cost = ashpch(ashph3, gc, ashph3_load_ratio, environment_temperature, ashp_heat_source_water_temperature)[0]
         # #3空气源热泵运行状态
         ashp3_cold_state = False
         ashp3_heat_state = True
@@ -940,20 +966,18 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
 
     # 空气源热泵4（制热）
     if ashph4_load_ratio > 0:
-        ashp4_power_consumption_total = ashpch(ashph4, gc, ashph4_load_ratio)[1]  # 设备本体+辅机总耗电
-        environment_temperature = gc.environment_temperature
-        ashp4_heat_source_water_temperature = gc.ashp_heat_source_water_temperature
-        ashp4_wp_water_frequency = ashpch(ashph4, gc, ashph4_load_ratio)[5]
+        ashp4_power_consumption_total = ashpch(ashph4, gc, ashph4_load_ratio, environment_temperature, ashp_heat_source_water_temperature)[1]  # 设备本体+辅机总耗电
+        ashp4_wp_water_frequency = ashpch(ashph4, gc, ashph4_load_ratio, environment_temperature, ashp_heat_source_water_temperature)[5]
         ashp4_heat_out = ashph4.heating_power_rated * ashph4_load_ratio
-        ashp4_power_consumption = ashpch(ashph4, gc, ashph4_load_ratio)[3] # 仅设备本身耗电
-        ashp4_chilled_heat_water_flow = ashpch(ashph4, gc, ashph4_load_ratio)[4]
+        ashp4_power_consumption = ashpch(ashph4, gc, ashph4_load_ratio, environment_temperature, ashp_heat_source_water_temperature)[3] # 仅设备本身耗电
+        ashp4_chilled_heat_water_flow = ashpch(ashph4, gc, ashph4_load_ratio, environment_temperature, ashp_heat_source_water_temperature)[4]
         ashp4_wp_power_consumption = ashph4.wp_heating_water.pump_performance_data(ashp4_chilled_heat_water_flow, ashp4_wp_water_frequency)[1]
         ashp4_fan_power_consumption = 20
         ashp4_cold_cop = 0
-        ashp4_heat_cop = ashph4.air_source_heat_pump_heat_cop(chph1_load_ratio, ashp4_heat_source_water_temperature, environment_temperature)
+        ashp4_heat_cop = ashph4.air_source_heat_pump_heat_cop(chph1_load_ratio, ashp_heat_source_water_temperature, environment_temperature)
         ashp4_cold_income = 0
         ashp4_cold_cost = 0
-        ashp4_heat_cost = ashpch(ashph4, gc, ashph4_load_ratio)[0]
+        ashp4_heat_cost = ashpch(ashph4, gc, ashph4_load_ratio, environment_temperature, ashp_heat_source_water_temperature)[0]
         # #4空气源热泵运行状态
         ashp4_cold_state = False
         ashp4_heat_state = True

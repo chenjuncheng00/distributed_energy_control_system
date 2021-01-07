@@ -1,9 +1,17 @@
 import math
 
-def centrifugal_chiller_function(cold_load, cc1, cc2, cc3, cc4, gc):
+def centrifugal_chiller_function(cold_load_a, cc1, cc2, cc3, cc4, chilled_water_temperature, gc):
     """离心式冷水机组制冷负荷计算函数"""
     # 不同管道布置方式的离心式冷水机计算
     # 母管制系统计算（水泵与离心式冷水机组不是一对一布置）
+
+    # cold_load_a:冷负荷初始值，如果初始值大于冷水机的总制冷率，则修正初始值
+    # 对cold_load_a进行判断
+    if cold_load_a >= cc1.cooling_power_rated + cc2.cooling_power_rated + cc3.cooling_power_rated + cc4.cooling_power_rated:
+        cold_load = cc1.cooling_power_rated + cc2.cooling_power_rated + cc3.cooling_power_rated + cc4.cooling_power_rated
+    else:
+        cold_load = cold_load_a
+
     # 获取4台离心式冷水机是否为变频，根据是否为变频，设置不同的计算步长
     # 离心式冷水机1
     if cc1.frequency_scaling == True:
@@ -125,20 +133,20 @@ def centrifugal_chiller_function(cold_load, cc1, cc2, cc3, cc4, gc):
                 cc3_load_ratio_result.append(cc_load_ratio_result_all[2])
                 cc4_load_ratio_result.append(cc_load_ratio_result_all[3])
                 # 计算4个设备本体的总耗电功率（仅设备本体耗电）
-                cc1_centrifugal_chiller_power_consumption = centrifugal_chiller_cost(cc1, gc, cc1_load_ratio)[3]
-                cc2_centrifugal_chiller_power_consumption = centrifugal_chiller_cost(cc2, gc, cc2_load_ratio)[3]
-                cc3_centrifugal_chiller_power_consumption = centrifugal_chiller_cost(cc3, gc, cc3_load_ratio)[3]
-                cc4_centrifugal_chiller_power_consumption = centrifugal_chiller_cost(cc4, gc, cc4_load_ratio)[3]
+                cc1_centrifugal_chiller_power_consumption = centrifugal_chiller_cost(cc1, gc, cc1_load_ratio, chilled_water_temperature)[3]
+                cc2_centrifugal_chiller_power_consumption = centrifugal_chiller_cost(cc2, gc, cc2_load_ratio, chilled_water_temperature)[3]
+                cc3_centrifugal_chiller_power_consumption = centrifugal_chiller_cost(cc3, gc, cc3_load_ratio, chilled_water_temperature)[3]
+                cc4_centrifugal_chiller_power_consumption = centrifugal_chiller_cost(cc4, gc, cc4_load_ratio, chilled_water_temperature)[3]
                 # 计算4个设备的冷冻水流量、冷却水流量
                 # 冷冻水和冷却水总流量
-                chilled_water_flow_total = centrifugal_chiller_cost(cc1, gc, cc1_load_ratio)[4] + \
-                                           centrifugal_chiller_cost(cc2, gc, cc2_load_ratio)[4] + \
-                                           centrifugal_chiller_cost(cc3, gc, cc3_load_ratio)[4] + \
-                                           centrifugal_chiller_cost(cc4, gc, cc4_load_ratio)[4]
-                cooling_water_flow_total = centrifugal_chiller_cost(cc1, gc, cc1_load_ratio)[5] + \
-                                           centrifugal_chiller_cost(cc2, gc, cc2_load_ratio)[5] + \
-                                           centrifugal_chiller_cost(cc3, gc, cc3_load_ratio)[5] + \
-                                           centrifugal_chiller_cost(cc4, gc, cc4_load_ratio)[5]
+                chilled_water_flow_total = centrifugal_chiller_cost(cc1, gc, cc1_load_ratio, chilled_water_temperature)[4] + \
+                                           centrifugal_chiller_cost(cc2, gc, cc2_load_ratio, chilled_water_temperature)[4] + \
+                                           centrifugal_chiller_cost(cc3, gc, cc3_load_ratio, chilled_water_temperature)[4] + \
+                                           centrifugal_chiller_cost(cc4, gc, cc4_load_ratio, chilled_water_temperature)[4]
+                cooling_water_flow_total = centrifugal_chiller_cost(cc1, gc, cc1_load_ratio, chilled_water_temperature)[5] + \
+                                           centrifugal_chiller_cost(cc2, gc, cc2_load_ratio, chilled_water_temperature)[5] + \
+                                           centrifugal_chiller_cost(cc3, gc, cc3_load_ratio, chilled_water_temperature)[5] + \
+                                           centrifugal_chiller_cost(cc4, gc, cc4_load_ratio, chilled_water_temperature)[5]
                 # 每个水泵的流量为总流量均分（后期可细化流量分配比例）
                 cc1_chilled_water_flow = chilled_water_flow_total / cc_num
                 cc2_chilled_water_flow = chilled_water_flow_total / cc_num
@@ -160,10 +168,10 @@ def centrifugal_chiller_function(cold_load, cc1, cc2, cc3, cc4, gc):
                                              + cc3_auxiliary_equipment_power_consumption + cc4_auxiliary_equipment_power_consumption
                 total_power_consumption.append(cc_power_consumption_total)
                 # 计算4个设备的总补水量
-                cc1_water_supply = centrifugal_chiller_cost(cc1, gc, cc1_load_ratio)[2]
-                cc2_water_supply = centrifugal_chiller_cost(cc2, gc, cc2_load_ratio)[2]
-                cc3_water_supply = centrifugal_chiller_cost(cc3, gc, cc3_load_ratio)[2]
-                cc4_water_supply = centrifugal_chiller_cost(cc4, gc, cc4_load_ratio)[2]
+                cc1_water_supply = centrifugal_chiller_cost(cc1, gc, cc1_load_ratio, chilled_water_temperature)[2]
+                cc2_water_supply = centrifugal_chiller_cost(cc2, gc, cc2_load_ratio, chilled_water_temperature)[2]
+                cc3_water_supply = centrifugal_chiller_cost(cc3, gc, cc3_load_ratio, chilled_water_temperature)[2]
+                cc4_water_supply = centrifugal_chiller_cost(cc4, gc, cc4_load_ratio, chilled_water_temperature)[2]
                 cc_water_supply_total = cc1_water_supply + cc2_water_supply + cc3_water_supply + cc4_water_supply
                 total_water_supply.append(cc_water_supply_total)
                 # 计算4个设备的成本
@@ -179,31 +187,39 @@ def centrifugal_chiller_function(cold_load, cc1, cc2, cc3, cc4, gc):
 
 def centrifugal_chiller_result(ans_cc, cc1, cc2, cc3, cc4):
     """选择出最合适的离心式冷水机的计算结果"""
-    # 总成本最小值
-    cost_min = min(ans_cc[0])
-    # 记录总成本最小值的列表索引
-    cost_min_index = ans_cc[0].index(cost_min)
+    try:
+        # 总成本最小值
+        cost_min = min(ans_cc[0])
+        # 记录总成本最小值的列表索引
+        cost_min_index = ans_cc[0].index(cost_min)
+        # 读取对应索引下的设备负荷率
+        cc1_ratio = ans_cc[1][cost_min_index]
+        cc2_ratio = ans_cc[2][cost_min_index]
+        cc3_ratio = ans_cc[3][cost_min_index]
+        cc4_ratio = ans_cc[4][cost_min_index]
+        power_consumption_total = ans_cc[5][cost_min_index]
+        water_supply_total = ans_cc[6][cost_min_index]
+    except:
+        # 读取对应索引下的设备负荷率
+        cc1_ratio = 0
+        cc2_ratio = 0
+        cc3_ratio = 0
+        cc4_ratio = 0
+        power_consumption_total = 0
+        water_supply_total = 0
 
-    # 读取对应索引下的设备负荷率
-    cc1_ratio = ans_cc[1][cost_min_index]
-    cc2_ratio = ans_cc[2][cost_min_index]
-    cc3_ratio = ans_cc[3][cost_min_index]
-    cc4_ratio = ans_cc[4][cost_min_index]
-    power_consumption_total = ans_cc[5][cost_min_index]
-    water_supply_total = ans_cc[6][cost_min_index]
     cold_load_out = cc1_ratio * cc1.cooling_power_rated + cc2_ratio * cc2.cooling_power_rated + cc3_ratio * cc3.cooling_power_rated + cc4_ratio * cc4.cooling_power_rated
 
     return cc1_ratio, cc2_ratio, cc3_ratio, cc4_ratio, cold_load_out, power_consumption_total, water_supply_total
 
 
-def centrifugal_chiller_cost(cc, gc, load_ratio):
+def centrifugal_chiller_cost(cc, gc, load_ratio, chilled_water_temperature):
     """离心式冷水机组运行成本计算"""
     # 冷冻水流量,某一负荷率条件下
     chilled_water_flow = cc.chilled_water_flow(load_ratio)
     # 冷却水流量,某一负荷率条件下
     cooling_water_flow = cc.cooling_water_flow(load_ratio)
     # 计算此时的离心式冷水机冷却水进口温度和冷冻水出口温度
-    chilled_water_temperature = gc.chilled_water_temperature
     cooling_water_temperature = cc.cooling_water_temperature(load_ratio)
     # 离心式冷水机制冷COP,某一负荷率条件下
     centrifugal_chiller_cop = cc.centrifugal_chiller_cop(load_ratio, chilled_water_temperature, cooling_water_temperature)
@@ -244,19 +260,29 @@ def centrifugal_chiller_auxiliary_equipment_cost(cc, gc, chilled_water_flow, coo
     return auxiliary_equipment_power_consumption, auxiliary_equipment_power_cost
 
 
-def print_centrifugal_chiller(ans, cc1, cc2, cc3, cc4):
+def print_centrifugal_chiller(ans_cc, cc1, cc2, cc3, cc4):
     """打印出离心式冷水机的计算结果"""
-    # 总成本最小值
-    cost_min = min(ans[0])
-    # 记录总成本最小值的列表索引
-    cost_min_index = ans[0].index(cost_min)
+    try:
+        # 总成本最小值
+        cost_min = min(ans_cc[0])
+        # 记录总成本最小值的列表索引
+        cost_min_index = ans_cc[0].index(cost_min)
+        # 读取对应索引下的设备负荷率
+        cc1_ratio = ans_cc[1][cost_min_index]
+        cc2_ratio = ans_cc[2][cost_min_index]
+        cc3_ratio = ans_cc[3][cost_min_index]
+        cc4_ratio = ans_cc[4][cost_min_index]
+    except:
+        # 总成本最小值
+        cost_min = 0
+        # 读取对应索引下的设备负荷率
+        cc1_ratio = 0
+        cc2_ratio = 0
+        cc3_ratio = 0
+        cc4_ratio = 0
 
-    # 读取对应索引下的设备负荷率
-    cc1_ratio = ans[1][cost_min_index]
-    cc2_ratio = ans[2][cost_min_index]
-    cc3_ratio = ans[3][cost_min_index]
-    cc4_ratio = ans[4][cost_min_index]
     cold_load_out = cc1_ratio * cc1.cooling_power_rated + cc2_ratio * cc2.cooling_power_rated + cc3_ratio * cc3.cooling_power_rated + cc4_ratio * cc4.cooling_power_rated
+
     print("离心式冷水机最低总运行成本为： " + str(cost_min) + "\n" + "离心式冷水机1负荷率为： " + str(cc1_ratio) + "\n"
           + "离心式冷水机2负荷率为： " + str(cc2_ratio) + "\n" + "离心式冷水机3负荷率为： " + str(cc3_ratio) + "\n"
           + "离心式冷水机4负荷率为： " + str(cc4_ratio) + "\n" + "离心式冷水机总制冷出力为： " + str(cold_load_out))

@@ -1,7 +1,15 @@
 import math
 
-def natural_gas_boiler_heat_funtion(heat_load, ngbh1, ngbh2, gc):
+def natural_gas_boiler_heat_funtion(heat_load_a, ngbh1, ngbh2, gc):
     """天然气采暖锅炉计算方程"""
+
+    # heat_load_a:热负荷初始值，如果初始值大于热水机的总制热率，则修正初始值
+    # 对heat_load_a进行判断
+    if heat_load_a >= ngbh1.heating_power_rated + ngbh2.heating_power_rated:
+        heat_load = ngbh1.heating_power_rated + ngbh2.heating_power_rated
+    else:
+        heat_load = heat_load_a
+
     # 天然气采暖锅炉母管制系统布置方式"""
     # 天然气采暖锅炉的计算步长
     ngbh1_step = 1
@@ -122,32 +130,48 @@ def natural_gas_boiler_heat_cost(ngbh, gc, load_ratio):
 
 def natural_gas_boiler_heat_result(ans_ngbh, ngbh1, ngbh2):
     """选择出最合适的天然气采暖锅炉的计算结果"""
-    # 总成本最小值
-    cost_min = min(ans_ngbh[0])
-    # 记录总成本最小值的列表索引
-    cost_min_index = ans_ngbh[0].index(cost_min)
+    try:
+        # 总成本最小值
+        cost_min = min(ans_ngbh[0])
+        # 记录总成本最小值的列表索引
+        cost_min_index = ans_ngbh[0].index(cost_min)
+        # 读取对应索引下的设备负荷率
+        ngbh1_ratio = ans_ngbh[1][cost_min_index]
+        ngbh2_ratio = ans_ngbh[2][cost_min_index]
+        natural_gas_consumption_total = ans_ngbh[3][cost_min_index]
+        power_consumption_total = ans_ngbh[4][cost_min_index]
+        water_supply_total = ans_ngbh[5][cost_min_index]
+    except:
+        # 读取对应索引下的设备负荷率
+        ngbh1_ratio = 0
+        ngbh2_ratio = 0
+        natural_gas_consumption_total = 0
+        power_consumption_total = 0
+        water_supply_total = 0
 
-    # 读取对应索引下的设备负荷率
-    ngbh1_ratio = ans_ngbh[1][cost_min_index]
-    ngbh2_ratio = ans_ngbh[2][cost_min_index]
-    natural_gas_consumption_total = ans_ngbh[3][cost_min_index]
-    power_consumption_total = ans_ngbh[4][cost_min_index]
-    water_supply_total = ans_ngbh[5][cost_min_index]
     heat_load_out = ngbh1_ratio * ngbh1.heating_power_rated + ngbh2_ratio * ngbh2.heating_power_rated
 
     return ngbh1_ratio, ngbh2_ratio, heat_load_out, natural_gas_consumption_total, power_consumption_total, water_supply_total
 
 
-def print_natural_gas_boiler_heat(ans, ngbh1, ngbh2):
+def print_natural_gas_boiler_heat(ans_ngbh, ngbh1, ngbh2):
     """打印天然气采暖锅炉计算结果"""
-    # 总成本最小值
-    cost_min = min(ans[0])
-    # 记录总成本最小值的列表索引
-    cost_min_index = ans[0].index(cost_min)
+    try:
+        # 总成本最小值
+        cost_min = min(ans_ngbh[0])
+        # 记录总成本最小值的列表索引
+        cost_min_index = ans_ngbh[0].index(cost_min)
+        # 读取对应索引下的设备负荷率
+        ngbh1_ratio = ans_ngbh[1][cost_min_index]
+        ngbh2_ratio = ans_ngbh[2][cost_min_index]
 
-    # 读取对应索引下的设备负荷率
-    ngbh1_ratio = ans[1][cost_min_index]
-    ngbh2_ratio = ans[2][cost_min_index]
+    except:
+        # 总成本最小值
+        cost_min = 0
+        # 读取对应索引下的设备负荷率
+        ngbh1_ratio = 0
+        ngbh2_ratio = 0
+
     heat_load_out = ngbh1_ratio * ngbh1.heating_power_rated + ngbh2_ratio * ngbh2.heating_power_rated
     # 打印计算结果
     print("天然气采暖锅炉最低总运行成本为： " + str(cost_min) + "\n" + "天然气采暖锅炉1负荷率为： " + str(ngbh1_ratio) + "\n"

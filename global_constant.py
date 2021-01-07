@@ -4,8 +4,8 @@ class Global_Constant():
     def __init__(self):
         # 设置历史数据读取间隔（单位秒）
         self.period = 1 * 60
-        # 环境温度
-        self.environment_temperature = 30
+        # 程序计算周期（一小时计算几次），用于蓄冷蓄热计算
+        self.hour_num_of_calculations = 1
         # 整个项目的建筑面积
         self.area = 189000
         # 允许的最大冷负荷
@@ -18,12 +18,6 @@ class Global_Constant():
         self.lb_hot_water_switch_cooling_season = False
         # 烟气热水型溴化锂设备在采暖季是否供生活热水
         self.lb_hot_water_switch_heating_season = False
-        # 供冷时出水温度
-        self.chilled_water_temperature = 7
-        # 供热时出水温度
-        self.heating_water_temperature = 55
-        # 空气源热泵在作为一级低温热源制热时的出水温度
-        self.ashp_heat_source_water_temperature = 25
         # 冷冻水额定供回水温差
         self.chilled_water_temperature_difference_rated = 5
         # 冷却水额定供回水温差
@@ -82,7 +76,7 @@ class Global_Constant():
         self.lb1_hot_water_step = 50
         self.lb2_hot_water_step = 50
         # 制冷季的开始月份和日期
-        self.cooling_season_start_date = "05-15"
+        self.cooling_season_start_date = "01-01"
         # 制冷季的结束月份和日期
         self.cooling_season_end_date = "10-15"
         # 采暖季的开始月份和日期
@@ -91,8 +85,8 @@ class Global_Constant():
         self.heating_season_end_date = "03-15"
         # 非谷电时间段列表(用与蓄冷蓄热策略计算)
         self.hour_ese_out = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
-        # 程序计算周期（一小时计算几次），用于蓄冷蓄热计算
-        self.hour_num_of_calculations = 1
+        # 定义冷负荷分配的次数（次数越大计算精度越高，但是计算速度越慢）
+        self.num_allocations_load = 50
         # 神经网络负荷预测模型
         self.cold_load_model = tf.keras.models.load_model('./load_forecast_model/cold_load_forecast_model.h5')
         self.heat_load_model = tf.keras.models.load_model('./load_forecast_model/heat_load_forecast_model.h5')

@@ -1,11 +1,19 @@
 import math
 
-def air_source_heat_pump_function_heat(heat_load, ashph1, ashph2, ashph3, ashph4, gc):
+def air_source_heat_pump_function_heat(heat_load_a, ashph1, ashph2, ashph3, ashph4, environment_temperature, heating_water_temperature, gc):
     """风冷螺杆热泵制热负荷计算函数"""
     # 制热，制热，制热
     # 风冷螺杆热泵组与水泵的布置方式，header_system（母管制）
     # 不同管道布置方式的风冷螺杆热泵计算
     # 母管制系统计算（水泵与风冷螺杆热泵组不是一对一布置）
+
+    # heat_load_a:热负荷初始值，如果初始值大于热水机的总制热率，则修正初始值
+    # 对heat_load_a进行判断
+    if heat_load_a >= ashph1.heating_power_rated + ashph2.heating_power_rated + ashph3.heating_power_rated + ashph4.heating_power_rated:
+        heat_load = ashph1.heating_power_rated + ashph2.heating_power_rated + ashph3.heating_power_rated + ashph4.heating_power_rated
+    else:
+        heat_load = heat_load_a
+
     # 获取4台风冷螺杆热泵是否为变频，根据是否为变频，设置不同的计算步长
     # 风冷螺杆热泵1
     if ashph1.frequency_scaling == True:
@@ -128,14 +136,14 @@ def air_source_heat_pump_function_heat(heat_load, ashph1, ashph2, ashph3, ashph4
                 ashph3_load_ratio_result.append(ashph_load_ratio_result_all[2])
                 ashph4_load_ratio_result.append(ashph_load_ratio_result_all[3])
                 # 计算4个设备本体的总耗电功率（仅设备本体耗电）
-                ashph1_air_source_heat_pump_power_consumption = air_source_heat_pump_cost_heat(ashph1, gc, ashph1_load_ratio)[3]
-                ashph2_air_source_heat_pump_power_consumption = air_source_heat_pump_cost_heat(ashph2, gc, ashph2_load_ratio)[3]
-                ashph3_air_source_heat_pump_power_consumption = air_source_heat_pump_cost_heat(ashph3, gc, ashph3_load_ratio)[3]
-                ashph4_air_source_heat_pump_power_consumption = air_source_heat_pump_cost_heat(ashph4, gc, ashph4_load_ratio)[3]
+                ashph1_air_source_heat_pump_power_consumption = air_source_heat_pump_cost_heat(ashph1, gc, ashph1_load_ratio, environment_temperature, heating_water_temperature)[3]
+                ashph2_air_source_heat_pump_power_consumption = air_source_heat_pump_cost_heat(ashph2, gc, ashph2_load_ratio, environment_temperature, heating_water_temperature)[3]
+                ashph3_air_source_heat_pump_power_consumption = air_source_heat_pump_cost_heat(ashph3, gc, ashph3_load_ratio, environment_temperature, heating_water_temperature)[3]
+                ashph4_air_source_heat_pump_power_consumption = air_source_heat_pump_cost_heat(ashph4, gc, ashph4_load_ratio, environment_temperature, heating_water_temperature)[3]
                 # 计算4个设备的采暖水流量、低温热源水流量
                 # 采暖水总流量
-                heating_water_flow_total = air_source_heat_pump_cost_heat(ashph1, gc, ashph1_load_ratio)[4] + air_source_heat_pump_cost_heat(ashph2, gc, ashph2_load_ratio)[4] \
-                                           + air_source_heat_pump_cost_heat(ashph3, gc, ashph3_load_ratio)[4] + air_source_heat_pump_cost_heat(ashph4, gc, ashph4_load_ratio)[4]
+                heating_water_flow_total = air_source_heat_pump_cost_heat(ashph1, gc, ashph1_load_ratio, environment_temperature, heating_water_temperature)[4] + air_source_heat_pump_cost_heat(ashph2, gc, ashph2_load_ratio, environment_temperature, heating_water_temperature)[4] \
+                                           + air_source_heat_pump_cost_heat(ashph3, gc, ashph3_load_ratio, environment_temperature, heating_water_temperature)[4] + air_source_heat_pump_cost_heat(ashph4, gc, ashph4_load_ratio, environment_temperature, heating_water_temperature)[4]
                 # 每个水泵的流量为总流量均分（后期可细化流量分配比例）
                 ashph1_heating_water_flow = heating_water_flow_total / ashph_num
                 ashph2_heating_water_flow = heating_water_flow_total / ashph_num
@@ -153,10 +161,10 @@ def air_source_heat_pump_function_heat(heat_load, ashph1, ashph2, ashph3, ashph4
                                                 + ashph3_auxiliary_equipment_power_consumption + ashph4_auxiliary_equipment_power_consumption
                 total_power_consumption.append(ashph_power_consumption_total)
                 # 计算4个设备的总补水量
-                ashph1_water_supply = air_source_heat_pump_cost_heat(ashph1, gc, ashph1_load_ratio)[2]
-                ashph2_water_supply = air_source_heat_pump_cost_heat(ashph2, gc, ashph2_load_ratio)[2]
-                ashph3_water_supply = air_source_heat_pump_cost_heat(ashph3, gc, ashph3_load_ratio)[2]
-                ashph4_water_supply = air_source_heat_pump_cost_heat(ashph4, gc, ashph4_load_ratio)[2]
+                ashph1_water_supply = air_source_heat_pump_cost_heat(ashph1, gc, ashph1_load_ratio, environment_temperature, heating_water_temperature)[2]
+                ashph2_water_supply = air_source_heat_pump_cost_heat(ashph2, gc, ashph2_load_ratio, environment_temperature, heating_water_temperature)[2]
+                ashph3_water_supply = air_source_heat_pump_cost_heat(ashph3, gc, ashph3_load_ratio, environment_temperature, heating_water_temperature)[2]
+                ashph4_water_supply = air_source_heat_pump_cost_heat(ashph4, gc, ashph4_load_ratio, environment_temperature, heating_water_temperature)[2]
                 ashph_water_supply_total = ashph1_water_supply + ashph2_water_supply + ashph3_water_supply + ashph4_water_supply
                 total_water_supply.append(ashph_water_supply_total)
                 # 计算4个设备的成本
@@ -172,32 +180,37 @@ def air_source_heat_pump_function_heat(heat_load, ashph1, ashph2, ashph3, ashph4
 
 def air_source_heat_pump_result_heat(ans_ashph, ashph1, ashph2, ashph3, ashph4):
     """选择出最合适的风冷螺杆热泵的计算结果"""
-    # 总成本最小值
-    cost_min = min(ans_ashph[0])
-    # 记录总成本最小值的列表索引
-    cost_min_index = ans_ashph[0].index(cost_min)
+    try:
+        # 总成本最小值
+        cost_min = min(ans_ashph[0])
+        # 记录总成本最小值的列表索引
+        cost_min_index = ans_ashph[0].index(cost_min)
+        # 读取对应索引下的设备负荷率
+        ashph1_ratio = ans_ashph[1][cost_min_index]
+        ashph2_ratio = ans_ashph[2][cost_min_index]
+        ashph3_ratio = ans_ashph[3][cost_min_index]
+        ashph4_ratio = ans_ashph[4][cost_min_index]
+        power_consumption_total = ans_ashph[5][cost_min_index]
+        water_supply_total = ans_ashph[6][cost_min_index]
+    except:
+        # 读取对应索引下的设备负荷率
+        ashph1_ratio = 0
+        ashph2_ratio = 0
+        ashph3_ratio = 0
+        ashph4_ratio = 0
+        power_consumption_total = 0
+        water_supply_total = 0
 
-    # 读取对应索引下的设备负荷率
-    ashph1_ratio = ans_ashph[1][cost_min_index]
-    ashph2_ratio = ans_ashph[2][cost_min_index]
-    ashph3_ratio = ans_ashph[3][cost_min_index]
-    ashph4_ratio = ans_ashph[4][cost_min_index]
-    power_consumption_total = ans_ashph[5][cost_min_index]
-    water_supply_total = ans_ashph[6][cost_min_index]
     heat_load_out = ashph1_ratio * ashph1.heating_power_rated + ashph2_ratio * ashph2.heating_power_rated \
                     + ashph3_ratio * ashph3.heating_power_rated + ashph4_ratio * ashph4.heating_power_rated
 
     return ashph1_ratio, ashph2_ratio, ashph3_ratio, ashph4_ratio, heat_load_out, power_consumption_total, water_supply_total
 
 
-def air_source_heat_pump_cost_heat(ashph, gc, load_ratio):
+def air_source_heat_pump_cost_heat(ashph, gc, load_ratio, environment_temperature, heating_water_temperature):
     """风冷螺杆热泵组运行成本计算"""
     # 采暖水流量,某一负荷率条件下
     heating_water_flow = ashph.heating_water_flow(load_ratio)
-    # 环境温度
-    environment_temperature = gc.environment_temperature
-    # 计算此时的风冷螺杆热泵采暖水出口温度
-    heating_water_temperature = gc.heating_water_temperature
     # 风冷螺杆热泵制热COP,某一负荷率条件下
     air_source_heat_pump_cop = ashph.air_source_heat_pump_heat_cop(load_ratio, heating_water_temperature, environment_temperature)
     # 风冷螺杆热泵本体耗电功率,某一负荷率条件下
@@ -233,18 +246,27 @@ def air_source_heat_pump_auxiliary_equipment_cost_heat(ashph, gc, heating_water_
     return auxiliary_equipment_power_consumption, auxiliary_equipment_power_cost
 
 
-def print_air_source_heat_pump_heat(ans, ashph1, ashph2, ashph3, ashph4):
+def print_air_source_heat_pump_heat(ans_ashph, ashph1, ashph2, ashph3, ashph4):
     """打印出风冷螺杆热泵的计算结果"""
-    # 总成本最小值
-    cost_min = min(ans[0])
-    # 记录总成本最小值的列表索引
-    cost_min_index = ans[0].index(cost_min)
+    try:
+        # 总成本最小值
+        cost_min = min(ans_ashph[0])
+        # 记录总成本最小值的列表索引
+        cost_min_index = ans_ashph[0].index(cost_min)
+        # 读取对应索引下的设备负荷率
+        ashph1_ratio = ans_ashph[1][cost_min_index]
+        ashph2_ratio = ans_ashph[2][cost_min_index]
+        ashph3_ratio = ans_ashph[3][cost_min_index]
+        ashph4_ratio = ans_ashph[4][cost_min_index]
+    except:
+        # 总成本最小值
+        cost_min = 0
+        # 读取对应索引下的设备负荷率
+        ashph1_ratio = 0
+        ashph2_ratio = 0
+        ashph3_ratio = 0
+        ashph4_ratio = 0
 
-    # 读取对应索引下的设备负荷率
-    ashph1_ratio = ans[1][cost_min_index]
-    ashph2_ratio = ans[2][cost_min_index]
-    ashph3_ratio = ans[3][cost_min_index]
-    ashph4_ratio = ans[4][cost_min_index]
     heat_load_out = ashph1_ratio * ashph1.heating_power_rated + ashph2_ratio * ashph2.heating_power_rated \
                     + ashph3_ratio * ashph3.heating_power_rated + ashph4_ratio * ashph4.heating_power_rated
     print("风冷螺杆热泵最低总运行成本为： " + str(cost_min) + "\n" + "风冷螺杆热泵1负荷率为： " + str(ashph1_ratio) + "\n"

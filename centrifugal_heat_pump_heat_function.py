@@ -1,11 +1,19 @@
 import math
 
-def centrifugal_heat_pump_function_heat(heat_load, chph1, chph2, chph3, chph4, gc):
+def centrifugal_heat_pump_function_heat(heat_load_a, chph1, chph2, chph3, chph4, heating_water_temperature, gc):
     """离心式热泵制热负荷计算函数"""
     # 制热，制热，制热
     # 离心式热泵组与水泵的布置方式，header_system（母管制）
     # 不同管道布置方式的离心式热泵计算
     # 母管制系统计算（水泵与离心式热泵组不是一对一布置）
+
+    # heat_load_a:热负荷初始值，如果初始值大于热水机的总制热率，则修正初始值
+    # 对heat_load_a进行判断
+    if heat_load_a >= chph1.heating_power_rated + chph2.heating_power_rated + chph3.heating_power_rated + chph4.heating_power_rated:
+        heat_load = chph1.heating_power_rated + chph2.heating_power_rated + chph3.heating_power_rated + chph4.heating_power_rated
+    else:
+        heat_load = heat_load_a
+
     # 获取4台离心式热泵是否为变频，根据是否为变频，设置不同的计算步长
     # 离心式热泵1
     if chph1.frequency_scaling == True:
@@ -98,7 +106,6 @@ def centrifugal_heat_pump_function_heat(heat_load, chph1, chph2, chph3, chph4, g
             chph3_heat_out_now = chph3_load_ratio * chph3.heating_power_rated
             chph4_heat_out_now = chph4_load_ratio * chph4.heating_power_rated
             chph_heat_out_now_sum = chph1_heat_out_now + chph2_heat_out_now + chph3_heat_out_now + chph4_heat_out_now
-            # print(chph_num, chph1_heat_out_now, chph2_heat_out_now, chph3_heat_out_now, chph4_heat_out_now)
             if chph_heat_out_now_sum < heat_load:
                 # 增加设备1、2、3、4负荷率
                 if chph_num >= 1:
@@ -128,16 +135,16 @@ def centrifugal_heat_pump_function_heat(heat_load, chph1, chph2, chph3, chph4, g
                 chph3_load_ratio_result.append(chph_load_ratio_result_all[2])
                 chph4_load_ratio_result.append(chph_load_ratio_result_all[3])
                 # 计算4个设备本体的总耗电功率（仅设备本体耗电）
-                chph1_centrifugal_heat_pump_power_consumption = centrifugal_heat_pump_cost_heat(chph1, gc, chph1_load_ratio)[3]
-                chph2_centrifugal_heat_pump_power_consumption = centrifugal_heat_pump_cost_heat(chph2, gc, chph2_load_ratio)[3]
-                chph3_centrifugal_heat_pump_power_consumption = centrifugal_heat_pump_cost_heat(chph3, gc, chph3_load_ratio)[3]
-                chph4_centrifugal_heat_pump_power_consumption = centrifugal_heat_pump_cost_heat(chph4, gc, chph4_load_ratio)[3]
+                chph1_centrifugal_heat_pump_power_consumption = centrifugal_heat_pump_cost_heat(chph1, gc, chph1_load_ratio, heating_water_temperature)[3]
+                chph2_centrifugal_heat_pump_power_consumption = centrifugal_heat_pump_cost_heat(chph2, gc, chph2_load_ratio, heating_water_temperature)[3]
+                chph3_centrifugal_heat_pump_power_consumption = centrifugal_heat_pump_cost_heat(chph3, gc, chph3_load_ratio, heating_water_temperature)[3]
+                chph4_centrifugal_heat_pump_power_consumption = centrifugal_heat_pump_cost_heat(chph4, gc, chph4_load_ratio, heating_water_temperature)[3]
                 # 计算4个设备的采暖水流量、低温热源水流量
                 # 采暖水和低温热源水总流量
-                heating_water_flow_total = centrifugal_heat_pump_cost_heat(chph1, gc, chph1_load_ratio)[4] + centrifugal_heat_pump_cost_heat(chph2, gc, chph2_load_ratio)[4] \
-                                           + centrifugal_heat_pump_cost_heat(chph3, gc, chph3_load_ratio)[4] + centrifugal_heat_pump_cost_heat(chph4, gc, chph4_load_ratio)[4]
-                heat_source_water_flow_total = centrifugal_heat_pump_cost_heat(chph1, gc, chph1_load_ratio)[5] + centrifugal_heat_pump_cost_heat(chph2, gc, chph2_load_ratio)[5] \
-                                               + centrifugal_heat_pump_cost_heat(chph3, gc, chph3_load_ratio)[5] + centrifugal_heat_pump_cost_heat(chph4, gc, chph4_load_ratio)[5]
+                heating_water_flow_total = centrifugal_heat_pump_cost_heat(chph1, gc, chph1_load_ratio, heating_water_temperature)[4] + centrifugal_heat_pump_cost_heat(chph2, gc, chph2_load_ratio, heating_water_temperature)[4] \
+                                           + centrifugal_heat_pump_cost_heat(chph3, gc, chph3_load_ratio, heating_water_temperature)[4] + centrifugal_heat_pump_cost_heat(chph4, gc, chph4_load_ratio, heating_water_temperature)[4]
+                heat_source_water_flow_total = centrifugal_heat_pump_cost_heat(chph1, gc, chph1_load_ratio, heating_water_temperature)[5] + centrifugal_heat_pump_cost_heat(chph2, gc, chph2_load_ratio, heating_water_temperature)[5] \
+                                               + centrifugal_heat_pump_cost_heat(chph3, gc, chph3_load_ratio, heating_water_temperature)[5] + centrifugal_heat_pump_cost_heat(chph4, gc, chph4_load_ratio, heating_water_temperature)[5]
                 # 每个水泵的流量为总流量均分（后期可细化流量分配比例）
                 chph1_heating_water_flow = heating_water_flow_total / chph_num
                 chph2_heating_water_flow = heating_water_flow_total / chph_num
@@ -159,10 +166,10 @@ def centrifugal_heat_pump_function_heat(heat_load, chph1, chph2, chph3, chph4, g
                                                + chph3_auxiliary_equipment_power_consumption + chph4_auxiliary_equipment_power_consumption
                 total_power_consumption.append(chph_power_consumption_total)
                 # 计算4个设备的总补水量
-                chph1_water_supply = centrifugal_heat_pump_cost_heat(chph1, gc, chph1_load_ratio)[2]
-                chph2_water_supply = centrifugal_heat_pump_cost_heat(chph2, gc, chph2_load_ratio)[2]
-                chph3_water_supply = centrifugal_heat_pump_cost_heat(chph3, gc, chph3_load_ratio)[2]
-                chph4_water_supply = centrifugal_heat_pump_cost_heat(chph4, gc, chph4_load_ratio)[2]
+                chph1_water_supply = centrifugal_heat_pump_cost_heat(chph1, gc, chph1_load_ratio, heating_water_temperature)[2]
+                chph2_water_supply = centrifugal_heat_pump_cost_heat(chph2, gc, chph2_load_ratio, heating_water_temperature)[2]
+                chph3_water_supply = centrifugal_heat_pump_cost_heat(chph3, gc, chph3_load_ratio, heating_water_temperature)[2]
+                chph4_water_supply = centrifugal_heat_pump_cost_heat(chph4, gc, chph4_load_ratio, heating_water_temperature)[2]
                 chph_water_supply_total = chph1_water_supply + chph2_water_supply + chph3_water_supply + chph4_water_supply
                 total_water_supply.append(chph_water_supply_total)
                 # 计算4个设备的成本
@@ -178,32 +185,40 @@ def centrifugal_heat_pump_function_heat(heat_load, chph1, chph2, chph3, chph4, g
 
 def centrifugal_heat_pump_result_heat(ans_chph, chph1, chph2, chph3, chph4):
     """选择出最合适的离心式热泵的计算结果"""
-    # 总成本最小值
-    cost_min = min(ans_chph[0])
-    # 记录总成本最小值的列表索引
-    cost_min_index = ans_chph[0].index(cost_min)
+    try:
+        # 总成本最小值
+        cost_min = min(ans_chph[0])
+        # 记录总成本最小值的列表索引
+        cost_min_index = ans_chph[0].index(cost_min)
+        # 读取对应索引下的设备负荷率
+        chph1_ratio = ans_chph[1][cost_min_index]
+        chph2_ratio = ans_chph[2][cost_min_index]
+        chph3_ratio = ans_chph[3][cost_min_index]
+        chph4_ratio = ans_chph[4][cost_min_index]
+        power_consumption_total = ans_chph[5][cost_min_index]
+        water_supply_total = ans_chph[6][cost_min_index]
+    except:
+        # 读取对应索引下的设备负荷率
+        chph1_ratio = 0
+        chph2_ratio = 0
+        chph3_ratio = 0
+        chph4_ratio = 0
+        power_consumption_total = 0
+        water_supply_total = 0
 
-    # 读取对应索引下的设备负荷率
-    chph1_ratio = ans_chph[1][cost_min_index]
-    chph2_ratio = ans_chph[2][cost_min_index]
-    chph3_ratio = ans_chph[3][cost_min_index]
-    chph4_ratio = ans_chph[4][cost_min_index]
-    power_consumption_total = ans_chph[5][cost_min_index]
-    water_supply_total = ans_chph[6][cost_min_index]
     heat_load_out = chph1_ratio * chph1.heating_power_rated + chph2_ratio * chph2.heating_power_rated + chph3_ratio * chph3.heating_power_rated \
                     + chph4_ratio * chph4.heating_power_rated
 
     return chph1_ratio, chph2_ratio, chph3_ratio, chph4_ratio, heat_load_out, power_consumption_total, water_supply_total
 
 
-def centrifugal_heat_pump_cost_heat(chph, gc, load_ratio):
+def centrifugal_heat_pump_cost_heat(chph, gc, load_ratio, heating_water_temperature):
     """离心式热泵组运行成本计算"""
     # 采暖水流量,某一负荷率条件下
     heating_water_flow = chph.heating_water_flow(load_ratio)
     # 低温热源水流量,某一负荷率条件下
     heat_source_water_flow = chph.heat_source_water_flow(load_ratio)
     # 计算此时的离心式热泵低温热源水进口温度和采暖水出口温度
-    heating_water_temperature = gc.heating_water_temperature
     heat_source_water_temperature = chph.heat_source_water_temperature(load_ratio)
     # 离心式热泵制热COP,某一负荷率条件下
     centrifugal_heat_pump_cop = chph.centrifugal_heat_pump_cop(load_ratio, heating_water_temperature, heat_source_water_temperature)
@@ -244,18 +259,27 @@ def centrifugal_heat_pump_auxiliary_equipment_cost_heat(chph, gc, heating_water_
     return auxiliary_equipment_power_consumption, auxiliary_equipment_power_cost
 
 
-def print_centrifugal_heat_pump_heat(ans, chph1, chph2, chph3, chph4):
+def print_centrifugal_heat_pump_heat(ans_chph, chph1, chph2, chph3, chph4):
     """打印出离心式热泵的计算结果"""
-    # 总成本最小值
-    cost_min = min(ans[0])
-    # 记录总成本最小值的列表索引
-    cost_min_index = ans[0].index(cost_min)
+    try:
+        # 总成本最小值
+        cost_min = min(ans_chph[0])
+        # 记录总成本最小值的列表索引
+        cost_min_index = ans_chph[0].index(cost_min)
+        # 读取对应索引下的设备负荷率
+        chph1_ratio = ans_chph[1][cost_min_index]
+        chph2_ratio = ans_chph[2][cost_min_index]
+        chph3_ratio = ans_chph[3][cost_min_index]
+        chph4_ratio = ans_chph[4][cost_min_index]
+    except:
+        # 总成本最小值
+        cost_min = 0
+        # 读取对应索引下的设备负荷率
+        chph1_ratio = 0
+        chph2_ratio = 0
+        chph3_ratio = 0
+        chph4_ratio = 0
 
-    # 读取对应索引下的设备负荷率
-    chph1_ratio = ans[1][cost_min_index]
-    chph2_ratio = ans[2][cost_min_index]
-    chph3_ratio = ans[3][cost_min_index]
-    chph4_ratio = ans[4][cost_min_index]
     heat_load_out = chph1_ratio * chph1.heating_power_rated + chph2_ratio * chph2.heating_power_rated \
                     + chph3_ratio * chph3.heating_power_rated + chph4_ratio * chph4.heating_power_rated
     print("离心式热泵最低总运行成本为： " + str(cost_min) + "\n" + "离心式热泵1负荷率为： " + str(chph1_ratio) + "\n" + "离心式热泵2负荷率为： " + str(chph2_ratio)

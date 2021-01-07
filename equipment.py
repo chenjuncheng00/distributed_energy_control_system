@@ -224,8 +224,6 @@ class Centrifugal_Heat_Pump_Heat():
         self.heating_water_temperature_difference_rated = gc.heating_water_temperature_difference_rated
         # 离心式热泵机组额定低温热源水供回水温差
         self.heat_source_water_temperature_difference_rated = gc.heat_source_water_temperature_difference_rated
-        # 采暖热水出水温度
-        self.heating_water_temperature = gc.heating_water_temperature
         # 离心式热泵机组制热COP神经网络模型
 
 
@@ -246,7 +244,7 @@ class Centrifugal_Heat_Pump_Heat():
     def heat_source_water_flow_rated(self):
         # 计算低温热源水额定流量，低温热源水的功率+电功率=制热输出功率
         # 计算满负荷时候的制热COP
-        cop = self.centrifugal_heat_pump_cop(1, self.heating_water_temperature, 25)
+        cop = self.centrifugal_heat_pump_cop(1, 55, 25)
         # 计算满负荷时候的电负荷功率
         electric_power_consumption_rated = self.heating_power_rated / cop
         # 计算满负荷时候的低温热源水功率

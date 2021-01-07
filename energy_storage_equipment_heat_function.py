@@ -377,33 +377,49 @@ def energy_storage_equipment_heat_load_ratio_correction(eseh, heat_load_a, load_
 
 def energy_storage_equipment_heat_result(ans_eseh, eseh1, eseh2, eseh3):
     """选择出最合适的蓄热水罐（实际上是水泵）的计算结果"""
-    # 总成本最小值
-    cost_min = min(ans_eseh[0])
-    # 记录总成本最小值的列表索引
-    cost_min_index = ans_eseh[0].index(cost_min)
+    try:
+        # 总成本最小值
+        cost_min = min(ans_eseh[0])
+        # 记录总成本最小值的列表索引
+        cost_min_index = ans_eseh[0].index(cost_min)
+        # 读取对应索引下的设备负荷率
+        eseh1_ratio = ans_eseh[1][cost_min_index]
+        eseh2_ratio = ans_eseh[2][cost_min_index]
+        eseh3_ratio = ans_eseh[3][cost_min_index]
+        power_consumption_total = ans_eseh[4][cost_min_index]
+        water_supply_total = ans_eseh[5][cost_min_index]
+    except:
+        # 读取对应索引下的设备负荷率
+        eseh1_ratio = 0
+        eseh2_ratio = 0
+        eseh3_ratio = 0
+        power_consumption_total = 0
+        water_supply_total = 0
 
-    # 读取对应索引下的设备负荷率
-    eseh1_ratio = ans_eseh[1][cost_min_index]
-    eseh2_ratio = ans_eseh[2][cost_min_index]
-    eseh3_ratio = ans_eseh[3][cost_min_index]
     heat_load_out = eseh1_ratio * eseh1.heating_power_rated + eseh2_ratio * eseh2.heating_power_rated + eseh3_ratio * eseh3.heating_power_rated
-    power_consumption_total = ans_eseh[4][cost_min_index]
-    water_supply_total = ans_eseh[5][cost_min_index]
 
     return eseh1_ratio, eseh2_ratio, eseh3_ratio, heat_load_out, power_consumption_total, water_supply_total
 
 
 def print_energy_storage_equipment_heat(ans_eseh, eseh1, eseh2, eseh3):
     """打印出最合适的蓄热水罐（实际上是水泵）的计算结果"""
-    # 总成本最小值
-    cost_min = min(ans_eseh[0])
-    # 记录总成本最小值的列表索引
-    cost_min_index = ans_eseh[0].index(cost_min)
+    try:
+        # 总成本最小值
+        cost_min = min(ans_eseh[0])
+        # 记录总成本最小值的列表索引
+        cost_min_index = ans_eseh[0].index(cost_min)
+        # 读取对应索引下的设备负荷率
+        eseh1_ratio = ans_eseh[1][cost_min_index]
+        eseh2_ratio = ans_eseh[2][cost_min_index]
+        eseh3_ratio = ans_eseh[3][cost_min_index]
+    except:
+        # 总成本最小值
+        cost_min = 0
+        # 读取对应索引下的设备负荷率
+        eseh1_ratio = 0
+        eseh2_ratio = 0
+        eseh3_ratio = 0
 
-    # 读取对应索引下的设备负荷率
-    eseh1_ratio = ans_eseh[1][cost_min_index]
-    eseh2_ratio = ans_eseh[2][cost_min_index]
-    eseh3_ratio = ans_eseh[3][cost_min_index]
     heat_load_out = eseh1_ratio * eseh1.heating_power_rated + eseh2_ratio * eseh2.heating_power_rated + eseh3_ratio * eseh3.heating_power_rated
 
     print("蓄能水罐最低总运行成本为： " + str(cost_min) + "\n" + "蓄能水罐水泵1负荷率为： " + str(eseh1_ratio) + "\n" + "蓄能水罐水泵2负荷率为： " + str(eseh2_ratio) + "\n" + "蓄能水罐水泵3负荷率为： " + str(eseh3_ratio) + "\n" + "蓄能水罐总制热出力为： " + str(heat_load_out))
