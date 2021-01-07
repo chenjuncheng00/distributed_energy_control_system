@@ -1214,13 +1214,13 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
     chilled_water_return_temperature = 0
     heat_water_supply_flow_total = lb1_chilled_heat_water_flow + lb2_chilled_heat_water_flow + chp1_heat_water_flow + chp2_heat_water_flow \
                                    + ese1_chilled_heat_water_flow + ese2_chilled_heat_water_flow + ese3_chilled_heat_water_flow
-    heat_water_supply_temperature = gc.heating_water_temperature
-    heat_water_return_temperature = gc.heating_water_temperature - gc.heating_water_temperature_difference_rated
+    heat_water_supply_temperature = heating_water_temperature
+    heat_water_return_temperature = heating_water_temperature - gc.heating_water_temperature_difference_rated
     hot_water_supply_flow_total = lb1_hot_water_flow + lb2_hot_water_flow + ngb3_hot_water_flow
     hot_water_supply_temperature = gc.hot_water_temperature
     hot_water_return_temperature = gc.hot_water_temperature - gc.hot_water_temperature_difference_rated
     if lb1_cold_heat_out > 0:
-        lb1_heat_chilled_water_supply_temperature = gc.heating_water_temperature
+        lb1_heat_chilled_water_supply_temperature = heating_water_temperature
     else:
         lb1_heat_chilled_water_supply_temperature = 0
     if lb1_hot_water_out > 0:
@@ -1228,7 +1228,7 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
     else:
         lb1_hot_water_supply_temperature = 0
     if lb2_cold_heat_out > 0:
-        lb2_heat_chilled_water_supply_temperature = gc.heating_water_temperature
+        lb2_heat_chilled_water_supply_temperature = heating_water_temperature
     else:
         lb2_heat_chilled_water_supply_temperature = 0
     if lb2_hot_water_out > 0:
@@ -1244,31 +1244,31 @@ def print_heating_season(ans, ice1, ice2, lb1_wp_heating_water, lb2_wp_heating_w
     cc3_chilled_water_supply_temperature = 0
     cc4_chilled_water_supply_temperature = 0
     if chp1_heat_out > 0:
-        chp1_heat_water_supply_temperature = gc.heating_water_temperature
+        chp1_heat_water_supply_temperature = heating_water_temperature
     else:
         chp1_heat_water_supply_temperature = 0
     if chp2_heat_out > 0:
-        chp2_heat_water_supply_temperature = gc.heating_water_temperature
+        chp2_heat_water_supply_temperature = heating_water_temperature
     else:
         chp2_heat_water_supply_temperature = 0
     if ashp1_heat_out > 0:
-        ashp1_water_supply_temperature = gc.ashp_heat_source_water_temperature
+        ashp1_water_supply_temperature = ashp_heat_source_water_temperature
     else:
         ashp1_water_supply_temperature = 0
     if ashp2_heat_out > 0:
-        ashp2_water_supply_temperature = gc.ashp_heat_source_water_temperature
+        ashp2_water_supply_temperature = ashp_heat_source_water_temperature
     else:
         ashp2_water_supply_temperature = 0
     if ashp3_heat_out > 0:
-        ashp3_water_supply_temperature = gc.ashp_heat_source_water_temperature
+        ashp3_water_supply_temperature = ashp_heat_source_water_temperature
     else:
         ashp3_water_supply_temperature = 0
     if ashp4_heat_out > 0:
-        ashp4_water_supply_temperature = gc.ashp_heat_source_water_temperature
+        ashp4_water_supply_temperature = ashp_heat_source_water_temperature
     else:
         ashp4_water_supply_temperature = 0
     if ese_heat_out_total > 0:
-        ese_water_supply_temperature = gc.heating_water_temperature
+        ese_water_supply_temperature = heating_water_temperature
     else:
         ese_water_supply_temperature = 0
     # 写入数据库

@@ -24,10 +24,10 @@ def two_stage_heat_pump_function(heat_load_a, chph1, chph2, chph3, chph4, ashph1
     chph_power_consumption_total = chphrh(ans_chph, chph1, chph2, chph3, chph4)[5]
     chph_water_supply_total = chphrh(ans_chph, chph1, chph2, chph3, chph4)[6]
     # 分别计算此时离心式热泵的制热COP
-    chph1_cop = chph1.centrifugal_heat_pump_cop(chph1_load_ratio, gc.heating_water_temperature, 25)
-    chph2_cop = chph2.centrifugal_heat_pump_cop(chph2_load_ratio, gc.heating_water_temperature, 25)
-    chph3_cop = chph3.centrifugal_heat_pump_cop(chph3_load_ratio, gc.heating_water_temperature, 25)
-    chph4_cop = chph4.centrifugal_heat_pump_cop(chph4_load_ratio, gc.heating_water_temperature, 25)
+    chph1_cop = chph1.centrifugal_heat_pump_cop(chph1_load_ratio, heating_water_temperature, 25)
+    chph2_cop = chph2.centrifugal_heat_pump_cop(chph2_load_ratio, heating_water_temperature, 25)
+    chph3_cop = chph3.centrifugal_heat_pump_cop(chph3_load_ratio, heating_water_temperature, 25)
+    chph4_cop = chph4.centrifugal_heat_pump_cop(chph4_load_ratio, heating_water_temperature, 25)
     # 计算此时的设备本体耗电功率
     chph1_electric_power = chph1.heating_power_rated * chph1_load_ratio / chph1_cop
     chph2_electric_power = chph1.heating_power_rated * chph2_load_ratio / chph2_cop

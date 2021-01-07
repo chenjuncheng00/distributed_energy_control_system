@@ -76,7 +76,7 @@ class Global_Constant():
         self.lb1_hot_water_step = 50
         self.lb2_hot_water_step = 50
         # 制冷季的开始月份和日期
-        self.cooling_season_start_date = "01-01"
+        self.cooling_season_start_date = "05-15"
         # 制冷季的结束月份和日期
         self.cooling_season_end_date = "10-15"
         # 采暖季的开始月份和日期

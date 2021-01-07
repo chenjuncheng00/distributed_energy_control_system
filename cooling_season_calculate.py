@@ -336,7 +336,6 @@ def cooling_season_function(cold_load, hot_water_load, electricity_load, ice1, i
                     # 存储此时的能源站向外供冷供电量
                     station_electricity_out_all.append(station_electricity_out_total)
                     station_cold_out_all.append(station_cold_out_total)
-                    print(station_cold_out_total)
                     # 储存此时的内燃机负荷率
                     ice_load_ratio_result_all[0] = ice1_load_ratio
                     ice_load_ratio_result_all[1] = ice2_load_ratio
@@ -1212,8 +1211,8 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
                                       + cc2_chilled_water_flow + cc3_chilled_water_flow + cc4_chilled_water_flow \
                                       + ashp1_chilled_heat_water_flow + ashp2_chilled_heat_water_flow + ashp3_chilled_heat_water_flow + ashp4_chilled_heat_water_flow \
                                       + ese1_chilled_heat_water_flow + ese2_chilled_heat_water_flow + ese3_chilled_heat_water_flow
-    chilled_water_supply_temperature = gc.chilled_water_temperature
-    chilled_water_return_temperature = gc.chilled_water_temperature + gc.chilled_water_temperature_difference_rated
+    chilled_water_supply_temperature = chilled_water_temperature
+    chilled_water_return_temperature = chilled_water_temperature + gc.chilled_water_temperature_difference_rated
     heat_water_supply_flow_total = 0
     heat_water_supply_temperature = 0
     heat_water_return_temperature = 0
@@ -1221,7 +1220,7 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
     hot_water_supply_temperature = gc.hot_water_temperature
     hot_water_return_temperature = gc.hot_water_temperature - gc.hot_water_temperature_difference_rated
     if lb1_cold_heat_out > 0:
-        lb1_heat_chilled_water_supply_temperature = gc.chilled_water_temperature
+        lb1_heat_chilled_water_supply_temperature = chilled_water_temperature
     else:
         lb1_heat_chilled_water_supply_temperature = 0
     if lb1_hot_water_out > 0:
@@ -1229,7 +1228,7 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
     else:
         lb1_hot_water_supply_temperature = 0
     if lb2_cold_heat_out > 0:
-        lb2_heat_chilled_water_supply_temperature = gc.chilled_water_temperature
+        lb2_heat_chilled_water_supply_temperature = chilled_water_temperature
     else:
         lb2_heat_chilled_water_supply_temperature = 0
     if lb2_hot_water_out > 0:
@@ -1241,41 +1240,41 @@ def print_cooling_season(ans, ice1, ice2, lb1_wp_cooling_water, lb2_wp_cooling_w
     else:
         ngb3_hot_water_supply_temperature = 0
     if cc1_cold_out > 0:
-        cc1_chilled_water_supply_temperature = gc.chilled_water_temperature
+        cc1_chilled_water_supply_temperature = chilled_water_temperature
     else:
         cc1_chilled_water_supply_temperature = 0
     if cc2_cold_out > 0:
-        cc2_chilled_water_supply_temperature = gc.chilled_water_temperature
+        cc2_chilled_water_supply_temperature = chilled_water_temperature
     else:
         cc2_chilled_water_supply_temperature = 0
     if cc3_cold_out > 0:
-        cc3_chilled_water_supply_temperature = gc.chilled_water_temperature
+        cc3_chilled_water_supply_temperature = chilled_water_temperature
     else:
         cc3_chilled_water_supply_temperature = 0
     if cc4_cold_out > 0:
-        cc4_chilled_water_supply_temperature = gc.chilled_water_temperature
+        cc4_chilled_water_supply_temperature = chilled_water_temperature
     else:
         cc4_chilled_water_supply_temperature = 0
     chp1_heat_water_supply_temperature = 0
     chp2_heat_water_supply_temperature = 0
     if ashp1_cold_out > 0:
-        ashp1_water_supply_temperature = gc.chilled_water_temperature
+        ashp1_water_supply_temperature = chilled_water_temperature
     else:
         ashp1_water_supply_temperature = 0
     if ashp2_cold_out > 0:
-        ashp2_water_supply_temperature = gc.chilled_water_temperature
+        ashp2_water_supply_temperature = chilled_water_temperature
     else:
         ashp2_water_supply_temperature = 0
     if ashp3_cold_out > 0:
-        ashp3_water_supply_temperature = gc.chilled_water_temperature
+        ashp3_water_supply_temperature = chilled_water_temperature
     else:
         ashp3_water_supply_temperature = 0
     if ashp4_cold_out > 0:
-        ashp4_water_supply_temperature = gc.chilled_water_temperature
+        ashp4_water_supply_temperature = chilled_water_temperature
     else:
         ashp4_water_supply_temperature = 0
     if ese_cold_out_total > 0:
-        ese_water_supply_temperature = gc.chilled_water_temperature
+        ese_water_supply_temperature = chilled_water_temperature
     else:
         ese_water_supply_temperature = 0
     # 写入数据库
