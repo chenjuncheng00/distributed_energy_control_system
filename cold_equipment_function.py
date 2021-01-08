@@ -1,7 +1,5 @@
 from centrifugal_chiller_function import centrifugal_chiller_function as ccf, centrifugal_chiller_result as ccr
 from air_source_heat_pump_cold_function import air_source_heat_pump_function_cold as ashpfc, air_source_heat_pump_result_cold as ashprc
-from global_constant import Global_Constant
-from equipment import Centrifugal_Chiller, Water_Pump, Air_Source_Heat_Pump_Cold
 
 
 def cold_equipment_function(cold_load_a, cc1, cc2, cc3, cc4, ashpc1, ashpc2, ashpc3, ashpc4,
@@ -226,42 +224,4 @@ def print_cold_equipment_result(ans, cc1, cc2, cc3, cc4, ashpc1, ashpc2, ashpc3,
           + "风冷螺杆热泵2负荷率为： " + str(ashpc2_ratio) + "\n" + "风冷螺杆热泵3负荷率为： " + str(ashpc3_ratio) + "\n"
           + "风冷螺杆热泵4负荷率为： " + str(ashpc4_ratio) + "\n" + "制冷设备总制冷出力为： " + str(cold_load_out))
 
-def test_cef():
-    """测试"""
-    # 实例化一个全局常量类
-    gc = Global_Constant()
-    # 实例化4个离心式冷水机的冷冻水泵和冷却水泵（离心式热泵的制冷工况采用离心式冷水机的计算模型）
-    cc1_wp_chilled_water = Water_Pump(600, True, 38, 25, gc)
-    cc2_wp_chilled_water = Water_Pump(600, True, 38, 25, gc)
-    cc3_wp_chilled_water = Water_Pump(600, True, 38, 25, gc)
-    cc4_wp_chilled_water = Water_Pump(600, True, 38, 25, gc)
-    cc1_wp_cooling_water = Water_Pump(710, True, 32, 25, gc)
-    cc2_wp_cooling_water = Water_Pump(710, True, 32, 25, gc)
-    cc3_wp_cooling_water = Water_Pump(710, True, 32, 25, gc)
-    cc4_wp_cooling_water = Water_Pump(710, True, 32, 25, gc)
-    # 实例化4个离心式冷水机（离心式热泵的制冷工况采用离心式冷水机的计算模型）
-    cc1 = Centrifugal_Chiller(3164, 0.1, True, cc1_wp_chilled_water, cc1_wp_cooling_water, gc)
-    cc2 = Centrifugal_Chiller(3164, 0.1, True, cc2_wp_chilled_water, cc2_wp_cooling_water, gc)
-    cc3 = Centrifugal_Chiller(3164, 0.1, True, cc3_wp_chilled_water, cc3_wp_cooling_water, gc)
-    cc4 = Centrifugal_Chiller(3164, 0.1, True, cc4_wp_chilled_water, cc4_wp_cooling_water, gc)
-    # 实例化4个空气源热泵的冷冻水泵
-    ashpc1_wp_chilled_water = Water_Pump(330, True, 35, 25, gc)
-    ashpc2_wp_chilled_water = Water_Pump(330, True, 35, 25, gc)
-    ashpc3_wp_chilled_water = Water_Pump(330, True, 35, 25, gc)
-    ashpc4_wp_chilled_water = Water_Pump(330, True, 35, 25, gc)
-    # 实例化4个空气源热泵（制冷）
-    ashpc1 = Air_Source_Heat_Pump_Cold(1640, 0.1, True, ashpc1_wp_chilled_water, gc)
-    ashpc2 = Air_Source_Heat_Pump_Cold(1640, 0.1, True, ashpc2_wp_chilled_water, gc)
-    ashpc3 = Air_Source_Heat_Pump_Cold(1640, 0.1, True, ashpc3_wp_chilled_water, gc)
-    ashpc4 = Air_Source_Heat_Pump_Cold(1640, 0.1, True, ashpc4_wp_chilled_water, gc)
-
-    cold_load_equipment = 14000
-    # 环境温度
-    environment_temperature = 35
-    # 供冷时出水温度
-    chilled_water_temperature = 7
-    ans = cold_equipment_function(cold_load_equipment, cc1, cc2, cc3, cc4, ashpc1, ashpc2, ashpc3, ashpc4,
-                                      environment_temperature, chilled_water_temperature, gc)
-
-    print_cold_equipment_result(ans, cc1, cc2, cc3, cc4, ashpc1, ashpc2, ashpc3, ashpc4)
 

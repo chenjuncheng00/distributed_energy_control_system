@@ -271,384 +271,385 @@ def print_transition_season(ans, ice1, ice2, lb1_wp_hot_water, lb2_wp_hot_water,
           "内燃机2负荷率为： " + str(ice2_load_ratio) + "\n" + "溴化锂供生活热水功率为： " + str(
         lb_hot_water) + "\n" + "天然气锅炉供生活热水功率为： " + str(ngb_hw_hot_water) + "\n")
 
-    # 向数据库写入计算结果
-    # 内燃机1和溴化锂1
-    if ice1_load_ratio > 0:
-        # 内燃机1
-        ice1_electrical_efficiency = ice1.electricity_power_efficiency(ice1_load_ratio)
-        ice1_residual_heat_efficiency = ice1.residual_heat_efficiency(ice1_load_ratio)
-        ice1_electrical_power = ice1.electricity_power_rated * ice1_load_ratio
-        ice1_total_heat_input = ice1.total_heat_input(ice1_load_ratio, ice1_electrical_efficiency)
-        ice1_residual_heat_power = ice1.residual_heat_power(ice1_total_heat_input, ice1_residual_heat_efficiency)
-        ice1_natural_gas_consumption = ice1.natural_gas_consumption(ice1_total_heat_input)
-        ice1_power_consumption = ice1.auxiliary_equipment_power_consumption(ice1_load_ratio)
-        ice1_electrical_income = ice1_electrical_power * gc.sale_electricity_price
-        ice1_electrical_cost = ice1_natural_gas_consumption * gc.natural_gas_price + ice1_power_consumption * gc.buy_electricity_price
-        # 写入数据库
 
-        # 溴化锂1
-        lb1_transition = Lithium_Bromide_Transition(ice1_residual_heat_power, lb1_wp_hot_water, 0.5, gc)
-        lb1_cold_heat_out = 0
-        lb1_wp_heat_chilled_water_frequency = 0
-        lb1_wp_cooling_water_frequency = 0
-        lb1_hot_water_out = lb_hot_water * (ice1_load_ratio / (ice1_load_ratio + ice2_load_ratio))
-        lb1_power_consumption = lbtf(lb1_hot_water_out, ice1_load_ratio, lb1_transition, gc)[0]
-        lb1_chilled_heat_water_flow = 0
-        lb1_cooling_water_flow = 0
-        lb1_wp_chilled_heat_water_power_consumption =0
-        lb1_wp_cooling_water_power_consumption = 0
-        lb1_fan_power_consumption = 0
-        lb1_cold_cop = 0
-        lb1_heat_cop = 0
-        lb1_hot_water_cop = lb1_transition.heating_cop(ice1_load_ratio)
-        lb1_cold_cost = 0
-        lb1_heat_cost = 0
-        lb1_hot_water_cost = lb1_power_consumption * gc.buy_electricity_price + lbtf(lb1_hot_water_out, ice1_load_ratio, lb1_transition, gc)[1]*gc.water_price
-        lb1_hot_water_temperature_difference = lb1_transition.hot_water_temperature_difference(ice1_load_ratio)
-        lb1_hot_water_flow = lb1_transition.hot_water_flow(lb1_hot_water_out, lb1_hot_water_temperature_difference)
-        lb1_wp_hot_water_frequency = 50
-        lb1_wp_hot_water_power_consumption = lb1_transition.wp_hot_water.pump_performance_data(lb1_hot_water_flow, lb1_wp_hot_water_frequency)[1]
-        lb1_cold_income = 0
-        lb1_heat_income = 0
-        lb1_hot_water_income = lb1_hot_water_out * gc.hot_water_price
-        # 内燃机运行状态
-        ice1_start_state = True
-        ice1_stop_state = False
-        ice1_fault_state = False
-        # 溴化锂运行状态
-        lb1_cold_state = False
-        lb1_heat_state = False
-        lb1_hot_water_state = True
-        lb1_stop_state = False
-        lb1_fault_state = False
-        # 写入数据库
-
-
-    else:
-        ice1_electrical_efficiency = 0
-        ice1_electrical_power = 0
-        ice1_electrical_income = 0
-        ice1_electrical_cost = 0
-        ice1_natural_gas_consumption = 0
-        ice1_power_consumption = 0
-        lb1_cold_cop = 0
-        lb1_heat_cop = 0
-        lb1_hot_water_cop = 0
-        lb1_cold_heat_out = 0
-        lb1_hot_water_out = 0
-        lb1_power_consumption = 0
-        lb1_cold_cost = 0
-        lb1_heat_cost = 0
-        lb1_hot_water_cost = 0
-        lb1_cold_income = 0
-        lb1_heat_income = 0
-        lb1_hot_water_income = 0
-        lb1_chilled_heat_water_flow = 0
-        lb1_hot_water_flow = 0
-        # 1#内燃机运行状态
-        ice1_start_state = False
-        ice1_stop_state = True
-        ice1_fault_state = False
-        # 1#溴化锂运行状态
-        lb1_cold_state = False
-        lb1_heat_state = False
-        lb1_hot_water_state = False
-        lb1_stop_state = True
-        lb1_fault_state = False
-        # 写入数据库
-
-
-    # 内燃机2
-    if ice2_load_ratio > 0:
-        ice2_electrical_efficiency = ice2.electricity_power_efficiency(ice2_load_ratio)
-        ice2_residual_heat_efficiency = ice2.residual_heat_efficiency(ice2_load_ratio)
-        ice2_electrical_power = ice2.electricity_power_rated * ice2_load_ratio
-        ice2_total_heat_input = ice2.total_heat_input(ice2_load_ratio, ice2_electrical_efficiency)
-        ice2_residual_heat_power = ice2.residual_heat_power(ice2_total_heat_input, ice2_residual_heat_efficiency)
-        ice2_natural_gas_consumption = ice2.natural_gas_consumption(ice2_total_heat_input)
-        ice2_power_consumption = ice2.auxiliary_equipment_power_consumption(ice2_load_ratio)
-        ice2_electrical_income = ice2_electrical_power * gc.sale_electricity_price
-        ice2_electrical_cost = ice2_natural_gas_consumption * gc.natural_gas_price + ice2_power_consumption * gc.buy_electricity_price
-
-        # 溴化锂2
-        lb2_transition = Lithium_Bromide_Transition(ice2_residual_heat_power, lb2_wp_hot_water, 0.5, gc)
-        lb2_cold_heat_out = 0
-        lb2_wp_heat_chilled_water_frequency = 0
-        lb2_wp_cooling_water_frequency = 0
-        lb2_hot_water_out = lb_hot_water * (ice2_load_ratio / (ice2_load_ratio + ice2_load_ratio))
-        lb2_power_consumption = lbtf(lb2_hot_water_out, ice2_load_ratio, lb2_transition, gc)[0]
-        lb2_chilled_heat_water_flow = 0
-        lb2_cooling_water_flow = 0
-        lb2_wp_chilled_heat_water_power_consumption = 0
-        lb2_wp_cooling_water_power_consumption = 0
-        lb2_fan_power_consumption = 0
-        lb2_cold_cop = 0
-        lb2_heat_cop = 0
-        lb2_hot_water_cop = lb2_transition.heating_cop(ice2_load_ratio)
-        lb2_cold_cost = 0
-        lb2_heat_cost = 0
-        lb2_hot_water_cost = lb2_power_consumption * gc.buy_electricity_price + lbtf(lb2_hot_water_out, ice2_load_ratio, lb2_transition, gc)[1] * gc.water_price
-        lb2_hot_water_temperature_difference = lb2_transition.hot_water_temperature_difference(ice2_load_ratio)
-        lb2_hot_water_flow = lb2_transition.hot_water_flow(lb2_hot_water_out, lb2_hot_water_temperature_difference)
-        lb2_wp_hot_water_frequency = 50
-        lb2_wp_hot_water_power_consumption = lb2_transition.wp_hot_water.pump_performance_data(lb2_hot_water_flow, lb2_wp_hot_water_frequency)[1]
-        lb2_cold_income = 0
-        lb2_heat_income = 0
-        lb2_hot_water_income = lb2_hot_water_out * gc.hot_water_price
-        # 2#内燃机运行状态
-        ice2_start_state = True
-        ice2_stop_state = False
-        ice2_fault_state = False
-        # 2#溴化锂运行状态
-        lb2_cold_state = False
-        lb2_heat_state = False
-        lb2_hot_water_state = True
-        lb2_stop_state = False
-        lb2_fault_state = False
-        # 写入数据库
-
-
-    else:
-        ice2_electrical_efficiency = 0
-        ice2_electrical_power = 0
-        ice2_electrical_income = 0
-        ice2_electrical_cost = 0
-        ice2_natural_gas_consumption = 0
-        ice2_power_consumption = 0
-        lb2_cold_cop = 0
-        lb2_heat_cop = 0
-        lb2_hot_water_cop = 0
-        lb2_cold_heat_out = 0
-        lb2_hot_water_out = 0
-        lb2_power_consumption = 0
-        lb2_cold_cost = 0
-        lb2_heat_cost = 0
-        lb2_hot_water_cost = 0
-        lb2_cold_income = 0
-        lb2_heat_income = 0
-        lb2_hot_water_income = 0
-        lb2_chilled_heat_water_flow = 0
-        lb2_hot_water_flow = 0
-        # 内燃机运行状态
-        ice2_start_state = False
-        ice2_stop_state = True
-        ice2_fault_state = False
-        # 溴化锂运行状态
-        lb2_cold_state = False
-        lb2_heat_state = False
-        lb2_hot_water_state = False
-        lb2_stop_state = True
-        lb2_fault_state = False
-        # 写入数据库
-
-
-    # 天然气生活热水锅炉
-    if ngb_hw_hot_water > 0:
-        ngb3_wp_hot_water_frequency = 50
-        ngb3_hot_water_out = ngb_hw_hot_water
-        ngb3_load_ratio = ngb3_hot_water_out / ngb_hot_water.heating_power_rated
-        ngb3_power_consumption = ngbiohw(ngb3_hot_water_out, ngb_hot_water, gc)[0]
-        ngb3_hot_water_flow = ngb_hw_hot_water * 3600 / gc.hot_water_temperature_difference_rated / 4.2 / 1000
-        ngb3_wp_hot_water_power_consumption = ngb_hot_water.wp_hot_water.pump_performance_data(ngb3_hot_water_flow, ngb3_wp_hot_water_frequency)[1]
-        ngb3_efficiency = ngb_hot_water.boiler_efficiency(ngb3_load_ratio)
-        ngb3_natural_gas_consumption = ngbiohw(ngb3_hot_water_out, ngb_hot_water, gc)[1]
-        ngb3_income = ngb3_hot_water_out * gc.hot_water_price
-        ngb3_cost = ngb3_natural_gas_consumption * gc.natural_gas_price + ngb3_natural_gas_consumption * gc.buy_electricity_price
-        # 天然气热水锅炉运行状态
-        ngb_hot_water_state = True
-        ngb_stop_state = False
-        ngb_fault_state = False
-        # 写入数据库
-
-    else:
-        ngb3_efficiency = 0
-        ngb3_natural_gas_consumption = 0
-        ngb3_power_consumption = 0
-        ngb3_income = 0
-        ngb3_cost = 0
-        ngb3_hot_water_out = 0
-        ngb3_hot_water_flow = 0
-        # 天然气热水锅炉运行状态
-        ngb_hot_water_state = False
-        ngb_stop_state = True
-        ngb_fault_state = False
-        # 写入数据库
-
-
-    # 写入系统共用数据结果
-    cost_total = station_cost_min
-    profit_total = station_profitis_max
-    income_total = cost_total + profit_total
-    electricity_out_total = station_electricity_out_all
-    cold_heat_out_total = 0
-    hot_water_out_total = lb_hot_water + ngb_hw_hot_water
-    natural_gas_consume_total = ice1_natural_gas_consumption + ice2_natural_gas_consumption + ngb3_natural_gas_consumption
-    electricity_consume_total = ice1_power_consumption + ice2_power_consumption + lb1_power_consumption + lb2_power_consumption + ngb3_power_consumption
-    if (ice1_natural_gas_consumption + ice2_natural_gas_consumption) > 0:
-        comprehensive_energy_utilization = (ice1_electrical_power + ice2_electrical_power + lb1_cold_heat_out + lb2_cold_heat_out) * 3600 \
-                                           / ((ice1_natural_gas_consumption + ice2_natural_gas_consumption) * gc.natural_gas_calorific_value)
-    else:
-        comprehensive_energy_utilization = 0
-    cop_real_time = 0
-    reduction_in_carbon_emissions = 0
-    reduction_in_sulfide_emissions = 0
-    reduction_in_nitride_emissions = 0
-    reduction_in_dust_emissions = 0
-    proportion_of_renewable_energy_power = 0
-
-
-    # 写入能源站冷热电的输入输出功率数据
-    photovoltaic_electricity_out_total = 0
-    wind_electricity_out_total = 0
-    accumulator_electricity_out_total = 0
-    electricity_generation_total = ice1_electrical_power + ice2_electrical_power + photovoltaic_electricity_out_total + wind_electricity_out_total + accumulator_electricity_out_total
-    ice_electricity_out_total = ice1_electrical_power + ice2_electrical_power
-    buy_electricity_total = electricity_consume_total - electricity_generation_total
-    lb_cold_out_total = lb1_cold_heat_out + lb2_cold_heat_out
-    lb_heat_out_total = 0
-    lb_hot_water_out_total = lb1_hot_water_out + lb2_hot_water_out
-    ngb_hot_water_out_total = ngb3_hot_water_out
-    cc_cold_out_total = 0
-    chp_cold_out_total = 0
-    chp_heat_out_total = 0
-    ashp_cold_out_total = 0
-    ese_cold_out_total = 0
-    ese_heat_out_total = 0
-    cold_out_total = lb_cold_out_total + cc_cold_out_total + chp_cold_out_total + ashp_cold_out_total + ese_cold_out_total
-    heat_out_total = lb_heat_out_total + chp_heat_out_total + ese_heat_out_total
-    # 写入数据库
-
-
-    # 写入能源站冷热电的收入成本数据
-    ice_income_total = ice1_electrical_income + ice2_electrical_income
-    lb_cold_income_total = lb1_cold_income + lb2_cold_income
-    lb_heat_income_total = lb1_heat_income + lb2_heat_income
-    lb_hot_water_income_total = lb1_hot_water_income + lb2_hot_water_income
-    cc_cold_income_total = 0
-    chp_cold_income_total = 0
-    chp_heat_income_total = 0
-    ashp_cold_income_total = 0
-    ngb_hot_water_income_total = ngb3_income
-    photovoltaic_income_total = photovoltaic_electricity_out_total * gc.sale_electricity_price
-    wind_income_total = wind_electricity_out_total * gc.sale_electricity_price
-    ice_cost_total = ice1_electrical_cost + ice2_electrical_cost
-    lb_cold_cost_total = lb1_cold_cost + lb2_cold_cost
-    lb_heat_cost_total = lb1_heat_cost + lb2_heat_cost
-    lb_hot_water_cost_total = lb1_hot_water_cost + lb2_hot_water_cost
-    cc_cold_cost_total = 0
-    chp_cold_cost_total = 0
-    chp_heat_cost_total = 0
-    ashp_cold_cost_total = 0
-    ashp_heat_cost_total = 0
-    ngb_hot_water_cost_total = ngb3_cost
-    # 写入数据库
-
-
-    # 写入设备效率数据
-    ice_electrical_efficiency = max(ice1_electrical_efficiency, ice2_electrical_efficiency)
-    lb_cold_efficiency = max(lb1_cold_cop, lb2_cold_cop)
-    lb_heat_efficiency = max(lb1_heat_cop, lb2_heat_cop)
-    lb_hot_water_efficiency = max(lb1_hot_water_cop, lb2_hot_water_cop)
-    cc_cold_cop = 0
-    chp_cold_cop = 0
-    chp_heat_cop = 0
-    ashp_cold_cop = 0
-    ashp_heat_cop = 0
-    ngb_hot_water_efficiency = ngb3_efficiency
-    photovoltaic_electrical_efficiency = 0
-    wind_electrical_efficiency = 0
-    # 写入数据库
-
-
-    # 写入设备冷冻水出水温度和冷水生活热水总流量数据
-    chilled_water_supply_flow_total = 0
-    chilled_water_supply_temperature = 0
-    chilled_water_return_temperature = 0
-    heat_water_supply_flow_total = 0
-    heat_water_supply_temperature = 0
-    heat_water_return_temperature = 0
-    hot_water_supply_flow_total = lb1_hot_water_flow + lb2_hot_water_flow + ngb3_hot_water_flow
-    hot_water_supply_temperature = gc.hot_water_temperature
-    hot_water_return_temperature = gc.hot_water_temperature - gc.hot_water_temperature_difference_rated
-    lb1_heat_chilled_water_supply_temperature = 0
-    lb2_heat_chilled_water_supply_temperature = 0
-    if lb1_hot_water_out > 0:
-        lb1_hot_water_supply_temperature = gc.hot_water_temperature
-    else:
-        lb1_hot_water_supply_temperature = 0
-    if lb2_hot_water_out > 0:
-        lb2_hot_water_supply_temperature = gc.hot_water_temperature
-    else:
-        lb2_hot_water_supply_temperature = 0
-    if ngb3_hot_water_out > 0:
-        ngb3_hot_water_supply_temperature = gc.hot_water_temperature
-    else:
-        ngb3_hot_water_supply_temperature = 0
-    cc1_chilled_water_supply_temperature = 0
-    cc2_chilled_water_supply_temperature = 0
-    cc3_chilled_water_supply_temperature = 0
-    cc4_chilled_water_supply_temperature = 0
-    chp1_heat_water_supply_temperature = 0
-    chp2_heat_water_supply_temperature = 0
-    ashp1_water_supply_temperature = 0
-    ashp2_water_supply_temperature = 0
-    ashp3_water_supply_temperature = 0
-    ashp4_water_supply_temperature = 0
-    ese_water_supply_temperature = 0
-    # 写入数据库
-
-
-    # 写入设备运行状态
-    cc1_cold_state = False
-    cc1_stop_state = True
-    cc1_fault_state = False
-    cc2_cold_state = False
-    cc2_stop_state = True
-    cc2_fault_state = False
-    chp1_cold_state = False
-    chp1_heat_state = False
-    chp1_stop_state = True
-    chp1_fault_state = False
-    chp2_cold_state = False
-    chp2_heat_state = False
-    chp2_stop_state = True
-    chp2_fault_state = False
-    ashp1_cold_state = False
-    ashp1_heat_state = False
-    ashp1_stop_state = True
-    ashp1_fault_state = False
-    ashp2_cold_state = False
-    ashp2_heat_state = False
-    ashp2_stop_state = True
-    ashp2_fault_state = False
-    ashp3_cold_state = False
-    ashp3_heat_state = False
-    ashp3_stop_state = True
-    ashp3_fault_state = False
-    ashp4_cold_state = False
-    ashp4_heat_state = False
-    ashp4_stop_state = True
-    ashp4_fault_state = False
-    ese_cold_out_state = False
-    ese_heat_out_state = False
-    ese_cold_in_state = False
-    ese_heat_in_state = False
-    ese_stop_state = True
-    ese_fault_state = False
-    photovoltaic_start_state = False
-    photovoltaic_stop_state = True
-    photovoltaic_fault_state = False
-    wind_start_state = False
-    wind_stop_state = True
-    wind_fault_state = False
-    cdz_start_state = False
-    cdz_stop_state = True
-    cdz_fault_state = False
-    accumulator_electricity_out_state = False
-    accumulator_electricity_in_state = False
-    accumulator_stop_state = True
-    accumulator_fault_state = False
-    lamp_start_state = False
-    lamp_stop_state = True
-    lamp_fault_state = False
-    # 写入数据库
+    # # 向数据库写入计算结果
+    # # 内燃机1和溴化锂1
+    # if ice1_load_ratio > 0:
+    #     # 内燃机1
+    #     ice1_electrical_efficiency = ice1.electricity_power_efficiency(ice1_load_ratio)
+    #     ice1_residual_heat_efficiency = ice1.residual_heat_efficiency(ice1_load_ratio)
+    #     ice1_electrical_power = ice1.electricity_power_rated * ice1_load_ratio
+    #     ice1_total_heat_input = ice1.total_heat_input(ice1_load_ratio, ice1_electrical_efficiency)
+    #     ice1_residual_heat_power = ice1.residual_heat_power(ice1_total_heat_input, ice1_residual_heat_efficiency)
+    #     ice1_natural_gas_consumption = ice1.natural_gas_consumption(ice1_total_heat_input)
+    #     ice1_power_consumption = ice1.auxiliary_equipment_power_consumption(ice1_load_ratio)
+    #     ice1_electrical_income = ice1_electrical_power * gc.sale_electricity_price
+    #     ice1_electrical_cost = ice1_natural_gas_consumption * gc.natural_gas_price + ice1_power_consumption * gc.buy_electricity_price
+    #     # 写入数据库
+    #
+    #     # 溴化锂1
+    #     lb1_transition = Lithium_Bromide_Transition(ice1_residual_heat_power, lb1_wp_hot_water, 0.5, gc)
+    #     lb1_cold_heat_out = 0
+    #     lb1_wp_heat_chilled_water_frequency = 0
+    #     lb1_wp_cooling_water_frequency = 0
+    #     lb1_hot_water_out = lb_hot_water * (ice1_load_ratio / (ice1_load_ratio + ice2_load_ratio))
+    #     lb1_power_consumption = lbtf(lb1_hot_water_out, ice1_load_ratio, lb1_transition, gc)[0]
+    #     lb1_chilled_heat_water_flow = 0
+    #     lb1_cooling_water_flow = 0
+    #     lb1_wp_chilled_heat_water_power_consumption =0
+    #     lb1_wp_cooling_water_power_consumption = 0
+    #     lb1_fan_power_consumption = 0
+    #     lb1_cold_cop = 0
+    #     lb1_heat_cop = 0
+    #     lb1_hot_water_cop = lb1_transition.heating_cop(ice1_load_ratio)
+    #     lb1_cold_cost = 0
+    #     lb1_heat_cost = 0
+    #     lb1_hot_water_cost = lb1_power_consumption * gc.buy_electricity_price + lbtf(lb1_hot_water_out, ice1_load_ratio, lb1_transition, gc)[1]*gc.water_price
+    #     lb1_hot_water_temperature_difference = lb1_transition.hot_water_temperature_difference(ice1_load_ratio)
+    #     lb1_hot_water_flow = lb1_transition.hot_water_flow(lb1_hot_water_out, lb1_hot_water_temperature_difference)
+    #     lb1_wp_hot_water_frequency = 50
+    #     lb1_wp_hot_water_power_consumption = lb1_transition.wp_hot_water.pump_performance_data(lb1_hot_water_flow, lb1_wp_hot_water_frequency)[1]
+    #     lb1_cold_income = 0
+    #     lb1_heat_income = 0
+    #     lb1_hot_water_income = lb1_hot_water_out * gc.hot_water_price
+    #     # 内燃机运行状态
+    #     ice1_start_state = True
+    #     ice1_stop_state = False
+    #     ice1_fault_state = False
+    #     # 溴化锂运行状态
+    #     lb1_cold_state = False
+    #     lb1_heat_state = False
+    #     lb1_hot_water_state = True
+    #     lb1_stop_state = False
+    #     lb1_fault_state = False
+    #     # 写入数据库
+    #
+    #
+    # else:
+    #     ice1_electrical_efficiency = 0
+    #     ice1_electrical_power = 0
+    #     ice1_electrical_income = 0
+    #     ice1_electrical_cost = 0
+    #     ice1_natural_gas_consumption = 0
+    #     ice1_power_consumption = 0
+    #     lb1_cold_cop = 0
+    #     lb1_heat_cop = 0
+    #     lb1_hot_water_cop = 0
+    #     lb1_cold_heat_out = 0
+    #     lb1_hot_water_out = 0
+    #     lb1_power_consumption = 0
+    #     lb1_cold_cost = 0
+    #     lb1_heat_cost = 0
+    #     lb1_hot_water_cost = 0
+    #     lb1_cold_income = 0
+    #     lb1_heat_income = 0
+    #     lb1_hot_water_income = 0
+    #     lb1_chilled_heat_water_flow = 0
+    #     lb1_hot_water_flow = 0
+    #     # 1#内燃机运行状态
+    #     ice1_start_state = False
+    #     ice1_stop_state = True
+    #     ice1_fault_state = False
+    #     # 1#溴化锂运行状态
+    #     lb1_cold_state = False
+    #     lb1_heat_state = False
+    #     lb1_hot_water_state = False
+    #     lb1_stop_state = True
+    #     lb1_fault_state = False
+    #     # 写入数据库
+    #
+    #
+    # # 内燃机2
+    # if ice2_load_ratio > 0:
+    #     ice2_electrical_efficiency = ice2.electricity_power_efficiency(ice2_load_ratio)
+    #     ice2_residual_heat_efficiency = ice2.residual_heat_efficiency(ice2_load_ratio)
+    #     ice2_electrical_power = ice2.electricity_power_rated * ice2_load_ratio
+    #     ice2_total_heat_input = ice2.total_heat_input(ice2_load_ratio, ice2_electrical_efficiency)
+    #     ice2_residual_heat_power = ice2.residual_heat_power(ice2_total_heat_input, ice2_residual_heat_efficiency)
+    #     ice2_natural_gas_consumption = ice2.natural_gas_consumption(ice2_total_heat_input)
+    #     ice2_power_consumption = ice2.auxiliary_equipment_power_consumption(ice2_load_ratio)
+    #     ice2_electrical_income = ice2_electrical_power * gc.sale_electricity_price
+    #     ice2_electrical_cost = ice2_natural_gas_consumption * gc.natural_gas_price + ice2_power_consumption * gc.buy_electricity_price
+    #
+    #     # 溴化锂2
+    #     lb2_transition = Lithium_Bromide_Transition(ice2_residual_heat_power, lb2_wp_hot_water, 0.5, gc)
+    #     lb2_cold_heat_out = 0
+    #     lb2_wp_heat_chilled_water_frequency = 0
+    #     lb2_wp_cooling_water_frequency = 0
+    #     lb2_hot_water_out = lb_hot_water * (ice2_load_ratio / (ice2_load_ratio + ice2_load_ratio))
+    #     lb2_power_consumption = lbtf(lb2_hot_water_out, ice2_load_ratio, lb2_transition, gc)[0]
+    #     lb2_chilled_heat_water_flow = 0
+    #     lb2_cooling_water_flow = 0
+    #     lb2_wp_chilled_heat_water_power_consumption = 0
+    #     lb2_wp_cooling_water_power_consumption = 0
+    #     lb2_fan_power_consumption = 0
+    #     lb2_cold_cop = 0
+    #     lb2_heat_cop = 0
+    #     lb2_hot_water_cop = lb2_transition.heating_cop(ice2_load_ratio)
+    #     lb2_cold_cost = 0
+    #     lb2_heat_cost = 0
+    #     lb2_hot_water_cost = lb2_power_consumption * gc.buy_electricity_price + lbtf(lb2_hot_water_out, ice2_load_ratio, lb2_transition, gc)[1] * gc.water_price
+    #     lb2_hot_water_temperature_difference = lb2_transition.hot_water_temperature_difference(ice2_load_ratio)
+    #     lb2_hot_water_flow = lb2_transition.hot_water_flow(lb2_hot_water_out, lb2_hot_water_temperature_difference)
+    #     lb2_wp_hot_water_frequency = 50
+    #     lb2_wp_hot_water_power_consumption = lb2_transition.wp_hot_water.pump_performance_data(lb2_hot_water_flow, lb2_wp_hot_water_frequency)[1]
+    #     lb2_cold_income = 0
+    #     lb2_heat_income = 0
+    #     lb2_hot_water_income = lb2_hot_water_out * gc.hot_water_price
+    #     # 2#内燃机运行状态
+    #     ice2_start_state = True
+    #     ice2_stop_state = False
+    #     ice2_fault_state = False
+    #     # 2#溴化锂运行状态
+    #     lb2_cold_state = False
+    #     lb2_heat_state = False
+    #     lb2_hot_water_state = True
+    #     lb2_stop_state = False
+    #     lb2_fault_state = False
+    #     # 写入数据库
+    #
+    #
+    # else:
+    #     ice2_electrical_efficiency = 0
+    #     ice2_electrical_power = 0
+    #     ice2_electrical_income = 0
+    #     ice2_electrical_cost = 0
+    #     ice2_natural_gas_consumption = 0
+    #     ice2_power_consumption = 0
+    #     lb2_cold_cop = 0
+    #     lb2_heat_cop = 0
+    #     lb2_hot_water_cop = 0
+    #     lb2_cold_heat_out = 0
+    #     lb2_hot_water_out = 0
+    #     lb2_power_consumption = 0
+    #     lb2_cold_cost = 0
+    #     lb2_heat_cost = 0
+    #     lb2_hot_water_cost = 0
+    #     lb2_cold_income = 0
+    #     lb2_heat_income = 0
+    #     lb2_hot_water_income = 0
+    #     lb2_chilled_heat_water_flow = 0
+    #     lb2_hot_water_flow = 0
+    #     # 内燃机运行状态
+    #     ice2_start_state = False
+    #     ice2_stop_state = True
+    #     ice2_fault_state = False
+    #     # 溴化锂运行状态
+    #     lb2_cold_state = False
+    #     lb2_heat_state = False
+    #     lb2_hot_water_state = False
+    #     lb2_stop_state = True
+    #     lb2_fault_state = False
+    #     # 写入数据库
+    #
+    #
+    # # 天然气生活热水锅炉
+    # if ngb_hw_hot_water > 0:
+    #     ngb3_wp_hot_water_frequency = 50
+    #     ngb3_hot_water_out = ngb_hw_hot_water
+    #     ngb3_load_ratio = ngb3_hot_water_out / ngb_hot_water.heating_power_rated
+    #     ngb3_power_consumption = ngbiohw(ngb3_hot_water_out, ngb_hot_water, gc)[0]
+    #     ngb3_hot_water_flow = ngb_hw_hot_water * 3600 / gc.hot_water_temperature_difference_rated / 4.2 / 1000
+    #     ngb3_wp_hot_water_power_consumption = ngb_hot_water.wp_hot_water.pump_performance_data(ngb3_hot_water_flow, ngb3_wp_hot_water_frequency)[1]
+    #     ngb3_efficiency = ngb_hot_water.boiler_efficiency(ngb3_load_ratio)
+    #     ngb3_natural_gas_consumption = ngbiohw(ngb3_hot_water_out, ngb_hot_water, gc)[1]
+    #     ngb3_income = ngb3_hot_water_out * gc.hot_water_price
+    #     ngb3_cost = ngb3_natural_gas_consumption * gc.natural_gas_price + ngb3_natural_gas_consumption * gc.buy_electricity_price
+    #     # 天然气热水锅炉运行状态
+    #     ngb_hot_water_state = True
+    #     ngb_stop_state = False
+    #     ngb_fault_state = False
+    #     # 写入数据库
+    #
+    # else:
+    #     ngb3_efficiency = 0
+    #     ngb3_natural_gas_consumption = 0
+    #     ngb3_power_consumption = 0
+    #     ngb3_income = 0
+    #     ngb3_cost = 0
+    #     ngb3_hot_water_out = 0
+    #     ngb3_hot_water_flow = 0
+    #     # 天然气热水锅炉运行状态
+    #     ngb_hot_water_state = False
+    #     ngb_stop_state = True
+    #     ngb_fault_state = False
+    #     # 写入数据库
+    #
+    #
+    # # 写入系统共用数据结果
+    # cost_total = station_cost_min
+    # profit_total = station_profitis_max
+    # income_total = cost_total + profit_total
+    # electricity_out_total = station_electricity_out_all
+    # cold_heat_out_total = 0
+    # hot_water_out_total = lb_hot_water + ngb_hw_hot_water
+    # natural_gas_consume_total = ice1_natural_gas_consumption + ice2_natural_gas_consumption + ngb3_natural_gas_consumption
+    # electricity_consume_total = ice1_power_consumption + ice2_power_consumption + lb1_power_consumption + lb2_power_consumption + ngb3_power_consumption
+    # if (ice1_natural_gas_consumption + ice2_natural_gas_consumption) > 0:
+    #     comprehensive_energy_utilization = (ice1_electrical_power + ice2_electrical_power + lb1_cold_heat_out + lb2_cold_heat_out) * 3600 \
+    #                                        / ((ice1_natural_gas_consumption + ice2_natural_gas_consumption) * gc.natural_gas_calorific_value)
+    # else:
+    #     comprehensive_energy_utilization = 0
+    # cop_real_time = 0
+    # reduction_in_carbon_emissions = 0
+    # reduction_in_sulfide_emissions = 0
+    # reduction_in_nitride_emissions = 0
+    # reduction_in_dust_emissions = 0
+    # proportion_of_renewable_energy_power = 0
+    #
+    #
+    # # 写入能源站冷热电的输入输出功率数据
+    # photovoltaic_electricity_out_total = 0
+    # wind_electricity_out_total = 0
+    # accumulator_electricity_out_total = 0
+    # electricity_generation_total = ice1_electrical_power + ice2_electrical_power + photovoltaic_electricity_out_total + wind_electricity_out_total + accumulator_electricity_out_total
+    # ice_electricity_out_total = ice1_electrical_power + ice2_electrical_power
+    # buy_electricity_total = electricity_consume_total - electricity_generation_total
+    # lb_cold_out_total = lb1_cold_heat_out + lb2_cold_heat_out
+    # lb_heat_out_total = 0
+    # lb_hot_water_out_total = lb1_hot_water_out + lb2_hot_water_out
+    # ngb_hot_water_out_total = ngb3_hot_water_out
+    # cc_cold_out_total = 0
+    # chp_cold_out_total = 0
+    # chp_heat_out_total = 0
+    # ashp_cold_out_total = 0
+    # ese_cold_out_total = 0
+    # ese_heat_out_total = 0
+    # cold_out_total = lb_cold_out_total + cc_cold_out_total + chp_cold_out_total + ashp_cold_out_total + ese_cold_out_total
+    # heat_out_total = lb_heat_out_total + chp_heat_out_total + ese_heat_out_total
+    # # 写入数据库
+    #
+    #
+    # # 写入能源站冷热电的收入成本数据
+    # ice_income_total = ice1_electrical_income + ice2_electrical_income
+    # lb_cold_income_total = lb1_cold_income + lb2_cold_income
+    # lb_heat_income_total = lb1_heat_income + lb2_heat_income
+    # lb_hot_water_income_total = lb1_hot_water_income + lb2_hot_water_income
+    # cc_cold_income_total = 0
+    # chp_cold_income_total = 0
+    # chp_heat_income_total = 0
+    # ashp_cold_income_total = 0
+    # ngb_hot_water_income_total = ngb3_income
+    # photovoltaic_income_total = photovoltaic_electricity_out_total * gc.sale_electricity_price
+    # wind_income_total = wind_electricity_out_total * gc.sale_electricity_price
+    # ice_cost_total = ice1_electrical_cost + ice2_electrical_cost
+    # lb_cold_cost_total = lb1_cold_cost + lb2_cold_cost
+    # lb_heat_cost_total = lb1_heat_cost + lb2_heat_cost
+    # lb_hot_water_cost_total = lb1_hot_water_cost + lb2_hot_water_cost
+    # cc_cold_cost_total = 0
+    # chp_cold_cost_total = 0
+    # chp_heat_cost_total = 0
+    # ashp_cold_cost_total = 0
+    # ashp_heat_cost_total = 0
+    # ngb_hot_water_cost_total = ngb3_cost
+    # # 写入数据库
+    #
+    #
+    # # 写入设备效率数据
+    # ice_electrical_efficiency = max(ice1_electrical_efficiency, ice2_electrical_efficiency)
+    # lb_cold_efficiency = max(lb1_cold_cop, lb2_cold_cop)
+    # lb_heat_efficiency = max(lb1_heat_cop, lb2_heat_cop)
+    # lb_hot_water_efficiency = max(lb1_hot_water_cop, lb2_hot_water_cop)
+    # cc_cold_cop = 0
+    # chp_cold_cop = 0
+    # chp_heat_cop = 0
+    # ashp_cold_cop = 0
+    # ashp_heat_cop = 0
+    # ngb_hot_water_efficiency = ngb3_efficiency
+    # photovoltaic_electrical_efficiency = 0
+    # wind_electrical_efficiency = 0
+    # # 写入数据库
+    #
+    #
+    # # 写入设备冷冻水出水温度和冷水生活热水总流量数据
+    # chilled_water_supply_flow_total = 0
+    # chilled_water_supply_temperature = 0
+    # chilled_water_return_temperature = 0
+    # heat_water_supply_flow_total = 0
+    # heat_water_supply_temperature = 0
+    # heat_water_return_temperature = 0
+    # hot_water_supply_flow_total = lb1_hot_water_flow + lb2_hot_water_flow + ngb3_hot_water_flow
+    # hot_water_supply_temperature = gc.hot_water_temperature
+    # hot_water_return_temperature = gc.hot_water_temperature - gc.hot_water_temperature_difference_rated
+    # lb1_heat_chilled_water_supply_temperature = 0
+    # lb2_heat_chilled_water_supply_temperature = 0
+    # if lb1_hot_water_out > 0:
+    #     lb1_hot_water_supply_temperature = gc.hot_water_temperature
+    # else:
+    #     lb1_hot_water_supply_temperature = 0
+    # if lb2_hot_water_out > 0:
+    #     lb2_hot_water_supply_temperature = gc.hot_water_temperature
+    # else:
+    #     lb2_hot_water_supply_temperature = 0
+    # if ngb3_hot_water_out > 0:
+    #     ngb3_hot_water_supply_temperature = gc.hot_water_temperature
+    # else:
+    #     ngb3_hot_water_supply_temperature = 0
+    # cc1_chilled_water_supply_temperature = 0
+    # cc2_chilled_water_supply_temperature = 0
+    # cc3_chilled_water_supply_temperature = 0
+    # cc4_chilled_water_supply_temperature = 0
+    # chp1_heat_water_supply_temperature = 0
+    # chp2_heat_water_supply_temperature = 0
+    # ashp1_water_supply_temperature = 0
+    # ashp2_water_supply_temperature = 0
+    # ashp3_water_supply_temperature = 0
+    # ashp4_water_supply_temperature = 0
+    # ese_water_supply_temperature = 0
+    # # 写入数据库
+    #
+    #
+    # # 写入设备运行状态
+    # cc1_cold_state = False
+    # cc1_stop_state = True
+    # cc1_fault_state = False
+    # cc2_cold_state = False
+    # cc2_stop_state = True
+    # cc2_fault_state = False
+    # chp1_cold_state = False
+    # chp1_heat_state = False
+    # chp1_stop_state = True
+    # chp1_fault_state = False
+    # chp2_cold_state = False
+    # chp2_heat_state = False
+    # chp2_stop_state = True
+    # chp2_fault_state = False
+    # ashp1_cold_state = False
+    # ashp1_heat_state = False
+    # ashp1_stop_state = True
+    # ashp1_fault_state = False
+    # ashp2_cold_state = False
+    # ashp2_heat_state = False
+    # ashp2_stop_state = True
+    # ashp2_fault_state = False
+    # ashp3_cold_state = False
+    # ashp3_heat_state = False
+    # ashp3_stop_state = True
+    # ashp3_fault_state = False
+    # ashp4_cold_state = False
+    # ashp4_heat_state = False
+    # ashp4_stop_state = True
+    # ashp4_fault_state = False
+    # ese_cold_out_state = False
+    # ese_heat_out_state = False
+    # ese_cold_in_state = False
+    # ese_heat_in_state = False
+    # ese_stop_state = True
+    # ese_fault_state = False
+    # photovoltaic_start_state = False
+    # photovoltaic_stop_state = True
+    # photovoltaic_fault_state = False
+    # wind_start_state = False
+    # wind_stop_state = True
+    # wind_fault_state = False
+    # cdz_start_state = False
+    # cdz_stop_state = True
+    # cdz_fault_state = False
+    # accumulator_electricity_out_state = False
+    # accumulator_electricity_in_state = False
+    # accumulator_stop_state = True
+    # accumulator_fault_state = False
+    # lamp_start_state = False
+    # lamp_stop_state = True
+    # lamp_fault_state = False
+    # # 写入数据库
